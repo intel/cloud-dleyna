@@ -31,7 +31,7 @@
 		mediaSources = new Array();
 		containerStack = new Array();
 		// find DMS on the local network
-		tizen.mediacontent2.getLocalNetworkMediaSources({onserverfound:addMediaSource, onserverlost:removeMediaSource});
+		dleyna.getServers({onserverfound:addMediaSource, onserverlost:removeMediaSource});
 	}
 
 	
@@ -262,9 +262,10 @@
 	//
 
 	function setSortMode() {
-		var attribute = sortByPopList.options[sortByPopList.selectedIndex].value;
-		var direction = sortDirectionPopList.options[sortDirectionPopList.selectedIndex].value;
-		sortMode = new tizen.SortMode(attribute, direction);
+		sortMode = {
+				attributeName: sortByPopList.options[sortByPopList.selectedIndex].value,
+				order: sortDirectionPopList.options[sortDirectionPopList.selectedIndex].value
+		};
 	}
 
 
@@ -288,7 +289,10 @@
 
 //Initialize function
 var init = function () {
-	initPage();
+	var cloudeebusURI = "ws://localhost:9000";
+	dleyna.init(cloudeebusURI, 
+			initPage,
+			function() {alert("Connection to " + cloudeebusURI + " failed");});
 };
 // window.onload can work without <body onload="">
 window.onload = init;
