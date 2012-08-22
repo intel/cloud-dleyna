@@ -70,8 +70,111 @@ dleyna.setServerListener = function(serverCallback, errorCallback) {
 /*****************************************************************************/
 
 dleyna.MediaServer = function(proxy) {
+	this.proxy = proxy;
+	this.id = proxy.objectPath;
+	this.friendlyName = proxy.FriendlyName;
+	this.manufacturer = proxy.Manufacturer;
+	this.manufacturerURL = proxy.ManufacturerUrl;
+	this.modelDescription = proxy.ModelDescription;
+	this.modelName = proxy.ModelName;
+	this.modelNumber = proxy.ModelNumber;
+	this.modelURL = proxy.ModelURL;
+	this.serialNumber = proxy.SerialNumber;
+	this.UPC = null;
+	this.presentationURL = proxy.PresentationURL;
 	return this;
 };
+
+
+
+/*****************************************************************************/
+
+dleyna.MediaObject = function(proxy) {
+	this.proxy = proxy;
+	this.id = proxy.objectPath;
+	this.type = proxy.Type;
+	this.displayName = proxy.DisplayName;
+	return this;
+};
+
+
+
+/*****************************************************************************/
+
+dleyna.MediaContainer = function(proxy) {
+	dleyna.MediaObject.call(this,proxy);
+	this.type = "container";
+	return this;
+};
+
+dleyna.MediaContainer.prototype = new dleyna.MediaObject();
+dleyna.MediaContainer.prototype.constructor = dleyna.MediaContainer;
+
+
+
+/*****************************************************************************/
+
+dleyna.MediaItem = function(proxy) {
+	dleyna.MediaObject.call(this,proxy);
+	this.mimeType = proxy.MIMEType;
+	this.URLs = proxy.URLs;
+	this.size = proxy.Size;
+	return this;
+};
+
+dleyna.MediaItem.prototype = new dleyna.MediaObject();
+dleyna.MediaItem.prototype.constructor = dleyna.MediaItem;
+
+
+
+/*****************************************************************************/
+
+dleyna.MediaVideo = function(proxy) {
+	dleyna.MediaItem.call(this,proxy);
+	this.type = "video";
+	this.album = proxy.Album;
+	this.artist = proxy.Artist;
+	this.duration = proxy.Duration;
+	this.width = proxy.Width;
+	this.height = proxy.Height;
+	return this;
+};
+
+dleyna.MediaVideo.prototype = new dleyna.MediaItem();
+dleyna.MediaVideo.prototype.constructor = dleyna.MediaVideo;
+
+
+
+/*****************************************************************************/
+
+dleyna.MediaAudio = function(proxy) {
+	dleyna.MediaItem.call(this,proxy);
+	this.type = "audio";
+	this.album = proxy.Album;
+	this.genre = proxy.Genre;
+	this.artist = proxy.Artist;
+	this.bitrate = proxy.Bitrate;
+	this.duration = proxy.Duration;
+	return this;
+};
+
+dleyna.MediaAudio.prototype = new dleyna.MediaItem();
+dleyna.MediaAudio.prototype.constructor = dleyna.MediaAudio;
+
+
+
+/*****************************************************************************/
+
+dleyna.MediaImage = function(proxy) {
+	dleyna.MediaItem.call(this,proxy);
+	this.type = "image";
+	this.width = proxy.Width;
+	this.height = proxy.Height;
+	return this;
+};
+
+dleyna.MediaImage.prototype = new dleyna.MediaItem();
+dleyna.MediaImage.prototype.constructor = dleyna.MediaImage;
 
 
 
