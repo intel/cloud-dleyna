@@ -40,7 +40,7 @@ dleyna.init = function(uri, successCB, errorCB) {
 		dleyna.bus = cloudeebus.SessionBus();
 		dleyna.uri = uri;
 		dleyna.manager = dleyna.bus.getObject(dleyna.busName, "/com/intel/MediaServiceUPnP", onManagerOk, errorCB);
-	};
+	}
 	
 	cloudeebus.connect(uri, onConnectOk, errorCB);
 };
@@ -48,20 +48,15 @@ dleyna.init = function(uri, successCB, errorCB) {
 
 dleyna.getServers = function(successCB, errorCB) {
 	
-	var objs = [];
-	var objIds = null;
-	
 	function onServerOk(obj) {
-		objs.push(new dleyna.MediaServer(obj));
-		if (successCB && objIds && objIds.length == objs.length)
-			successCB(objs);		
+		if (successCB)
+			successCB(new dleyna.MediaServer(obj));		
 	}
 	
 	function onObjIdsOk(ids) {
-		objIds = ids;
 		for (var i=0; i<ids.length; i++)
 			dleyna.bus.getObject(dleyna.busName, ids[i], onServerOk, errorCB);
-	};
+	}
 	
 	dleyna.manager.getServers(onObjIdsOk, errorCB);
 };
@@ -73,7 +68,6 @@ dleyna.setServerListener = function(serverCallback, errorCallback) {
 
 
 /*****************************************************************************/
-
 
 dleyna.MediaServer = function(proxy) {
 	return this;
