@@ -42,7 +42,7 @@
 	function containerBrowsingElement(source, container) {
 		var node = document.createElement("input");
 		node.type = "button";
-		node.value = container.title;
+		node.value = container.displayName;
 		node.mediaSource = source;
 		node.mediaContainer = container;
 		return node;
@@ -53,7 +53,7 @@
 		node.style.borderStyle = "solid";
 		node.style.borderWidth = "1px";
 		node.style.backgroundColor = "#F7E9E9";
-		node.innerHTML = item.title;
+		node.innerHTML = item.displayName;
 		return node;
 	}
 	
@@ -118,8 +118,8 @@
 		if (source.presentationURL)
 			mediaSourceInfo.innerHTML += "<a href='" + source.presentationURL + "'>" + source.presentationURL + "</a><br>";
 		clearFolderBrowsing();
-		if (source.rootContainer)
-			browseMediaSourceContainer(source, source.rootContainer);
+		if (source.root)
+			browseMediaSourceContainer(source, source.root);
 	}
 
 	
@@ -218,7 +218,7 @@
 		containerStack.push(container);
 		pushContainerToFolderPath(source, container);
 		clearFolderInfo();
-		source.browseContainer(container.id, { /* MediaObjectArraySuccessCallback */
+		source.browse(container.id, { /* MediaObjectArraySuccessCallback */
 						onsuccess: browseContainerCB, 
 						browseCount: browseCount, 
 						browseOffset: 0,
@@ -253,7 +253,7 @@
 		}
 		if (mediaObjectArray.length == this.browseCount) {
 			this.browseOffset += this.browseCount;
-			this.mediaSource.browseContainer(this.container.id, this, null, this.sortMode, this.browseCount, this.browseOffset);
+			this.mediaSource.browse(this.container.id, this, null, this.sortMode, this.browseCount, this.browseOffset);
 		}
     }
 
