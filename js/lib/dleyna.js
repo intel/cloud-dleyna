@@ -46,23 +46,30 @@ dleyna.init = function(uri, successCB, errorCB) {
 };
 
 
-dleyna.getServers = function(successCB, errorCB) {
+dleyna.setServerListener = function(serverCallback, errorCallback) {
 	
-	function onServerOk(obj) {
-		if (successCB)
-			successCB(new dleyna.MediaServer(obj));		
+	var serverFoundCB = serverCallback.onserverfound;
+	var serverLostCB = serverCallback.onserverlost;
+	
+	function onServerOk(proxy) {
+		if (serverFoundCB)
+			serverFoundCB(new dleyna.MediaServer(proxy));		
+	}
+	
+	function onObjIdOk(id) {
+		dleyna.bus.getObject(dleyna.busName, id, onServerOk, errorCallback);
 	}
 	
 	function onObjIdsOk(ids) {
 		for (var i=0; i<ids.length; i++)
-			dleyna.bus.getObject(dleyna.busName, ids[i], onServerOk, errorCB);
+			onObjIdOk(ids[i]);
 	}
 	
-	dleyna.manager.getServers(onObjIdsOk, errorCB);
-};
-
-
-dleyna.setServerListener = function(serverCallback, errorCallback) {
+	dleyna.manager.GetServers(onObjIdsOk, errorCallback);
+	dleyna.manager.connectToSignal("com.intel.MediaServiceUPnP.Manager", "FoundServer",
+			onObjIdOk, errorCallback);
+	dleyna.manager.connectToSignal("com.intel.MediaServiceUPnP.Manager", "LostServer",
+			serverLostCB, errorCallback);
 };
 
 
@@ -71,17 +78,19 @@ dleyna.setServerListener = function(serverCallback, errorCallback) {
 
 dleyna.MediaServer = function(proxy) {
 	this.proxy = proxy;
-	this.id = proxy.objectPath;
-	this.friendlyName = proxy.FriendlyName;
-	this.manufacturer = proxy.Manufacturer;
-	this.manufacturerURL = proxy.ManufacturerUrl;
-	this.modelDescription = proxy.ModelDescription;
-	this.modelName = proxy.ModelName;
-	this.modelNumber = proxy.ModelNumber;
-	this.modelURL = proxy.ModelURL;
-	this.serialNumber = proxy.SerialNumber;
-	this.UPC = null;
-	this.presentationURL = proxy.PresentationURL;
+	if (proxy) {
+		this.id = proxy.objectPath;
+		this.friendlyName = proxy.FriendlyName;
+		this.manufacturer = proxy.Manufacturer;
+		this.manufacturerURL = proxy.ManufacturerUrl;
+		this.modelDescription = proxy.ModelDescription;
+		this.modelName = proxy.ModelName;
+		this.modelNumber = proxy.ModelNumber;
+		this.modelURL = proxy.ModelURL;
+		this.serialNumber = proxy.SerialNumber;
+		this.UPC = null;
+		this.presentationURL = proxy.PresentationURL;
+	}
 	return this;
 };
 
@@ -91,9 +100,11 @@ dleyna.MediaServer = function(proxy) {
 
 dleyna.MediaObject = function(proxy) {
 	this.proxy = proxy;
-	this.id = proxy.objectPath;
-	this.type = proxy.Type;
-	this.displayName = proxy.DisplayName;
+	if (proxy) {
+		this.id = proxy.objectPath;
+		this.type = proxy.Type;
+		this.displayName = proxy.DisplayName;
+	}
 	return this;
 };
 
@@ -116,9 +127,11 @@ dleyna.MediaContainer.prototype.constructor = dleyna.MediaContainer;
 
 dleyna.MediaItem = function(proxy) {
 	dleyna.MediaObject.call(this,proxy);
-	this.mimeType = proxy.MIMEType;
-	this.URLs = proxy.URLs;
-	this.size = proxy.Size;
+	if (proxy) {
+		this.mimeType = proxy.MIMEType;
+		this.URLs = proxy.URLs;
+		this.size = proxy.Size;
+	}
 	return this;
 };
 
@@ -132,11 +145,13 @@ dleyna.MediaItem.prototype.constructor = dleyna.MediaItem;
 dleyna.MediaVideo = function(proxy) {
 	dleyna.MediaItem.call(this,proxy);
 	this.type = "video";
-	this.album = proxy.Album;
-	this.artist = proxy.Artist;
-	this.duration = proxy.Duration;
-	this.width = proxy.Width;
-	this.height = proxy.Height;
+	if (proxy) {
+		this.album = proxy.Album;
+		this.artist = proxy.Artist;
+		this.duration = proxy.Duration;
+		this.width = proxy.Width;
+		this.height = proxy.Height;
+	}
 	return this;
 };
 
@@ -150,11 +165,13 @@ dleyna.MediaVideo.prototype.constructor = dleyna.MediaVideo;
 dleyna.MediaAudio = function(proxy) {
 	dleyna.MediaItem.call(this,proxy);
 	this.type = "audio";
-	this.album = proxy.Album;
-	this.genre = proxy.Genre;
-	this.artist = proxy.Artist;
-	this.bitrate = proxy.Bitrate;
-	this.duration = proxy.Duration;
+	if (proxy) {
+		this.album = proxy.Album;
+		this.genre = proxy.Genre;
+		this.artist = proxy.Artist;
+		this.bitrate = proxy.Bitrate;
+		this.duration = proxy.Duration;
+	}
 	return this;
 };
 
@@ -168,8 +185,10 @@ dleyna.MediaAudio.prototype.constructor = dleyna.MediaAudio;
 dleyna.MediaImage = function(proxy) {
 	dleyna.MediaItem.call(this,proxy);
 	this.type = "image";
-	this.width = proxy.Width;
-	this.height = proxy.Height;
+	if (proxy) {
+		this.width = proxy.Width;
+		this.height = proxy.Height;
+	}
 	return this;
 };
 

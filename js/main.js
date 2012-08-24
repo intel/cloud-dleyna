@@ -31,7 +31,7 @@
 		mediaSources = new Array();
 		containerStack = new Array();
 		// find DMS on the local network
-		dleyna.getServers({onserverfound:addMediaSource, onserverlost:removeMediaSource});
+		dleyna.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById},debugLog);
 	}
 
 	
@@ -62,29 +62,29 @@
 	// Media sources management
 	//
 
-    function getMediaSourceById(deviceId) {
+    function getMediaSourceById(id) {
 		for (var i=0; i<mediaSourcesListBox.options.length; i++) {
-			if (mediaSourcesListBox.options[i].value == deviceId)
+			if (mediaSourcesListBox.options[i].value == id)
     			return mediaSourcesListBox.options[i].mediaSource;
     	}
     }
 
 	function addMediaSource(source) {
 		// check if the media source is already known
-		if (getMediaSourceById(source.deviceId))
+		if (getMediaSourceById(source.id))
 			return;
 		// add an option to the listbox
 		var node = document.createElement("option");
 		node.text = source.friendlyName;
-		node.value = source.deviceId;
+		node.value = source.id;
 		node.mediaSource = source;
 		mediaSourcesListBox.add(node);
 	}
 	
-	function removeMediaSource(source) {
+	function removeMediaSourceById(sourceId) {
 		// seek media source in the listbox
 		for (var i=0; i<mediaSourcesListBox.options.length; i++) {
-			if (mediaSourcesListBox.options[i].value == source.deviceId) {
+			if (mediaSourcesListBox.options[i].value == sourceId) {
 				// clear browsing area if the current media source is removed
 				if (i == mediaSourcesListBox.selectedIndex)
 					clearMediaSourceBrowsing();
@@ -102,7 +102,7 @@
 
 	function logMediaSourceInfo(source) {
 		mediaSourceInfo.innerHTML = "<b>" + source.friendlyName + "<b><br>";
-		mediaSourceInfo.innerHTML += source.deviceId + "<br>";
+		mediaSourceInfo.innerHTML += source.id + "<br>";
 		if (source.serialNumber)
 			mediaSourceInfo.innerHTML += "s/n: " + source.serialNumber + "<br>";
 		if (source.manufacturerURL)
@@ -287,13 +287,36 @@
 		clearContentArea();
 	}
 
-//Initialize function
-var init = function () {
-	var cloudeebusURI = "ws://localhost:9000";
-	dleyna.init(cloudeebusURI, 
-			initPage,
-			function() {alert("Connection to " + cloudeebusURI + " failed");});
-};
-// window.onload can work without <body onload="">
-window.onload = init;
+	    
+	function clearFolderBrowsing() {
+		containerStack = new Array();
+		folderPath.innerHTML="<hr>";
+		clearFolderInfo();
+	}
+	
+	function clearMediaSourceBrowsing() {
+		mediaSourceInfo.innerHTML="";
+		clearFolderBrowsing();
+	}
+	
+	//
+	// Debug log function
+	//
 
+	function debugLog(msg) {
+		alert(msg);
+	}
+	
+	//
+	// Main Init function
+	//
+
+	var init = function () {
+		var cloudeebusURI = "ws://localhost:9000";
+		dleyna.init(cloudeebusURI, 
+				initPage,
+				debugLog);
+	};
+	
+	// window.onload can work without <body onload="">
+	window.onload = init;
