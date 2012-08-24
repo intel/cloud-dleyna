@@ -28,8 +28,8 @@
 		// init browsing context
 		setSortMode();
 		// init DLNA global objects
-		mediaSources = new Array();
-		containerStack = new Array();
+		mediaSources = [];
+		containerStack = [];
 		// find DMS on the local network
 		dleyna.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById},debugLog);
 	}
@@ -65,8 +65,8 @@
     function getMediaSourceById(id) {
 		for (var i=0; i<mediaSourcesListBox.options.length; i++) {
 			if (mediaSourcesListBox.options[i].value == id)
-    			return mediaSourcesListBox.options[i].mediaSource;
-    	}
+				return mediaSourcesListBox.options[i].mediaSource;
+		}
     }
 
 	function addMediaSource(source) {
@@ -192,19 +192,19 @@
 		var i;
 		var container = null;
 		// clear all containers below the selected one
-    	for (i=0; i<containerStack.length; i++) {
-    		if (containerStack[i].id == containerId) {
-    			container = containerStack[i];
-    			containerStack.splice(i,containerStack.length-i);
-    		}
-    	}
-    	if (!container)
-    		return;
+		for (i=0; i<containerStack.length; i++) {
+			if (containerStack[i].id == containerId) {
+				container = containerStack[i];
+				containerStack.splice(i,containerStack.length-i);
+			}
+		}
+		if (!container)
+			return;
 		folderPath.innerHTML="<hr>";
-    	for (i=0; i<containerStack.length; i++) {
-    		pushContainerToFolderPath(source, containerStack[i]);
-    	}
-    	browseMediaSourceContainer(source, container);
+		for (i=0; i<containerStack.length; i++) {
+			pushContainerToFolderPath(source, containerStack[i]);
+		}
+		browseMediaSourceContainer(source, container);
 	}
 	
 	
@@ -234,27 +234,27 @@
 
     function browseContainerCB(mediaObjectArray) 
     {
-    	// exit if we are not browsing the current container
-    	if (this.container.id != containerStack[containerStack.length-1].id)
-    		return;
-     	for (var i=0; i<mediaObjectArray.length; i++) {
-    		var node = null;
-    		if (mediaObjectArray[i].type == "FOLDER" || mediaObjectArray[i].type == "CONTAINER") {
-    			node = containerBrowsingElement(this.mediaSource, mediaObjectArray[i]);
-    		}
-    		else {
-    			node = mediaItemElement(mediaObjectArray[i]);
-    		}
-    		node.mediaItem = mediaObjectArray[i];
-    		node.onclick = containerContentsItemOnClick;
-    		node.style.width = "100%";
-    		outLog.appendChild(node);
-    		outLog.appendChild(document.createElement("br"));
-    	}
-       	if (mediaObjectArray.length == this.browseCount) {
-       		this.browseOffset += this.browseCount;
-       		this.mediaSource.browseContainer(this.container.id, this, null, this.sortMode, this.browseCount, this.browseOffset);
-       	}
+		// exit if we are not browsing the current container
+		if (this.container.id != containerStack[containerStack.length-1].id)
+			return;
+		for (var i=0; i<mediaObjectArray.length; i++) {
+			var node = null;
+			if (mediaObjectArray[i].type == "FOLDER" || mediaObjectArray[i].type == "CONTAINER") {
+				node = containerBrowsingElement(this.mediaSource, mediaObjectArray[i]);
+			}
+			else {
+				node = mediaItemElement(mediaObjectArray[i]);
+			}
+			node.mediaItem = mediaObjectArray[i];
+			node.onclick = containerContentsItemOnClick;
+			node.style.width = "100%";
+			outLog.appendChild(node);
+			outLog.appendChild(document.createElement("br"));
+		}
+		if (mediaObjectArray.length == this.browseCount) {
+			this.browseOffset += this.browseCount;
+			this.mediaSource.browseContainer(this.container.id, this, null, this.sortMode, this.browseCount, this.browseOffset);
+		}
     }
 
 	//
@@ -279,17 +279,17 @@
 	    
 	function clearFolderInfo() {
 		folderInfo.innerHTML="<hr>";
-    	outLog = document.createElement("div");
-    	outLog.style.width = folderInfo.clientWidth + "px";
-    	outLog.style.height = folderInfo.clientHeight + "px";
-    	outLog.style.overflow = "auto";
-       	folderInfo.appendChild(outLog);
+		outLog = document.createElement("div");
+		outLog.style.width = folderInfo.clientWidth + "px";
+		outLog.style.height = folderInfo.clientHeight + "px";
+		outLog.style.overflow = "auto";
+		folderInfo.appendChild(outLog);
 		clearContentArea();
 	}
 
 	    
 	function clearFolderBrowsing() {
-		containerStack = new Array();
+		containerStack = [];
 		folderPath.innerHTML="<hr>";
 		clearFolderInfo();
 	}
