@@ -146,23 +146,23 @@
 			return;
 		}
 		var node = null;
-		if (this.mediaItem.type == "IMAGE") {
+		if (this.mediaItem.type == "image") {
 			node = document.createElement("img");
-			node.src = this.mediaItem.itemURI;
+			node.src = this.mediaItem.URLs[0];
 			fitItemNodeInClientView(this.mediaItem, node, mediaContent);
 		}
 		else {
-			if (this.mediaItem.type == "VIDEO") {
+			if (this.mediaItem.type == "video") {
 				node = document.createElement("video");
 				fitItemNodeInClientView(this.mediaItem, node, mediaContent);
 			}
-			else if (this.mediaItem.type == "AUDIO") {
+			else if (this.mediaItem.type == "audio") {
 				node = document.createElement("audio");
 			}
 			else 
 				return;
 			var source = document.createElement("source");
-			source.src = this.mediaItem.itemURI;
+			source.src = this.mediaItem.URLs[0];
 // ####		source.type = this.mediaItem.mimeType; // let browser guess 
 			node.controls = true;
 			node.autoplay = true;
@@ -224,7 +224,7 @@
 				return;
 			for (var i=0; i<mediaObjectArray.length; i++) {
 				var node = null;
-				if (mediaObjectArray[i].type == "FOLDER" || mediaObjectArray[i].type == "CONTAINER") {
+				if (mediaObjectArray[i].type == "container") {
 					node = containerBrowsingElement(source, mediaObjectArray[i]);
 				}
 				else {
