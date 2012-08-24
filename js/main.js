@@ -212,50 +212,52 @@
 	// Media source browsing by folder management
 	//
 
-	var browseCount = 10;
     
 	function browseMediaSourceContainer(source, container) {
+		var browseCount = 10;
+		var browseOffset = 0;
+		
+	    function browseContainerCB(mediaObjectArray) 
+	    {
+			// exit if we are not browsing the current container
+			if (container.id != containerStack[containerStack.length-1].id)
+				return;
+			for (var i=0; i<mediaObjectArray.length; i++) {
+				var node = null;
+				if (mediaObjectArray[i].type == "FOLDER" || mediaObjectArray[i].type == "CONTAINER") {
+					node = containerBrowsingElement(source, mediaObjectArray[i]);
+				}
+				else {
+					node = mediaItemElement(mediaObjectArray[i]);
+				}
+				node.mediaItem = mediaObjectArray[i];
+				node.onclick = containerContentsItemOnClick;
+				node.style.width = "100%";
+				outLog.appendChild(node);
+				outLog.appendChild(document.createElement("br"));
+			}
+			if (mediaObjectArray.length == browseCount) {
+				browseOffset += browseCount;
+				source.browse(container.id, 
+						browseContainerCB, 
+						null,  /* errorCallback */
+						sortMode,  /* sortMode */
+						browseCount, 
+						browseOffset);
+			}
+	    }
+		
 		containerStack.push(container);
 		pushContainerToFolderPath(source, container);
 		clearFolderInfo();
-		source.browse(container.id, { /* MediaObjectArraySuccessCallback */
-						onsuccess: browseContainerCB, 
-						browseCount: browseCount, 
-						browseOffset: 0,
-						mediaSource: source,
-						container: container,
-						sortMode: sortMode
-						}, 
+		source.browse(container.id, 
+				browseContainerCB, 
 				null, /* errorCallback */
 				sortMode, /* sortMode */
 				browseCount, 
-				0);
+				browseOffset);
 	}
 
-    function browseContainerCB(mediaObjectArray) 
-    {
-		// exit if we are not browsing the current container
-		if (this.container.id != containerStack[containerStack.length-1].id)
-			return;
-		for (var i=0; i<mediaObjectArray.length; i++) {
-			var node = null;
-			if (mediaObjectArray[i].type == "FOLDER" || mediaObjectArray[i].type == "CONTAINER") {
-				node = containerBrowsingElement(this.mediaSource, mediaObjectArray[i]);
-			}
-			else {
-				node = mediaItemElement(mediaObjectArray[i]);
-			}
-			node.mediaItem = mediaObjectArray[i];
-			node.onclick = containerContentsItemOnClick;
-			node.style.width = "100%";
-			outLog.appendChild(node);
-			outLog.appendChild(document.createElement("br"));
-		}
-		if (mediaObjectArray.length == this.browseCount) {
-			this.browseOffset += this.browseCount;
-			this.mediaSource.browse(this.container.id, this, null, this.sortMode, this.browseCount, this.browseOffset);
-		}
-    }
 
 	//
 	// Content browsing sort mode
@@ -278,11 +280,11 @@
 	}
 	    
 	function clearFolderInfo() {
-		folderInfo.innerHTML="<hr>";
 		outLog = document.createElement("div");
 		outLog.style.width = folderInfo.clientWidth + "px";
 		outLog.style.height = folderInfo.clientHeight + "px";
 		outLog.style.overflow = "auto";
+		folderInfo.innerHTML="<hr>";
 		folderInfo.appendChild(outLog);
 		clearContentArea();
 	}

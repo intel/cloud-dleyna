@@ -90,9 +90,73 @@ dleyna.MediaServer = function(proxy) {
 		this.serialNumber = proxy.SerialNumber;
 		this.UPC = null;
 		this.presentationURL = proxy.PresentationURL;
+		// proxy has a root folder if it implements MediaObject2
+		if (proxy.DisplayName) {
+			this.root = new dleyna.MediaContainer(proxy);
+		}
 	}
 	return this;
 };
+
+
+dleyna.browseFilter = [
+	"Path",
+	"Type",
+	"DisplayName",
+	"URLs",
+	"MIMEType",
+	"Date",
+	"Size",
+	"Width",
+	"Height",
+	"Duration",
+	"Bitrate",
+	"Album",
+	"Artist",
+	"Genre"
+];
+
+
+dleyna.MediaServer.prototype.browse = function(id, successCallback, errorCallback, sortMode, count, offset) {
+
+	function onMediaObjectsOk(jsonArray) {
+		var objArray = [];
+		for (var i=0; i<jsonArray.length; i++)
+			objArray.push(dleyna.mediaObjectForProxy(jsonArray[i]));
+		if (successCallback)
+			successCallback(objArray);
+	}
+
+	function onObjIdsOk(ids) {
+		objIds = ids;
+//		dleyna.bus.getObject(dleyna.busName, objIds.pop(), onMediaObjectOk, errorCallback);
+		alert(JSON.stringify(ids));
+	}
+
+	var sortStr = "";
+	if (sortMode) {
+		if (sortMode.order == "ASC")
+			sortStr = "+";
+		else
+			sortStr = "-";
+		sortStr += sortMode.attributeName;
+	}
+
+	this.proxy.ListChildrenEx(
+			offset ? offset : 0, 
+			count ? count : 0, 
+			dleyna.browseFilter, 
+			sortStr,
+			onMediaObjectsOk,
+			errorCallback
+			);
+};
+
+
+dleyna.MediaServer.prototype.find = function(id, successCallback, errorCallback, filter, sortMode, count, offset) {
+	
+};
+
 
 
 
@@ -195,6 +259,21 @@ dleyna.MediaImage = function(proxy) {
 dleyna.MediaImage.prototype = new dleyna.MediaItem();
 dleyna.MediaImage.prototype.constructor = dleyna.MediaImage;
 
+
+
+/*****************************************************************************/
+
+dleyna.mediaObjectForProxy = function(proxy) {
+	if (proxy.type == "container")
+		return new dleyna.MediaContainer(proxy);
+	if (proxy.type == "video")
+		return new dleyna.MediaVideo(proxy);
+	if (proxy.type == "audio")
+		return new dleyna.MediaAudio(proxy);
+	if (proxy.type == "image")
+		return new dleyna.MediaImage(proxy);
+	return new dleyna.MediaItem(proxy);
+};
 
 
 
