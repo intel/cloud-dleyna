@@ -4,7 +4,7 @@
 	//
 	
 	// HTML DOM elements
-	var mediaSourcesListBox, mediaSourceInfo, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
+	var mainView, mediaSourcesListBox, mediaSourceInfo, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
 	// Browsing path from current DMS root folder
@@ -18,6 +18,7 @@
 	
 	function initPage() {
 		// init HTML DOM elements
+		mainView = document.getElementById("mainView");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
 		sortByPopList = document.getElementById("sortByPopList");
@@ -25,6 +26,8 @@
 		folderPath = document.getElementById("folderPath");
 		folderInfo = document.getElementById("folderInfo");
 		mediaContent = document.getElementById("mediaContent");
+		// prevent page scrolling
+		mainView.style.height = Math.floor(0.8 * window.innerHeight) + "px";
 		// init browsing context
 		setSortMode();
 		// init DLNA global objects
@@ -282,7 +285,7 @@
 	function clearFolderInfo() {
 		outLog = document.createElement("div");
 		outLog.style.width = folderInfo.clientWidth + "px";
-		outLog.style.height = folderInfo.clientHeight + "px";
+		outLog.style.maxHeight = folderInfo.clientHeight + "px";
 		outLog.style.overflow = "auto";
 		folderInfo.innerHTML="<hr>";
 		folderInfo.appendChild(outLog);
