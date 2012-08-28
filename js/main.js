@@ -166,7 +166,7 @@
 				return;
 			var source = document.createElement("source");
 			source.src = this.mediaItem.URLs[0];
-// ####		source.type = this.mediaItem.mimeType; // let browser guess 
+			source.type = this.mediaItem.mimeType;
 			node.controls = true;
 			node.autoplay = true;
 			node.appendChild(source);
@@ -220,6 +220,10 @@
 		var browseCount = 10;
 		var browseOffset = 0;
 		
+		function browseErrorCB(str) {
+			alert(str);
+		}
+		
 	    function browseContainerCB(mediaObjectArray) 
 	    {
 			// exit if we are not browsing the current container
@@ -243,7 +247,7 @@
 				browseOffset += browseCount;
 				source.browse(container.id, 
 						browseContainerCB, 
-						null,  /* errorCallback */
+						browseErrorCB,  /* errorCallback */
 						sortMode,  /* sortMode */
 						browseCount, 
 						browseOffset);
@@ -255,7 +259,7 @@
 		clearFolderInfo();
 		source.browse(container.id, 
 				browseContainerCB, 
-				null, /* errorCallback */
+				browseErrorCB, /* errorCallback */
 				sortMode, /* sortMode */
 				browseCount, 
 				browseOffset);
