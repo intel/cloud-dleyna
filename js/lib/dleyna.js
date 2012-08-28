@@ -136,18 +136,16 @@ dleyna.MediaServer.prototype.browse = function(id, successCallback, errorCallbac
 			successCallback(objArray);
 	}
 
-	function onContainerProxyOk(proxy) {
-		proxy.ListChildrenEx(
-				offset ? offset : 0, 
-				count ? count : 0, 
-				dleyna.browseFilter, 
-				sortStr,
-				onMediaObjectsOk,
-				errorCallback
-				);
-	}
-	
-	dleyna.bus.getObject(dleyna.busName, id, onContainerProxyOk, errorCallback);
+	var containerProxy = dleyna.bus.getObject(dleyna.busName, id);
+	containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "ListChildrenEx", 
+		[
+			offset ? offset : 0, 
+			count ? count : 0, 
+			dleyna.browseFilter, 
+			sortStr
+		],
+		onMediaObjectsOk,
+		errorCallback);
 };
 
 
