@@ -28,7 +28,7 @@ dleyna.reset = function() {
 };
 
 
-dleyna.init = function(uri, successCB, errorCB) {
+dleyna.init = function(uri, manifest, successCB, errorCB) {
 	dleyna.reset();
 	
 	function onManagerOk() {
@@ -42,7 +42,7 @@ dleyna.init = function(uri, successCB, errorCB) {
 		dleyna.manager = dleyna.bus.getObject(dleyna.busName, "/com/intel/MediaServiceUPnP", onManagerOk, errorCB);
 	}
 	
-	cloudeebus.connect(uri, onConnectOk, errorCB);
+	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
 };
 
 

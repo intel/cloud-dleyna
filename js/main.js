@@ -317,12 +317,27 @@
 	}
 	
 	//
+	// Cloudeebus manifest
+	//
+
+	var manifest = {
+			name: "tizen-dlna-app",
+			version: "development",
+			key: "dLeyna",
+			permissions: [
+				"com.intel.media-service-upnp",
+				"com.intel.renderer-service-upnp"
+			]
+	};
+	
+	//
 	// Main Init function
 	//
 
 	var init = function () {
 		var cloudeebusURI = "ws://localhost:9000";
 		dleyna.init(cloudeebusURI, 
+				manifest,
 				initPage,
 				debugLog);
 	};
