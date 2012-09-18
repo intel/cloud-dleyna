@@ -149,8 +149,36 @@ dleyna.MediaServer.prototype.browse = function(id, successCallback, errorCallbac
 };
 
 
-dleyna.MediaServer.prototype.find = function(id, successCallback, errorCallback, filter, sortMode, count, offset) {
-	
+dleyna.MediaServer.prototype.find = function(id, successCallback, errorCallback, query, sortMode, count, offset) {
+
+	var sortStr = "";
+	if (sortMode) {
+		if (sortMode.order == "ASC")
+			sortStr = "+";
+		else
+			sortStr = "-";
+		sortStr += sortMode.attributeName;
+	}
+
+	function onMediaObjectsOk(jsonArray) {
+		var objArray = [];
+		for (var i=0; i<jsonArray.length; i++)
+			objArray.push(dleyna.mediaObjectForProxy(jsonArray[i]));
+		if (successCallback)
+			successCallback(objArray);
+	}
+
+	var containerProxy = dleyna.bus.getObject(dleyna.busName, id);
+	containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "SearchObjectsEx", 
+		[
+			query ? query : "*",
+			offset ? offset : 0, 
+			count ? count : 0, 
+			dleyna.browseFilter, 
+			sortStr
+		],
+		onMediaObjectsOk,
+		errorCallback);
 };
 
 

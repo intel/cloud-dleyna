@@ -4,7 +4,8 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, mediaSourcesListBox, mediaSourceInfo, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
+	var mainView, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
+		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
 	// Browsing path from current DMS root folder
@@ -21,6 +22,8 @@
 		mainView = document.getElementById("mainView");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
+		searchButton = document.getElementById("searchButton");
+		searchField = document.getElementById("searchField");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -212,6 +215,65 @@
 	
 	
 	//
+	// Media source find under given container
+	//
+
+    
+	function findInMediaSourceContainer(source, container, query) {
+		var findCount = 10;
+		var findOffset = 0;
+		
+		function findErrorCB(str) {
+			alert("Error searching for " + query + " in " + container.displayName + " : " + str);
+		}
+		
+	    function findContainerCB(mediaObjectArray) 
+	    {
+			// exit if we started browsing another container
+			if (container.id != containerStack[containerStack.length-1].id
+				// or if we launched another search
+					|| container.id != searchButton.container.id
+					|| source.id != searchButton.source.id
+					|| query != searchField.value)
+				return;
+			for (var i=0; i<mediaObjectArray.length; i++) {
+				var node = null;
+				if (mediaObjectArray[i].type == "container") {
+					node = containerBrowsingElement(source, mediaObjectArray[i]);
+				}
+				else {
+					node = mediaItemElement(mediaObjectArray[i]);
+				}
+				node.mediaItem = mediaObjectArray[i];
+				node.onclick = containerContentsItemOnClick;
+				node.style.width = "100%";
+				outLog.appendChild(node);
+				outLog.appendChild(document.createElement("br"));
+			}
+			if (mediaObjectArray.length == findCount) {
+				findOffset += findCount;
+				source.find(container.id, 
+						findContainerCB, 
+						findErrorCB,  /* errorCallback */
+						query, /* search query */
+						sortMode,  /* sortMode */
+						findCount, 
+						findOffset);
+			}
+	    }
+		
+		clearFolderInfo();
+		source.find(container.id, 
+				findContainerCB, 
+				findErrorCB, /* errorCallback */
+				query, /* search query */
+				sortMode, /* sortMode */
+				findCount, 
+				findOffset);
+	}
+
+
+	//
 	// Media source browsing by folder management
 	//
 
@@ -221,7 +283,7 @@
 		var browseOffset = 0;
 		
 		function browseErrorCB(str) {
-			alert(str);
+			alert("Error browsing " + container.displayName + " : " + str);
 		}
 		
 	    function browseContainerCB(mediaObjectArray) 
@@ -254,6 +316,8 @@
 			}
 	    }
 		
+		searchButton.source = source;
+		searchButton.container = container;
 		containerStack.push(container);
 		pushContainerToFolderPath(source, container);
 		clearFolderInfo();
