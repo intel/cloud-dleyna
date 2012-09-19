@@ -37,7 +37,7 @@
 		mediaSources = [];
 		containerStack = [];
 		// find DMS on the local network
-		dleyna.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById},debugLog);
+		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById},debugLog);
 	}
 
 	
@@ -400,7 +400,7 @@
 
 	var init = function () {
 		var cloudeebusURI = "ws://localhost:9000";
-		dleyna.init(cloudeebusURI, 
+		mediaserver.init(cloudeebusURI, 
 				manifest,
 				initPage,
 				debugLog);
