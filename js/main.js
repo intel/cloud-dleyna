@@ -4,7 +4,7 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
+	var mainView, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -20,6 +20,7 @@
 	function initPage() {
 		// init HTML DOM elements
 		mainView = document.getElementById("mainView");
+		mediaRenderersListBox = document.getElementById("mediaRenderersListBox");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
 		searchButton = document.getElementById("searchButton");
@@ -34,10 +35,11 @@
 		// init browsing context
 		setSortMode();
 		// init DLNA global objects
-		mediaSources = [];
 		containerStack = [];
 		// find DMS on the local network
 		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById},debugLog);
+		// find DMP on the local network
+		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById},debugLog);
 	}
 
 	
@@ -63,6 +65,41 @@
 		return node;
 	}
 	
+	
+	//
+	// Media renderers management
+	//
+
+    function getMediaRendererById(id) {
+		for (var i=0; i<mediaRenderersListBox.options.length; i++) {
+			if (mediaRenderersListBox.options[i].value == id)
+				return mediaRenderersListBox.options[i].mediaRenderer;
+		}
+    }
+
+	function addMediaRenderer(renderer) {
+		// check if the media renderer is already known
+		if (getMediaRendererById(renderer.id))
+			return;
+		// add an option to the listbox
+		var node = document.createElement("option");
+		node.text = renderer.id;
+		node.value = renderer.id;
+		node.mediaRenderer = renderer;
+		mediaRenderersListBox.add(node);
+	}
+	
+	function removeMediaRendererById(rendererId) {
+		// seek media renderer in the listbox
+		for (var i=0; i<mediaRenderersListBox.options.length; i++) {
+			if (mediaRenderersListBox.options[i].value == rendererId) {
+				// remove media renderer from the listbox
+				mediaRenderersListBox.remove(i);
+				return;
+			}
+		}
+	}
+
 	
 	//
 	// Media sources management
@@ -398,11 +435,22 @@
 	// Main Init function
 	//
 
+	function initRenderers() {
+		mediarenderer.reset();
+		mediarenderer.bus = mediaserver.bus;
+		mediarenderer.uri = mediaserver.uri;
+		mediarenderer.manager = mediarenderer.bus.getObject(
+				mediarenderer.busName, 
+				"/com/intel/RendererServiceUPnP", 
+				initPage, 
+				debugLog);
+	}
+	
 	var init = function () {
 		var cloudeebusURI = "ws://localhost:9000";
 		mediaserver.init(cloudeebusURI, 
 				manifest,
-				initPage,
+				initRenderers,
 				debugLog);
 	};
 	
