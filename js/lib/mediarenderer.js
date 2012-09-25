@@ -51,13 +51,9 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	var rendererFoundCB = rendererCallback.onrendererfound;
 	var rendererLostCB = rendererCallback.onrendererlost;
 	
-	function onRendererOk(proxy) {
-		if (rendererFoundCB)
-			rendererFoundCB(new mediarenderer.MediaRenderer(proxy));		
-	}
-	
 	function onObjIdOk(id) {
-		mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk, errorCallback);
+		if (rendererFoundCB)
+			rendererFoundCB(new mediarenderer.MediaRenderer(mediarenderer.bus.getObject(mediarenderer.busName, id)));		
 	}
 	
 	function onObjIdsOk(ids) {
