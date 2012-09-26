@@ -51,8 +51,12 @@
 						</select> 
 						</td>
 						<td style="width:50%">
-						<select id="mediaRenderersListBox" multiple=true size=3 style="min-width:60px;width:100%">
+						<select id="mediaRenderersListBox" multiple=true size=3 style="min-width:60px;width:100%"
+							onchange="mediaRenderersListBoxChanged()" >
 						</select> 
+						<input id="localRenderingCheckBox" type="checkbox" checked=true
+							onchange="localRenderingCheckBoxChanged()" >
+						Local rendering</input>
 						</td>
 					</tr>
 					<tr style="height:20%;min-height:80px">

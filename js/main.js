@@ -4,10 +4,12 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
+	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
+	// Remote renderer (null if rendering locally)
+	var remoteRenderer;
 	// Browsing path from current DMS root folder
 	var containerStack; 
 	// Sort mode
@@ -20,6 +22,7 @@
 	function initPage() {
 		// init HTML DOM elements
 		mainView = document.getElementById("mainView");
+		localRenderingCheckBox = document.getElementById("localRenderingCheckBox");
 		mediaRenderersListBox = document.getElementById("mediaRenderersListBox");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
@@ -100,6 +103,26 @@
 		}
 	}
 
+	function mediaRenderersListBoxChanged() {
+		if (mediaRenderersListBox.selectedIndex==-1) {
+			localRenderingCheckBox.checked = "checked";
+			remoteRenderer = null;
+		}
+		else {
+			localRenderingCheckBox.checked = false;
+			remoteRenderer = mediaRenderersListBox.options[mediaRenderersListBox.selectedIndex].mediaRenderer;
+		}
+	}
+	
+	function localRenderingCheckBoxChanged() {
+		if (localRenderingCheckBox.checked) {
+			mediaRenderersListBox.selectedIndex = -1;
+			remoteRenderer = null;
+		}
+		else
+			mediaRenderersListBoxChanged();
+	}
+	
 	
 	//
 	// Media sources management
@@ -186,6 +209,10 @@
 		clearContentArea();
 		if (this.mediaContainer) {
 			browseMediaSourceContainer(this.mediaSource, this.mediaContainer);
+			return;
+		}
+		if (remoteRenderer) {
+			remoteRenderer.openURI(this.mediaItem.URLs[0]);
 			return;
 		}
 		var node = null;
