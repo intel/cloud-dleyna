@@ -86,7 +86,7 @@
 			return;
 		// add an option to the listbox
 		var node = document.createElement("option");
-		node.text = renderer.id;
+		node.text = renderer.friendlyName;
 		node.value = renderer.id;
 		node.mediaRenderer = renderer;
 		mediaRenderersListBox.add(node);

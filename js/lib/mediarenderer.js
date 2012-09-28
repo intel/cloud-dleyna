@@ -80,6 +80,7 @@ mediarenderer.MediaRenderer = function(proxy) {
 	this.proxy = proxy;
 	if (proxy) {
 		this.id = proxy.objectPath;
+		this.friendlyName = proxy.Identity;
 	}
 	return this;
 };
