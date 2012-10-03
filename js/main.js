@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
+		playButton, pauseButton, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
 	// Remote renderer (null if rendering locally)
@@ -28,6 +28,8 @@
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
 		searchButton = document.getElementById("searchButton");
 		searchField = document.getElementById("searchField");
+		playButton = document.getElementById("playButton");
+		pauseButton = document.getElementById("pauseButton");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -103,21 +105,31 @@
 		}
 	}
 
+	function setRemoteRenderer(renderer) {
+		remoteRenderer = renderer;
+		if (remoteRenderer) {
+			playButton.disabled = pauseButton.disabled = false;
+		}
+		else {
+			playButton.disabled = pauseButton.disabled = true;
+		}
+	}
+	
 	function mediaRenderersListBoxChanged() {
 		if (mediaRenderersListBox.selectedIndex==-1) {
 			localRenderingCheckBox.checked = "checked";
-			remoteRenderer = null;
+			setRemoteRenderer(null);
 		}
 		else {
 			localRenderingCheckBox.checked = false;
-			remoteRenderer = mediaRenderersListBox.options[mediaRenderersListBox.selectedIndex].mediaRenderer;
+			setRemoteRenderer(mediaRenderersListBox.options[mediaRenderersListBox.selectedIndex].mediaRenderer);
 		}
 	}
 	
 	function localRenderingCheckBoxChanged() {
 		if (localRenderingCheckBox.checked) {
 			mediaRenderersListBox.selectedIndex = -1;
-			remoteRenderer = null;
+			setRemoteRenderer(null);
 		}
 		else
 			mediaRenderersListBoxChanged();

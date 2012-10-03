@@ -57,6 +57,10 @@
 						<input id="localRenderingCheckBox" type="checkbox" checked=true
 							onchange="localRenderingCheckBoxChanged()" >
 						Local rendering</input>
+						<input id="playButton" type="button" value="Play" disabled=true
+							onclick="remoteRenderer.controller.play()"/>
+						<input id="pauseButton" type="button" value="Pause" disabled=true
+							onclick="remoteRenderer.controller.pause()"/>
 						</td>
 					</tr>
 					<tr style="height:20%;min-height:80px">

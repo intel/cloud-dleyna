@@ -76,12 +76,45 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 
 /*****************************************************************************/
 
+mediarenderer.MediaController = function(renderer) {
+	this.renderer = renderer;
+	this.paused = true;
+	return this;
+};
+
+
+mediarenderer.MediaController.prototype.play = function() {
+	var self = this;
+	
+	function onPlayOk() {
+		self.paused = false;
+	}
+	
+	this.renderer.proxy.Play(onPlayOk, cloudeebus.log);
+};
+
+
+mediarenderer.MediaController.prototype.pause = function() {
+	var self = this;
+	
+	function onPauseOk() {
+		self.paused = true;
+	}
+	
+	this.renderer.proxy.Pause(onPauseOk, cloudeebus.log);
+};
+
+
+
+/*****************************************************************************/
+
 mediarenderer.MediaRenderer = function(proxy) {
 	this.proxy = proxy;
 	if (proxy) {
 		this.id = proxy.objectPath;
 		this.friendlyName = proxy.Identity;
 	}
+	this.controller = new mediarenderer.MediaController(this);
 	return this;
 };
 
