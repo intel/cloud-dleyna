@@ -461,7 +461,7 @@
 	//
 
 	var manifest = {
-			name: "tizen-dlna-app",
+			name: "cloud-dlna-app",
 			version: "development",
 			key: "dLeyna",
 			permissions: [
