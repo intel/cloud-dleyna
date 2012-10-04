@@ -461,7 +461,7 @@
 	//
 
 	var manifest = {
-			name: "cloud-dlna-app",
+			name: "cloud-dLeyna",
 			version: "development",
 			key: "dLeyna",
 			permissions: [
