@@ -54,17 +54,20 @@
 						<select id="mediaRenderersListBox" multiple="multiple" size=3 style="min-width:60px;width:100%"
 							onchange="mediaRenderersListBoxChanged()" >
 						</select> 
-						<input id="localRenderingCheckBox" type="checkbox" checked="checked"
-							onchange="localRenderingCheckBoxChanged()"/>
-						Local rendering
+						</td>
+					</tr>
+					<tr style="height:20%;min-height:80px">
+						<td id="mediaSourceInfo" style="width:50%;background-color:#F7E9E9">
+						</td>
+						<td>
 						<input id="playButton" type="button" value="Play" disabled="disabled"
 							onclick="remoteRenderer.controller.play()"/>
 						<input id="pauseButton" type="button" value="Pause" disabled="disabled"
 							onclick="remoteRenderer.controller.pause()"/>
-						</td>
-					</tr>
-					<tr style="height:20%;min-height:80px">
-						<td id="mediaSourceInfo" style="width:100%;background-color:#F7E9E9" colspan=2>
+						<hr>
+						<input id="localRenderingCheckBox" type="checkbox" checked="checked"
+							onchange="localRenderingCheckBoxChanged()"/>
+						Local rendering
 						</td>
 					</tr>
 					<tr style="height:10%;min-height:40px">
