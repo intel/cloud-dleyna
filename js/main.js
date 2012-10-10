@@ -428,7 +428,8 @@
 	    
 	function clearFolderInfo() {
 		outLog = document.createElement("div");
-		outLog.style.width = folderInfo.clientWidth + "px";
+		outLog.style.width = (folderInfo.clientWidth - 4) + "px";
+		outLog.style.maxWidth = folderInfo.clientWidth + "px";
 		outLog.style.maxHeight = folderInfo.clientHeight + "px";
 		outLog.style.overflow = "auto";
 		folderInfo.innerHTML="<hr>";
