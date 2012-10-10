@@ -113,6 +113,7 @@
 		else {
 			playButton.disabled = pauseButton.disabled = true;
 		}
+		clearContentArea();
 	}
 	
 	function mediaRenderersListBoxChanged() {
