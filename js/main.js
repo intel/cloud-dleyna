@@ -55,7 +55,7 @@
 	function containerBrowsingElement(source, container) {
 		var node = document.createElement("input");
 		node.type = "button";
-		node.value = container.displayName;
+		node.value = container.title;
 		node.mediaSource = source;
 		node.mediaContainer = container;
 		return node;
@@ -66,7 +66,7 @@
 		node.style.borderStyle = "solid";
 		node.style.borderWidth = "1px";
 		node.style.backgroundColor = "#F7E9E9";
-		node.innerHTML = item.displayName;
+		node.innerHTML = item.title;
 		return node;
 	}
 	
@@ -225,28 +225,28 @@
 			return;
 		}
 		if (remoteRenderer) {
-			remoteRenderer.openURI(this.mediaItem.URLs[0]);
+			remoteRenderer.openURI(this.mediaItem.content.uri);
 			return;
 		}
 		var node = null;
-		if (this.mediaItem.type == "image") {
+		if (this.mediaItem.type.indexOf("image") == 0) {
 			node = document.createElement("img");
-			node.src = this.mediaItem.URLs[0];
+			node.src = this.mediaItem.content.uri;
 			fitItemNodeInClientView(this.mediaItem, node, mediaContent);
 		}
 		else {
-			if (this.mediaItem.type == "video") {
+			if (this.mediaItem.type.indexOf("video") == 0) {
 				node = document.createElement("video");
 				fitItemNodeInClientView(this.mediaItem, node, mediaContent);
 			}
-			else if (this.mediaItem.type == "audio") {
+			else if (this.mediaItem.type.indexOf("audio") == 0) {
 				node = document.createElement("audio");
 			}
 			else 
 				return;
 			var source = document.createElement("source");
-			source.src = this.mediaItem.URLs[0];
-			source.type = this.mediaItem.mimeType;
+			source.src = this.mediaItem.content.uri;
+			source.type = this.mediaItem.type;
 			node.controls = true;
 			node.autoplay = true;
 			node.appendChild(source);
@@ -301,7 +301,7 @@
 		var findOffset = 0;
 		
 		function findErrorCB(str) {
-			alert("Error searching for " + query + " in " + container.displayName + " : " + str);
+			alert("Error searching for " + query + " in " + container.title + " : " + str);
 		}
 		
 	    function findContainerCB(mediaObjectArray) 
@@ -360,7 +360,7 @@
 		var browseOffset = 0;
 		
 		function browseErrorCB(str) {
-			alert("Error browsing " + container.displayName + " : " + str);
+			alert("Error browsing " + container.title + " : " + str);
 		}
 		
 	    function browseContainerCB(mediaObjectArray) 
