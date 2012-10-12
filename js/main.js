@@ -63,9 +63,7 @@
 	
 	function mediaItemElement(item) {
 		var node = document.createElement("div");
-		node.style.borderStyle = "solid";
-		node.style.borderWidth = "1px";
-		node.style.backgroundColor = "#F7E9E9";
+		node.className="content";
 		node.innerHTML = item.title;
 		return node;
 	}
@@ -323,7 +321,7 @@
 				}
 				node.mediaItem = mediaObjectArray[i];
 				node.onclick = containerContentsItemOnClick;
-				node.style.width = "100%";
+				node.style.width = "99%";
 				outLog.appendChild(node);
 				outLog.appendChild(document.createElement("br"));
 			}
@@ -378,7 +376,7 @@
 				}
 				node.mediaItem = mediaObjectArray[i];
 				node.onclick = containerContentsItemOnClick;
-				node.style.width = "100%";
+				node.style.width = "99%";
 				outLog.appendChild(node);
 				outLog.appendChild(document.createElement("br"));
 			}
