@@ -57,6 +57,10 @@ mediacontent.MediaItem = function(proxy) {
 		this.type = proxy.MIMEType;
 		this.content = { uri: proxy.URLs[0] };
 		this.fileSize = proxy.Size;
+		this.collection = proxy.Album;
+		this.category = proxy.Genre;
+		this.author = proxy.Artist;
+		this.createdDate = proxy.Date;
 	}
 	return this;
 };
@@ -72,8 +76,6 @@ mediacontent.MediaVideo = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
 	this.type = "video";
 	if (proxy) {
-		this.collection = proxy.Album;
-		this.author = proxy.Artist;
 		this.duration = proxy.Duration;
 		this.width = proxy.Width;
 		this.height = proxy.Height;
@@ -92,10 +94,7 @@ mediacontent.MediaAudio = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
 	this.type = "audio";
 	if (proxy) {
-		this.collection = proxy.Album;
-		this.genre = proxy.Genre;
-		this.author = proxy.Artist;
-		this.bitrate = proxy.Bitrate;
+		this.samplingRate = proxy.SampleRate;
 		this.duration = proxy.Duration;
 	}
 	return this;
