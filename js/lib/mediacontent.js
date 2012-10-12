@@ -74,7 +74,6 @@ mediacontent.MediaItem.prototype.constructor = mediacontent.MediaItem;
 
 mediacontent.MediaVideo = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
-	this.type = "video";
 	if (proxy) {
 		this.duration = proxy.Duration;
 		this.width = proxy.Width;
@@ -92,7 +91,6 @@ mediacontent.MediaVideo.prototype.constructor = mediacontent.MediaVideo;
 
 mediacontent.MediaAudio = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
-	this.type = "audio";
 	if (proxy) {
 		this.samplingRate = proxy.SampleRate;
 		this.duration = proxy.Duration;
@@ -109,7 +107,6 @@ mediacontent.MediaAudio.prototype.constructor = mediacontent.MediaAudio;
 
 mediacontent.MediaImage = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
-	this.type = "image";
 	if (proxy) {
 		this.width = proxy.Width;
 		this.height = proxy.Height;
