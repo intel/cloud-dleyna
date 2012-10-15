@@ -31,7 +31,9 @@ mediaserver.reset = function() {
 mediaserver.init = function(uri, manifest, successCB, errorCB) {
 	mediaserver.reset();
 	
-	function onManagerOk() {
+	function onManagerOk(proxy) {
+		// Use LAN addresses in case there is a remote renderer
+		proxy.PreferLocalAddresses(false);
 		if (successCB)
 			successCB();		
 	}
