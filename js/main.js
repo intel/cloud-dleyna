@@ -223,7 +223,10 @@
 			return;
 		}
 		if (remoteRenderer) {
-			remoteRenderer.openURI(this.mediaItem.content.uri);
+			var renderer = remoteRenderer;
+			remoteRenderer.openURI(this.mediaItem.content.uri,
+					function(){renderer.controller.play();},
+					debugLog);
 			return;
 		}
 		var node = null;
