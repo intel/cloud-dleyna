@@ -216,12 +216,12 @@
 	function fitItemNodeInClientView(item, node, view) {
 		// align largest item dimension on view, keep proportions 
 		var ratio;
-		if (item.width > item.height)
-			ratio = view.clientWidth / item.width;
+		if (item.resolution.width > item.resolution.height)
+			ratio = view.clientWidth / item.resolution.width;
 		else
-			ratio = view.clientHeight / item.height;
-		node.width = item.width * ratio;
-		node.height = item.height * ratio;
+			ratio = view.clientHeight / item.resolution.height;
+		node.width = item.resolution.width * ratio;
+		node.height = item.resolution.height * ratio;
 		return node;
 	}
 	
