@@ -28,3 +28,18 @@ header h2 {
 	border-style:solid;
 	border-width:1px
 }
+
+.singleRow {
+	height:5%;
+	min-height:20px
+}
+
+.listboxRow {
+	height:20%;
+	min-height:60px
+}
+
+.contentRow {
+	height:50%;
+	min-height:160px
+}

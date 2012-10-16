@@ -44,7 +44,7 @@
 		<tr style="height:90%;min-height:440px">
 			<td style="width:40%" colspan=2>
 				<table style="width:100%;height:100%;min-height:400px">
-					<tr style="height:20%;min-height:80px">
+					<tr class="listboxRow">
 						<td style="width:50%">
 						<select id="mediaSourcesListBox" multiple="multiple" size=3 style="min-width:60px;width:100%"
 							onchange="logMediaSourceInfo(this.options[this.selectedIndex].mediaSource)" >
@@ -56,7 +56,7 @@
 						</select> 
 						</td>
 					</tr>
-					<tr style="height:20%;min-height:80px">
+					<tr class="listboxRow">
 						<td id="mediaSourceInfo" class="content" style="width:50%">
 						</td>
 						<td>
@@ -70,17 +70,17 @@
 						Local rendering
 						</td>
 					</tr>
-					<tr style="height:10%;min-height:40px">
+					<tr class="singleRow">
 						<td id="folderPath" style="width:100%" colspan=2>
 						</td>
 					</tr>
-					<tr style="height:10%;min-height:40px">
+					<tr class="singleRow">
 						<td id="searchBox" style="width:100%" colspan=2>
 						<input id="searchButton" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
 						<input id="searchField" type="text" value="*">
 						</td>
 					</tr>
-					<tr style="height:10%;min-height:40px">
+					<tr class="singleRow">
 						<td style="width:100%" colspan=2>
 							Sort by:
 							<select id="sortByPopList" onchange="setSortMode()" >
@@ -98,7 +98,7 @@
 							</select>
 						</td>
 					</tr>
-					<tr style="height:30%;min-height:160px">
+					<tr class="contentRow">
 						<td id="folderInfo" style="height:100%;width:100%" colspan=2>
 						</td>
 					</tr>
