@@ -29,6 +29,16 @@ header h2 {
 	border-width:1px
 }
 
+.selectedContent {
+    color: #F7E9E9;
+    background-color:#666;
+}
+
+.listContent {
+	margin: 2px;
+	width:99%
+}
+
 .singleRow {
 	height:5%;
 	min-height:20px

@@ -14,6 +14,8 @@
 	var containerStack; 
 	// Sort mode
 	var sortMode;
+	// Selected item
+	var selectedItem;
 	
 	//
 	// Initialization on HTML page load
@@ -61,9 +63,16 @@
 		return node;
 	}
 	
+	function containerBrowsingListItem(source, container) {
+		var node = containerBrowsingElement(source, container);
+		node.className="listContent";
+		return node;
+	}
+
+	
 	function mediaItemElement(item) {
 		var node = document.createElement("div");
-		node.className="content";
+		node.className="content listContent";
 		node.innerHTML = item.title;
 		return node;
 	}
@@ -222,6 +231,8 @@
 			browseMediaSourceContainer(this.mediaSource, this.mediaContainer);
 			return;
 		}
+		this.className = "content selectedContent listContent";
+		selectedItem = this;
 		if (remoteRenderer) {
 			var renderer = remoteRenderer;
 			remoteRenderer.openURI(this.mediaItem.content.uri,
@@ -252,8 +263,7 @@
 			node.autoplay = true;
 			node.appendChild(source);
 		}
-		node.style.borderStyle = "solid";
-		node.style.borderWidth = "1px";
+		node.className = "content";
 		mediaContent.appendChild(node);
 	}
 	
@@ -317,14 +327,13 @@
 			for (var i=0; i<mediaObjectArray.length; i++) {
 				var node = null;
 				if (mediaObjectArray[i].type == "container") {
-					node = containerBrowsingElement(source, mediaObjectArray[i]);
+					node = containerBrowsingListItem(source, mediaObjectArray[i]);
 				}
 				else {
 					node = mediaItemElement(mediaObjectArray[i]);
 				}
 				node.mediaItem = mediaObjectArray[i];
 				node.onclick = containerContentsItemOnClick;
-				node.style.width = "99%";
 				outLog.appendChild(node);
 			}
 			if (mediaObjectArray.length == findCount) {
@@ -371,14 +380,13 @@
 			for (var i=0; i<mediaObjectArray.length; i++) {
 				var node = null;
 				if (mediaObjectArray[i].type == "container") {
-					node = containerBrowsingElement(source, mediaObjectArray[i]);
+					node = containerBrowsingListItem(source, mediaObjectArray[i]);
 				}
 				else {
 					node = mediaItemElement(mediaObjectArray[i]);
 				}
 				node.mediaItem = mediaObjectArray[i];
 				node.onclick = containerContentsItemOnClick;
-				node.style.width = "99%";
 				outLog.appendChild(node);
 			}
 			if (mediaObjectArray.length == browseCount) {
@@ -424,6 +432,9 @@
 
 	function clearContentArea() {
 		mediaContent.innerHTML="";
+		if (selectedItem)
+			selectedItem.className = "content listContent";
+		selectedItem=null;
 	}
 	    
 	function clearFolderInfo() {
