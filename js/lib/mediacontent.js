@@ -122,11 +122,15 @@ mediacontent.MediaImage.prototype.constructor = mediacontent.MediaImage;
 /*****************************************************************************/
 
 mediacontent.mediaObjectForProxy = function(proxy) {
-	if (proxy.Type.indexOf("container") == 0)
+	if (proxy.Type.indexOf("container") == 0 ||
+		proxy.Type.indexOf("album") == 0 ||
+		proxy.Type.indexOf("person") == 0 ||
+		proxy.Type.indexOf("genre") == 0)
 		return new mediacontent.MediaContainer(proxy);
 	if (proxy.Type.indexOf("video") == 0)
 		return new mediacontent.MediaVideo(proxy);
-	if (proxy.Type.indexOf("audio") == 0)
+	if (proxy.Type.indexOf("audio") == 0 ||
+		proxy.Type.indexOf("music") == 0)
 		return new mediacontent.MediaAudio(proxy);
 	if (proxy.Type.indexOf("image") == 0)
 		return new mediacontent.MediaImage(proxy);
