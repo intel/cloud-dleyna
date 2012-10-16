@@ -326,7 +326,6 @@
 				node.onclick = containerContentsItemOnClick;
 				node.style.width = "99%";
 				outLog.appendChild(node);
-				outLog.appendChild(document.createElement("br"));
 			}
 			if (mediaObjectArray.length == findCount) {
 				findOffset += findCount;
@@ -381,7 +380,6 @@
 				node.onclick = containerContentsItemOnClick;
 				node.style.width = "99%";
 				outLog.appendChild(node);
-				outLog.appendChild(document.createElement("br"));
 			}
 			if (mediaObjectArray.length == browseCount) {
 				browseOffset += browseCount;
