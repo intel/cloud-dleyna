@@ -187,8 +187,11 @@
 	//
 
 	function logMediaSourceInfo(source) {
-		mediaSourceInfo.innerHTML = "<b>" + source.friendlyName + "<b><br>";
-		mediaSourceInfo.innerHTML += source.id + "<br>";
+		mediaSourceInfo.innerHTML = "";
+		if (source.iconURL)
+			mediaSourceInfo.innerHTML += "<img width=32 height=32 src='" + source.iconURL + "' alt='" + source.friendlyName + "'>";
+		mediaSourceInfo.innerHTML += "<b>" + source.friendlyName + "<b><br>";
+		mediaSourceInfo.innerHTML += source.UPC + "<br>";
 		if (source.serialNumber)
 			mediaSourceInfo.innerHTML += "s/n: " + source.serialNumber + "<br>";
 		if (source.manufacturerURL)
@@ -199,8 +202,6 @@
 			mediaSourceInfo.innerHTML += "<a href='" + source.modelURL + "'>" + source.modelURL + "</a><br>";
 		if (source.modelDescription)
 			mediaSourceInfo.innerHTML += "Description: " + source.modelDescription + "<br>";
-		if (source.UPC)
-			mediaSourceInfo.innerHTML += "UPC: " + source.UPC + "<br>";
 		if (source.presentationURL)
 			mediaSourceInfo.innerHTML += "<a href='" + source.presentationURL + "'>" + source.presentationURL + "</a><br>";
 		clearFolderBrowsing();

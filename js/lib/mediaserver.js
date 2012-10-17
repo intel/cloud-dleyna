@@ -90,8 +90,9 @@ mediaserver.MediaServer = function(proxy) {
 		this.modelNumber = proxy.ModelNumber;
 		this.modelURL = proxy.ModelURL;
 		this.serialNumber = proxy.SerialNumber;
-		this.UPC = null;
+		this.UPC = proxy.UDN;
 		this.presentationURL = proxy.PresentationURL;
+		this.iconURL = proxy.IconURL;
 		// proxy has a root folder if it implements MediaObject2
 		if (proxy.DisplayName) {
 			this.root = new mediacontent.MediaContainer(proxy);
