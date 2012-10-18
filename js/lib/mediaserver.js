@@ -134,7 +134,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 	function onMediaObjectsOk(jsonArray) {
 		var objArray = [];
 		for (var i=0; i<jsonArray.length; i++)
-			objArray.push(mediacontent.mediaObjectForProxy(jsonArray[i]));
+			objArray.push(mediacontent.mediaObjectForProps(jsonArray[i]));
 		if (successCallback)
 			successCallback(objArray);
 	}
@@ -166,7 +166,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 	function onMediaObjectsOk(jsonArray) {
 		var objArray = [];
 		for (var i=0; i<jsonArray.length; i++)
-			objArray.push(mediacontent.mediaObjectForProxy(jsonArray[i]));
+			objArray.push(mediacontent.mediaObjectForProps(jsonArray[i]));
 		if (successCallback)
 			successCallback(objArray);
 	}
