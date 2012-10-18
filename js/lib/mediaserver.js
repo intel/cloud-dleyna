@@ -120,6 +120,18 @@ mediaserver.browseFilter = [
 ];
 
 
+mediaserver.mediaObjectsOkCallback = function(jsonArray, successCallback) {
+	var objArray = [];
+	for (var i=0; i<jsonArray.length; i++) {
+		var obj = mediacontent.mediaObjectForProps(jsonArray[i]);
+		obj.proxy = mediaserver.bus.getObject(mediaserver.busName, obj.id);
+		objArray.push(obj);
+	}
+	if (successCallback)
+		successCallback(objArray);
+};
+
+
 mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCallback, sortMode, count, offset) {
 
 	var sortStr = "";
@@ -132,11 +144,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 	}
 
 	function onMediaObjectsOk(jsonArray) {
-		var objArray = [];
-		for (var i=0; i<jsonArray.length; i++)
-			objArray.push(mediacontent.mediaObjectForProps(jsonArray[i]));
-		if (successCallback)
-			successCallback(objArray);
+		mediaserver.mediaObjectsOkCallback(jsonArray,successCallback);
 	}
 
 	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
@@ -164,11 +172,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 	}
 
 	function onMediaObjectsOk(jsonArray) {
-		var objArray = [];
-		for (var i=0; i<jsonArray.length; i++)
-			objArray.push(mediacontent.mediaObjectForProps(jsonArray[i]));
-		if (successCallback)
-			successCallback(objArray);
+		mediaserver.mediaObjectsOkCallback(jsonArray,successCallback);
 	}
 
 	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
