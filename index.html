@@ -72,6 +72,7 @@
 					</tr>
 					<tr class="singleRow">
 						<td id="uploadBox" style="width:100%" colspan=2>
+						<hr>
 						<input id="uploadFile" type="text">
 						<input id="uploadButton" type="button" value="Upload as:" onclick="this.source.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog)">
 						<input id="uploadTitle" type="text">
@@ -79,16 +80,19 @@
 					</tr>
 					<tr class="singleRow">
 						<td id="folderPath" style="width:100%" colspan=2>
+						<hr>
 						</td>
 					</tr>
 					<tr class="singleRow">
 						<td id="searchBox" style="width:100%" colspan=2>
+						<hr>
 						<input id="searchButton" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
 						<input id="searchField" type="text" value="*">
 						</td>
 					</tr>
 					<tr class="singleRow">
 						<td style="width:100%" colspan=2>
+						<hr>
 							Sort by:
 							<select id="sortByPopList" onchange="setSortMode()" >
 								<option value="DisplayName" selected="selected">Title</option>
