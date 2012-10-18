@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		uploadFile, uploadTitle, uploadButton, 
+		uploadFile, uploadTitle, uploadButton, uploadTo, 
 		playButton, pauseButton, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -34,6 +34,7 @@
 		uploadFile = document.getElementById("uploadFile");
 		uploadTitle = document.getElementById("uploadTitle");
 		uploadButton = document.getElementById("uploadButton");
+		uploadTo = document.getElementById("uploadTo");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
 		sortByPopList = document.getElementById("sortByPopList");
@@ -314,6 +315,15 @@
 	function uploadedItemOk() {
 		alert("Uploaded item");
 	}
+
+
+	function uploadLocalContent() {
+		if (uploadTo.selectedIndex == 0)
+			uploadButton.source.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog);
+		else
+			uploadButton.container.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog);
+	}
+
 	
 	
 	//

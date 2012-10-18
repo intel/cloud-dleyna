@@ -74,8 +74,12 @@
 						<td id="uploadBox" style="width:100%" colspan=2>
 						<hr>
 						<input id="uploadFile" type="text">
-						<input id="uploadButton" type="button" value="Upload as:" onclick="this.source.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog)">
+						<input id="uploadButton" type="button" value="Upload as:" onclick="uploadLocalContent()">
 						<input id="uploadTitle" type="text">
+						<select id="uploadTo">
+							<option value="Server" selected="selected">to server</option>
+							<option value="Folder">to folder</option>
+						</select>
 						</td>
 					</tr>
 					<tr class="singleRow">
