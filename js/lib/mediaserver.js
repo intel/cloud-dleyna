@@ -184,3 +184,8 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		errorCallback);
 };
 
+
+mediaserver.MediaServer.prototype.upload = function(title, path, successCallback, errorCallback) {
+	this.proxy.UploadToAnyContainer(title, path, successCallback, errorCallback);
+};
+

@@ -5,6 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
+		uploadFile, uploadTitle, uploadButton, 
 		playButton, pauseButton, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -30,6 +31,9 @@
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
 		searchButton = document.getElementById("searchButton");
 		searchField = document.getElementById("searchField");
+		uploadFile = document.getElementById("uploadFile");
+		uploadTitle = document.getElementById("uploadTitle");
+		uploadButton = document.getElementById("uploadButton");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
 		sortByPopList = document.getElementById("sortByPopList");
@@ -300,6 +304,16 @@
 		}
 		browseMediaSourceContainer(source, container);
 	}
+
+	
+	//
+	// Uploads to a DMS
+	//
+    
+	
+	function uploadedItemOk() {
+		alert("Uploaded item");
+	}
 	
 	
 	//
@@ -400,8 +414,8 @@
 			}
 	    }
 		
-		searchButton.source = source;
-		searchButton.container = container;
+		searchButton.source = uploadButton.source = source;
+		searchButton.container = uploadButton.container = container;
 		containerStack.push(container);
 		pushContainerToFolderPath(source, container);
 		clearFolderInfo();

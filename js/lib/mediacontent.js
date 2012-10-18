@@ -48,6 +48,17 @@ mediacontent.MediaContainer.prototype = new mediacontent.MediaObject();
 mediacontent.MediaContainer.prototype.constructor = mediacontent.MediaContainer;
 
 
+mediacontent.MediaContainer.prototype.upload = function(title, path, successCallback, errorCallback) {
+	this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "Upload",
+		[
+			title,
+			path
+		],
+		successCallback,
+		errorCallback);
+};
+
+
 
 /*****************************************************************************/
 
