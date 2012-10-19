@@ -41,7 +41,7 @@ mediaserver.init = function(uri, manifest, successCB, errorCB) {
 	function onConnectOk() {
 		mediaserver.bus = cloudeebus.SessionBus();
 		mediaserver.uri = uri;
-		mediaserver.manager = mediaserver.bus.getObject(mediaserver.busName, "/com/intel/MediaServiceUPnP", onManagerOk, errorCB);
+		mediaserver.manager = mediaserver.bus.getObject(mediaserver.busName, "/com/intel/MediaServiceUPnP", onManagerOk);
 	}
 	
 	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
@@ -59,7 +59,7 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 	}
 	
 	function onObjIdOk(id) {
-		mediaserver.bus.getObject(mediaserver.busName, id, onServerOk, errorCallback);
+		mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
 	}
 	
 	function onObjIdsOk(ids) {

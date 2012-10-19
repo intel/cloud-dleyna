@@ -39,7 +39,7 @@ mediarenderer.init = function(uri, manifest, successCB, errorCB) {
 	function onConnectOk() {
 		mediarenderer.bus = cloudeebus.SessionBus();
 		mediarenderer.uri = uri;
-		mediarenderer.manager = mediarenderer.bus.getObject(mediarenderer.busName, "/com/intel/RendererServiceUPnP", onManagerOk, errorCB);
+		mediarenderer.manager = mediarenderer.bus.getObject(mediarenderer.busName, "/com/intel/RendererServiceUPnP", onManagerOk);
 	}
 	
 	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
@@ -57,7 +57,7 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	}
 	
 	function onObjIdOk(id) {
-		mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk, errorCallback);
+		mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk);
 	}
 	
 	function onObjIdsOk(ids) {

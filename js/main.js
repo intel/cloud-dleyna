@@ -567,8 +567,7 @@
 		mediarenderer.manager = mediarenderer.bus.getObject(
 				mediarenderer.busName, 
 				"/com/intel/RendererServiceUPnP", 
-				initPage, 
-				debugLog);
+				initPage);
 	}
 	
 	var init = function () {
