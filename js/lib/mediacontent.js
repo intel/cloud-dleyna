@@ -35,6 +35,15 @@ mediacontent.MediaObject = function(proxy) {
 };
 
 
+mediacontent.MediaObject.prototype.remove = function(successCallback, errorCallback) {
+	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Delete",
+		[
+		],
+		successCallback,
+		errorCallback);
+};
+
+
 
 /*****************************************************************************/
 

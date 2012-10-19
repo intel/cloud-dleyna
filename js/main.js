@@ -306,7 +306,36 @@
 		browseMediaSourceContainer(source, container);
 	}
 
+
+
+	//
+	// Delete content
+	//
+    
 	
+	function removedItemOk() {
+		alert("Removed item");
+	}
+
+
+	function removeCurrentContent() {
+		var msg, obj;
+		if (selectedItem) {
+			obj = selectedItem.mediaItem;
+			msg = "Remove " + obj.type + " item \"" + obj.title + "\" ?";
+		}
+		else if (containerStack.length) {
+			obj = containerStack[containerStack.length-1];
+			msg = "Remove folder \"" + obj.title + "\" and all it's content ?"; 
+		}
+		else
+			return;
+		if (!confirm(msg))
+			return;
+		obj.remove(removedItemOk, debugLog);
+	}
+
+
 	//
 	// Uploads to a DMS
 	//
