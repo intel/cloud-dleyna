@@ -68,6 +68,18 @@ mediacontent.MediaContainer.prototype.upload = function(title, path, successCall
 };
 
 
+mediacontent.MediaContainer.prototype.createFolder = function(title, successCallback, errorCallback) {
+	this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "CreateContainer",
+		[
+			title,
+			"container",
+			["*"],
+		],
+		successCallback,
+		errorCallback);
+};
+
+
 
 /*****************************************************************************/
 

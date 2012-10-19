@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		uploadFile, uploadTitle, uploadButton, uploadTo, 
+		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle,
 		playButton, pauseButton, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -35,6 +35,7 @@
 		uploadTitle = document.getElementById("uploadTitle");
 		uploadButton = document.getElementById("uploadButton");
 		uploadTo = document.getElementById("uploadTo");
+		folderTitle = document.getElementById("folderTitle");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
 		sortByPopList = document.getElementById("sortByPopList");
@@ -336,6 +337,26 @@
 	}
 
 
+	
+	//
+	// Create folder
+	//
+
+	
+	function createFolderOk() {
+		alert("Folder created");
+	}
+
+
+	function createFolder(title) {
+		if (containerStack.length == 0)
+			return;
+		var parent = containerStack[containerStack.length-1];
+		parent.createFolder(title, createFolderOk, debugLog);
+	}
+
+
+	
 	//
 	// Uploads to a DMS
 	//
