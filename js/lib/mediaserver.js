@@ -18,6 +18,65 @@
 
 /*****************************************************************************/
 
+
+var knownMediaTypes = {
+	audio: [	
+		"audio/ogg",
+		"audio/x-vorbis",
+		"audio/x-vorbis+ogg",
+		"audio/mpeg",
+		"audio/mp4",
+		"audio/l16",
+		"audio/x-ac3", 
+		"audio/x-wav",
+		"audio/x-ms-wma"
+	],
+	video: [
+		"video/ogg",
+		"video/x-oggm",
+		"video/x-dirac", 
+		"video/x-theora",
+		"video/x-theora+ogg",
+		"video/x-3ivx",
+		"video/mpeg",
+		"video/mp4",
+		"video/webm",
+		"video/avi",
+		"video/flv",
+		"video/x-ms-wmv",
+		"video/x-ms-asf",
+		"video/x-msvideo"
+ ]
+};
+
+
+function getSupportedMediaTypes() {
+	var supported = [];
+	var media=["audio","video"];
+	for (var i=0; i<media.length; i++) {
+		var tag = document.createElement(media[i]);
+		for (var j=0; j<knownMediaTypes[media[i]].length; j++) {
+			if  (toto = tag.canPlayType(knownMediaTypes[media[i]][j])) { alert (knownMediaTypes[media[i]][j] + " : " + toto);
+				supported.push(knownMediaTypes[media[i]][j]);}
+		}
+	}
+	return supported;
+}
+
+
+function getDLNAProtocolInfo() {
+	var info = "http-get:*:image/jpeg:*,http-get:*:image/png:*,http-get:*:image/gif:*";
+	var mediaTypes = getSupportedMediaTypes();
+	for (var i=0; i<mediaTypes.length; i++) {
+		info += ",http-get:*:" + mediaTypes[i] + ":*";
+	}
+	return info;
+}
+
+
+
+/*****************************************************************************/
+
 var mediaserver = window.mediaserver = {};
 
 mediaserver.reset = function() {
@@ -34,6 +93,8 @@ mediaserver.init = function(uri, manifest, successCB, errorCB) {
 	function onManagerOk(proxy) {
 		// Use LAN addresses in case there is a remote renderer
 		proxy.PreferLocalAddresses(false);
+		// Set browser-supported media types
+		proxy.SetProtocolInfo(getDLNAProtocolInfo());
 		if (successCB)
 			successCB();		
 	}
@@ -66,7 +127,6 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 		for (var i=0; i<ids.length; i++)
 			onObjIdOk(ids[i]);
 	}
-	
 	mediaserver.manager.GetServers(onObjIdsOk, errorCallback);
 	mediaserver.manager.connectToSignal("com.intel.MediaServiceUPnP.Manager", "FoundServer",
 			onObjIdOk, errorCallback);
