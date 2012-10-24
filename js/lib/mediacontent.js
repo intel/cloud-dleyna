@@ -87,7 +87,8 @@ mediacontent.MediaItem = function(proxy) {
 	mediacontent.MediaObject.call(this,proxy);
 	if (proxy) {
 		this.type = proxy.MIMEType;
-		this.content = { uri: proxy.URLs[0] };
+		if (proxy.URLs)
+			this.content = { uri: proxy.URLs[0] };
 		this.fileSize = proxy.Size;
 		this.collection = proxy.Album;
 		this.category = proxy.Genre;
