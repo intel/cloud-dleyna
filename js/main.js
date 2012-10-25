@@ -50,9 +50,9 @@
 		// init DLNA global objects
 		containerStack = [];
 		// find DMS on the local network
-		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById},debugLog);
+		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById});
 		// find DMP on the local network
-		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById},debugLog);
+		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById});
 	}
 
 	
