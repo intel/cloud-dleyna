@@ -1,0 +1,55 @@
+* {
+    font-family: Lucida Sans, Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0px auto;
+}
+
+header {
+	text-align:center;
+}
+
+header h1 {
+    font-size: 36px;
+    margin: 0px;
+}
+
+header h2 {
+    font-size: 18px;
+    margin: 0px;
+    color: #EFD3D3;
+    background-color:#666;
+    font-style: italic;
+}
+
+.content {
+	background-color:#F7E9E9;
+	border-style:solid;
+	border-width:1px
+}
+
+.selectedContent {
+    color: #F7E9E9;
+    background-color:#666;
+}
+
+.listContent {
+	margin: 2px;
+	width:99%
+}
+
+.singleRow {
+	height:5%;
+	min-height:20px
+}
+
+.listboxRow {
+	height:10%;
+	min-height:60px
+}
+
+.contentRow {
+	height:50%;
+	min-height:160px
+}
