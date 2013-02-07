@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html lang="en"><head>
+
+<meta content="text/html; charset=utf-8" http-equiv="content-type">
+<title>Media Content API Specification</title>
+<style type="text/css">
+   pre.idl { border:solid thin; background:#eee; color:#000; padding:0.5em }
+   pre.idl :link, pre.idl :visited { color:inherit; background:transparent }
+   pre code { color:inherit; background:transparent }
+   div.example { margin-left:1em; padding-left:1em; border-left:double; color:#222; background:#fcfcfc }
+   .note { margin-left:2em; font-weight:bold; font-style:italic; color:#008000 }
+   p.note::before { content:"Note: " }
+   .XXX { padding:.5em; border:solid #f00 }
+   p.XXX::before { content:"Issue: " }
+   dl.switch { padding-left:2em }
+   dl.switch > dt { text-indent:-1.5em }
+   dl.switch > dt:before { content:'\21AA'; padding:0 0.5em 0 0; display:inline-block; width:1em; text-align:right; line-height:0.5em }
+   dl.domintro { color: green; margin: 2em 0 2em 2em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+   dl.domintro dt, dl.domintro dt * { color: black; text-decoration: none; }
+   dl.domintro dd { margin: 0.5em 0 1em 2em; padding: 0; }
+   dl.domintro dd p { margin: 0.5em 0; }
+   dl.domintro:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This box is non-normative. Implementation requirements are given below this box.'; color: red; border: solid 2px; background: white; padding: 0 0.25em; }
+   em.ct { text-transform:lowercase; font-variant:small-caps; font-style:normal }
+   dfn { font-weight:bold; font-style:normal }
+   code { color:orangered }
+   code :link, code :visited { color:inherit }
+   hr:not(.top) { display:block; background:none; border:none; padding:0; margin:2em 0; height:auto }
+   table { border-collapse:collapse; border-style:hidden hidden none hidden }
+   table thead { border-bottom:solid }
+   table tbody th:first-child { border-left:solid }
+   table td, table th { border-left:solid; border-right:solid; border-bottom:solid thin; vertical-align:top; padding:0.2em }
+</style>
+
+<body class="draft">
+
+<div class="head">
+	<h1>Media Content API Specification</h1>
+	
+	<h2 class="no-num no-toc" id="editor-draft-7-february-2013">Editor Draft &mdash; 7 February 2013</h2>
+	
+	<dl>
+		<dt>This version:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+
+		<dt class="dontpublish">Participate:</dt>
+		<dd class="dontpublish"><a href="mailto:dleyna@lists.01.org?subject=[mediacontent-web-api]%20">dleyna@lists.01.org</a> (<a href="https://lists.01.org/pipermail/dleyna/">archives</a>)
+		
+		<dt>Latest version:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+		
+		<dt>Previous versions:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+		
+		<dt>Editors:
+		<dd class="vcard">
+			<span class="fn">Luc Yriarte</span>,
+			<span class="org"><a href="http://www.intel.com">Intel Corporation</a></span>,
+			<span class="email"><a href="mailto:luc.yriarte@intel.com">luc.yriarte@intel.com</a></span>
+	</dl>
+	
+</div>
+
+
+
+<h2 class="no-num no-toc" id="abstract">Abstract</h2>
+
+<p>
+The Media Content API defines objects mapping the org.gnome.UPnP 
+<a href="https://live.gnome.org/Rygel/MediaServer2Spec/#org.gnome.MediaObject2">MediaObject2</a> and 
+<a href="https://live.gnome.org/Rygel/MediaServer2Spec/#org.gnome.MediaItem2">MediaItem2</a> interfaces 
+on a subset of the <a href="http://www.w3.org/TR/gallery/#the-media-dictionary">W3C gallery draft Media Dictionary</a>
+</p>
+
+
+<h2 class="no-num no-toc" id="toc">Table of Contents</h2>
+
+
+<!--begin-toc-->
+<ol class="toc">
+ <li><a href="#mediacontent-web-api"><span class="secno">1 </span>MediaContent Web API</a>
+  <ol class="toc">
+   <li><a href="#interface-mediaobject"><span class="secno">1.1 </span>Interface <code title="">MediaObject</code></a></li>
+   <li><a href="#interface-mediaitem"><span class="secno">1.2 </span>Interface <code title="">MediaItem</code></a></li>
+   <li><a href="#interface-mediavideo"><span class="secno">1.3 </span>Interface <code title="">MediaVideo</code></a></li>
+   <li><a href="#interface-mediaaudio"><span class="secno">1.4 </span>Interface <code title="">MediaAudio</code></a></li>
+   <li><a href="#interface-mediaimage"><span class="secno">1.5 </span>Interface <code title="">MediaImage</code></a></ol></li>
+ <li><a class="no-num" href="#references">References</a></ol>
+<!--end-toc-->
+
+
+
+<h2 id="mediacontent-web-api"><span class="secno">1 </span>MediaContent Web API</h2>
+
+
+
+<h3 id="interface-mediaobject"><span class="secno">1.1 </span>Interface <code title="">MediaObject</code></h3>
+
+Generic media object.
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediaobject">MediaObject</dfn> {
+    readonly attribute DOMString <a href="#mediaobject-id" title="MediaObject-id">id</a> ;
+    readonly attribute DOMString <a href="#mediaobject-type" title="MediaObject-type">type</a> ;
+    readonly attribute DOMString <a href="#mediaobject-title" title="MediaObject-title">title</a> ;
+    void <a href="#mediaobject-remove" title="MediaObject-remove">remove</a>(
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>);
+};
+</pre>
+<p>The <dfn id="mediaobject-id" title="MediaObject-id"><code>id</code></dfn> property is an opaque media object ID.
+</p>
+<p>The <dfn id="mediaobject-type" title="MediaObject-type"><code>type</code></dfn> property is an object type as defined 
+by the <a href="https://live.gnome.org/Rygel/MediaServer2Spec/#org.gnome.MediaObject2">org.gnome.UPnP.MediaObject2</a> interface.
+</p>
+<p>The <dfn id="mediaobject-title" title="MediaObject-title"><code>title</code></dfn> property is a user-friendly name.
+</p>
+<p>The <dfn id="mediaobject-remove" title="MediaObject-remove"><code>remove</code></dfn>
+method removes a <a href="#mediaobject">MediaObject</a> from the server.
+</p>
+
+
+
+<h3 id="interface-mediaitem"><span class="secno">1.2 </span>Interface <code title="">MediaItem</code></h3>
+
+The media item interface that provides access to properties of media items. 
+Partially implements the <a href="http://www.w3.org/TR/gallery/#the-media-dictionary">W3C gallery draft Media Dictionary</a>
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediaitem">MediaItem</dfn> : MediaObject {
+    readonly attribute Object <a href="#mediaitem-content" title="MediaItem-content">content</a> ;
+    readonly attribute unsigned long? <a href="#mediaitem-filesize" title="MediaItem-fileSize">fileSize</a> ;
+    readonly attribute DOMString? <a href="#mediaitem-collection" title="MediaItem-collection">collection</a> ;
+    readonly attribute DOMString? <a href="#mediaitem-category" title="MediaItem-category">category</a> ;
+    readonly attribute DOMString? <a href="#mediaitem-author" title="MediaItem-author">author</a> ;
+    readonly attribute DOMString? <a href="#mediaitem-createddate" title="MediaItem-createdDate">createdDate</a> ;
+};
+</pre>
+<p>The <dfn id="mediaitem-content" title="MediaItem-content"><code>content</code></dfn> is a 
+<a href="http://www.w3.org/TR/gallery/#idl-def-MediaContent">MediaContent dictionary</a>. Can be a URI or a blob.
+</p>
+<p>The <dfn id="mediaitem-filesize" title="MediaItem-fileSize"><code>fileSize</code></dfn> of the item in bytes.
+</p>
+<p>The <dfn id="mediaitem-collection" title="MediaItem-collection"><code>collection</code></dfn> name to which the media item belongs.
+</p>
+<p>The <dfn id="mediaitem-category" title="MediaItem-category"><code>category</code></dfn> that the media item belongs to.
+</p>
+<p>The <dfn id="mediaitem-author" title="MediaItem-author"><code>author</code></dfn> that created the media item.
+</p>
+<p>The <dfn id="mediaitem-createddate" title="MediaItem-createdDate"><code>createdDate</code></dfn>, date when the media item was created.
+</p>
+
+
+
+<h3 id="interface-mediavideo"><span class="secno">1.3 </span>Interface <code title="">MediaVideo</code></h3>
+
+The interface that extends a basic media item object with video-specific attributes.
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediavideo">MediaVideo</dfn> : MediaItem {
+    readonly attribute unsigned long <a href="#mediavideo-duration" title="MediaVideo-duration">duration</a> ;
+    readonly attribute Object <a href="#mediavideo-resolution" title="MediaVideo-resolution">resolution</a> ;
+};
+</pre>
+<p>The video <dfn id="mediavideo-duration" title="MediaVideo-duration"><code>duration</code></dfn> in seconds.
+</p>
+<p>The <dfn id="mediavideo-resolution" title="MediaVideo-resolution"><code>resolution</code></dfn>, a Resolution dictionary, width and height in pixels.
+</p>
+
+
+
+<h3 id="interface-mediaaudio"><span class="secno">1.4 </span>Interface <code title="">MediaAudio</code></h3>
+
+The interface that extends a basic media item object with audio-specific attributes.
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediaaudio">MediaAudio</dfn> : MediaItem {
+    readonly attribute unsigned long? <a href="#mediaaudio-samplingrate" title="MediaAudio-samplingRate">samplingRate</a> ;
+    readonly attribute unsigned long <a href="#mediaaudio-duration" title="MediaAudio-duration">duration</a> ;
+};
+</pre>
+<p>The audio <dfn id="mediaaudio-samplingrate" title="MediaAudio-samplingRate"><code>samplingRate</code></dfn> in samples per second.
+</p>
+<p>The audio <dfn id="mediaaudio-duration" title="MediaAudio-duration"><code>duration</code></dfn> in seconds.
+</p>
+
+
+
+<h3 id="interface-mediaimage"><span class="secno">1.5 </span>Interface <code title="">MediaImage</code></h3>
+
+The interface that extends a basic media item object with image-specific attributes.
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediaimage">MediaImage</dfn> : MediaItem {
+    readonly attribute Object <a href="#mediaimage-resolution" title="MediaImage-resolution">resolution</a> ;
+};
+</pre>
+<p>The <dfn id="mediaimage-resolution" title="MediaImage-resolution"><code>resolution</code></dfn>, a Resolution dictionary, width and height in pixels.
+</p>
+
+
+
+
+<h2 class="no-num" id="references">References</h2>
+<div id="anolis-references"><dl></dl></div>
+<ul>
+<li><a href="https://developer.tizen.org/help/index.jsp?topic=%2Forg.tizen.web.device.apireference%2Ftizen%2Fmediacontent.html">Tizen MediaContent device API</a>
+<li><a href="http://www.w3.org/TR/gallery/">W3C gallery API working draft</a>
+<li><a href="https://live.gnome.org/Rygel/MediaServer2Spec/">org.gnome.UPnP Media APIs</a>.
+</ul>

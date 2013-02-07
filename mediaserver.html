@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html lang="en"><head>
+
+<meta content="text/html; charset=utf-8" http-equiv="content-type">
+<title>Media Server API Specification</title>
+<style type="text/css">
+   pre.idl { border:solid thin; background:#eee; color:#000; padding:0.5em }
+   pre.idl :link, pre.idl :visited { color:inherit; background:transparent }
+   pre code { color:inherit; background:transparent }
+   div.example { margin-left:1em; padding-left:1em; border-left:double; color:#222; background:#fcfcfc }
+   .note { margin-left:2em; font-weight:bold; font-style:italic; color:#008000 }
+   p.note::before { content:"Note: " }
+   .XXX { padding:.5em; border:solid #f00 }
+   p.XXX::before { content:"Issue: " }
+   dl.switch { padding-left:2em }
+   dl.switch > dt { text-indent:-1.5em }
+   dl.switch > dt:before { content:'\21AA'; padding:0 0.5em 0 0; display:inline-block; width:1em; text-align:right; line-height:0.5em }
+   dl.domintro { color: green; margin: 2em 0 2em 2em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+   dl.domintro dt, dl.domintro dt * { color: black; text-decoration: none; }
+   dl.domintro dd { margin: 0.5em 0 1em 2em; padding: 0; }
+   dl.domintro dd p { margin: 0.5em 0; }
+   dl.domintro:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This box is non-normative. Implementation requirements are given below this box.'; color: red; border: solid 2px; background: white; padding: 0 0.25em; }
+   em.ct { text-transform:lowercase; font-variant:small-caps; font-style:normal }
+   dfn { font-weight:bold; font-style:normal }
+   code { color:orangered }
+   code :link, code :visited { color:inherit }
+   hr:not(.top) { display:block; background:none; border:none; padding:0; margin:2em 0; height:auto }
+   table { border-collapse:collapse; border-style:hidden hidden none hidden }
+   table thead { border-bottom:solid }
+   table tbody th:first-child { border-left:solid }
+   table td, table th { border-left:solid; border-right:solid; border-bottom:solid thin; vertical-align:top; padding:0.2em }
+</style>
+
+<body class="draft">
+
+<div class="head">
+	<h1>Media Server API Specification</h1>
+	
+	<h2 class="no-num no-toc" id="editor-draft-7-february-2013">Editor Draft &mdash; 7 February 2013</h2>
+	
+	<dl>
+		<dt>This version:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+
+		<dt class="dontpublish">Participate:</dt>
+		<dd class="dontpublish"><a href="mailto:dleyna@lists.01.org?subject=[mediaserver-web-api]%20">dleyna@lists.01.org</a> (<a href="https://lists.01.org/pipermail/dleyna/">archives</a>)
+		
+		<dt>Latest version:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+		
+		<dt>Previous versions:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+		
+		<dt>Editors:
+		<dd class="vcard">
+			<span class="fn">Luc Yriarte</span>,
+			<span class="org"><a href="http://www.intel.com">Intel Corporation</a></span>,
+			<span class="email"><a href="mailto:luc.yriarte@intel.com">luc.yriarte@intel.com</a></span>
+	</dl>
+	
+</div>
+
+
+
+<h2 class="no-num no-toc" id="abstract">Abstract</h2>
+
+<p>
+Media Server API to discover and manage images, videos, and music.
+</p>
+
+
+<h2 class="no-num no-toc" id="toc">Table of Contents</h2>
+
+
+<!--begin-toc-->
+<ol class="toc">
+ <li><a href="#mediaserver-web-api"><span class="secno">1 </span>MediaServer Web API</a>
+  <ol class="toc">
+   <li><a href="#interface-mediacontainer"><span class="secno">1.1 </span>Interface <code title="">MediaContainer</code></a></li>
+   <li><a href="#interface-navigator"><span class="secno">1.2 </span>Interface <code title="">Navigator</code></a></li>
+   <li><a href="#interface-mediaservermanager"><span class="secno">1.3 </span>Interface <code title="">MediaServerManager</code></a></li>
+   <li><a href="#interface-mediaservercallback"><span class="secno">1.4 </span>Interface <code title="">MediaServerCallback</code></a></li>
+   <li><a href="#interface-mediaobjectarraysuccesscallback"><span class="secno">1.5 </span>Interface <code title="">MediaObjectArraySuccessCallback</code></a></li>
+   <li><a href="#interface-mediaserver"><span class="secno">1.6 </span>Interface <code title="">MediaServer</code></a></ol></li>
+ <li><a class="no-num" href="#references">References</a></ol>
+<!--end-toc-->
+
+
+
+<h2 id="mediaserver-web-api"><span class="secno">1 </span>MediaServer Web API</h2>
+
+
+
+<h3 id="interface-mediacontainer"><span class="secno">1.1 </span>Interface <code title="">MediaContainer</code></h3>
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediacontainer">MediaContainer</dfn> : MediaObject {
+    void <span title="MediaContainer-upload">upload</span>(DOMString <var title="">title</var>,
+    	DOMString <var title="">path</var>,
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>);
+    void <span title="MediaContainer-createFolder">createFolder</span>(DOMString <var title="">title</var>,
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>);
+};
+</pre>
+
+
+
+<h3 id="interface-navigator"><span class="secno">1.2 </span>Interface <code title="">Navigator</code></h3>
+<pre class="idl">partial interface Navigator {
+  readonly attribute <a href="#mediaservermanager">MediaServerManager</a> <a href="#navigator-mediaserver" title="Navigator-mediaServer">mediaServer</a>;
+}</pre>
+
+<p>The <dfn id="navigator-mediaserver" title="Navigator-mediaServer"><code>mediaServer</code></dfn> attribute must return the object 
+through which the mediaServer functionality can be accessed.
+</p>
+
+
+
+<h3 id="interface-mediaservermanager"><span class="secno">1.3 </span>Interface <code title="">MediaServerManager</code></h3>
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediaservermanager">MediaServerManager</dfn> {
+	void <span title="MediaServerManager-setServerListener">setServerListener</span>(
+		<a href="#mediaservercallback">MediaServerCallback</a> <var title="">serverCallback</var>,
+	    optional Function? <var title="">errorCallback</var>) ;
+	void <span title="MediaServerManager-unsetServerListener">unsetServerListener</span>();
+};
+</pre>
+
+
+
+<h3 id="interface-mediaservercallback"><span class="secno">1.4 </span>Interface <code title="">MediaServerCallback</code></h3>
+
+<pre class="idl">[Callback, NoInterfaceObject] interface <dfn id="mediaservercallback">MediaServerCallback</dfn> {
+    void <span title="MediaServerCallback-onserverfound">onserverfound</span>(<a href="#mediaserver">MediaServer</a> <var title="">server</var>);
+    void <span title="MediaServerCallback-onserverlost">onserverlost</span>(DOMString <var title="">serverId</var>);
+    void <span title="MediaServerCallback-onserverchanged">onserverchanged</span>(DOMString <var title="">serverId</var>);
+};
+</pre>
+
+
+
+<h3 id="interface-mediaobjectarraysuccesscallback"><span class="secno">1.5 </span>Interface <code title="">MediaObjectArraySuccessCallback</code></h3>
+
+<pre class="idl">[Callback, NoInterfaceObject] interface <dfn id="mediaobjectarraysuccesscallback">MediaObjectArraySuccessCallback</dfn> {
+    void <span title="MediaObjectArraySuccessCallback-onsuccess">onsuccess</span>(<span>MediaObject[]</span> <var title="">objects</var>);
+};
+</pre>
+
+
+
+<h3 id="interface-mediaserver"><span class="secno">1.6 </span>Interface <code title="">MediaServer</code></h3>
+
+<pre class="idl">[NoInterfaceObject] interface <dfn id="mediaserver">MediaServer</dfn> {
+    readonly attribute DOMString <span title="MediaServer-id">id</span>;
+    readonly attribute DOMString? <span title="MediaServer-friendlyName">friendlyName</span>;
+    readonly attribute DOMString? <span title="MediaServer-manufacturer">manufacturer</span>;
+    readonly attribute DOMString? <span title="MediaServer-manufacturerURL">manufacturerURL</span>;
+    readonly attribute DOMString? <span title="MediaServer-modelDescription">modelDescription</span>;
+    readonly attribute DOMString? <span title="MediaServer-modelName">modelName</span>;
+    readonly attribute DOMString? <span title="MediaServer-modelNumber">modelNumber</span>;
+    readonly attribute DOMString? <span title="MediaServer-modelURL">modelURL</span>;
+    readonly attribute DOMString? <span title="MediaServer-serialNumber">serialNumber</span>;
+    readonly attribute DOMString? <span title="MediaServer-UPC">UPC</span>;
+    readonly attribute DOMString? <span title="MediaServer-presentationURL">presentationURL</span>;
+    
+    readonly attribute <a href="#mediacontainer">MediaContainer?</a> <span title="MediaServer-root">root</span>;
+    
+    readonly attribute DOMString? <span title="MediaServer-iconURL">iconURL</span>;
+
+
+    void <span title="MediaServer-browse">browse</span>(
+        <a href="#mediaobjectarraysuccesscallback">MediaObjectArraySuccessCallback</a> <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>,
+        optional DOMString? <var title="">sortMode</var>,
+        optional unsigned long? <var title="">count</var>,
+        optional unsigned long? <var title="">offset</var>
+        );
+
+
+    void <span title="MediaServer-find">find</span>(
+        <a href="#mediaobjectarraysuccesscallback">MediaObjectArraySuccessCallback</a> <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>,
+        optional DOMString? <var title="">filter</var>,
+        optional DOMString? <var title="">sortMode</var>,
+        optional unsigned long? <var title="">count</var>,
+        optional unsigned long? <var title="">offset</var>
+        );
+
+
+    void <span title="MediaServer-upload">upload</span>(
+        DOMString <var title="">path</var>,
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>
+        );
+};
+</pre>
+
+
+
+
+<h2 class="no-num" id="references">References</h2>
+<div id="anolis-references"><dl></dl></div>
+<ul>
+<li><a href="https://live.gnome.org/Rygel/MediaServer2Spec/">org.gnome.UPnP Media APIs</a>.
+</ul>

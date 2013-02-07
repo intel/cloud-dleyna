@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html lang="en"><head>
+
+<meta content="text/html; charset=utf-8" http-equiv="content-type">
+<title>Media Renderer API Specification</title>
+<style type="text/css">
+   pre.idl { border:solid thin; background:#eee; color:#000; padding:0.5em }
+   pre.idl :link, pre.idl :visited { color:inherit; background:transparent }
+   pre code { color:inherit; background:transparent }
+   div.example { margin-left:1em; padding-left:1em; border-left:double; color:#222; background:#fcfcfc }
+   .note { margin-left:2em; font-weight:bold; font-style:italic; color:#008000 }
+   p.note::before { content:"Note: " }
+   .XXX { padding:.5em; border:solid #f00 }
+   p.XXX::before { content:"Issue: " }
+   dl.switch { padding-left:2em }
+   dl.switch > dt { text-indent:-1.5em }
+   dl.switch > dt:before { content:'\21AA'; padding:0 0.5em 0 0; display:inline-block; width:1em; text-align:right; line-height:0.5em }
+   dl.domintro { color: green; margin: 2em 0 2em 2em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+   dl.domintro dt, dl.domintro dt * { color: black; text-decoration: none; }
+   dl.domintro dd { margin: 0.5em 0 1em 2em; padding: 0; }
+   dl.domintro dd p { margin: 0.5em 0; }
+   dl.domintro:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This box is non-normative. Implementation requirements are given below this box.'; color: red; border: solid 2px; background: white; padding: 0 0.25em; }
+   em.ct { text-transform:lowercase; font-variant:small-caps; font-style:normal }
+   dfn { font-weight:bold; font-style:normal }
+   code { color:orangered }
+   code :link, code :visited { color:inherit }
+   hr:not(.top) { display:block; background:none; border:none; padding:0; margin:2em 0; height:auto }
+   table { border-collapse:collapse; border-style:hidden hidden none hidden }
+   table thead { border-bottom:solid }
+   table tbody th:first-child { border-left:solid }
+   table td, table th { border-left:solid; border-right:solid; border-bottom:solid thin; vertical-align:top; padding:0.2em }
+</style>
+
+<body class="draft">
+
+<div class="head">
+	<h1>Media Renderer API Specification</h1>
+	
+	<h2 class="no-num no-toc" id="editor-draft-7-february-2013">Editor Draft &mdash; 7 February 2013</h2>
+	
+	<dl>
+		<dt>This version:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+
+		<dt class="dontpublish">Participate:</dt>
+		<dd class="dontpublish"><a href="mailto:dleyna@lists.01.org?subject=[mediarenderer-web-api]%20">dleyna@lists.01.org</a> (<a href="https://lists.01.org/pipermail/dleyna/">archives</a>)
+		
+		<dt>Latest version:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+		
+		<dt>Previous versions:
+		<dd><!--begin-link--><a href="https://github.com/01org/cloud-dleyna/wiki/">https://github.com/01org/cloud-dleyna/wiki/</a><!--end-link-->
+		
+		<dt>Editors:
+		<dd class="vcard">
+			<span class="fn">Luc Yriarte</span>,
+			<span class="org"><a href="http://www.intel.com">Intel Corporation</a></span>,
+			<span class="email"><a href="mailto:luc.yriarte@intel.com">luc.yriarte@intel.com</a></span>
+	</dl>
+	
+</div>
+
+
+
+<h2 class="no-num no-toc" id="abstract">Abstract</h2>
+
+<p>
+Media Renderer API to discover and manage media renderers on the local network.
+</p>
+
+
+<h2 class="no-num no-toc" id="toc">Table of Contents</h2>
+
+
+<!--begin-toc-->
+<ol class="toc">
+ <li><a href="#mediarenderer-web-api"><span class="secno">1 </span>MediaRenderer Web API</a>
+  <ol class="toc">
+   <li><a href="#interface-navigator"><span class="secno">1.1 </span>Interface <code title="">Navigator</code></a></li>
+   <li><a href="#interface-mediarenderermanager"><span class="secno">1.2 </span>Interface <code title="">MediaRendererManager</code></a></li>
+   <li><a href="#interface-mediarenderercallback"><span class="secno">1.3 </span>Interface <code title="">MediaRendererCallback</code></a></li>
+   <li><a href="#interface-mediarenderer"><span class="secno">1.4 </span>Interface <code title="">MediaRenderer</code></a></ol></li>
+ <li><a class="no-num" href="#references">References</a></ol>
+<!--end-toc-->
+
+
+
+<h2 id="mediarenderer-web-api"><span class="secno">1 </span>MediaRenderer Web API</h2>
+
+
+
+<h3 id="interface-navigator"><span class="secno">1.1 </span>Interface <code title="">Navigator</code></h3>
+<pre class="idl">partial interface Navigator {
+  readonly attribute <a href="#mediarenderermanager">MediaRendererManager</a> <a href="#navigator-mediarenderer" title="Navigator-mediaRenderer">mediaRenderer</a>;
+}</pre>
+
+<p>The <dfn id="navigator-mediarenderer" title="Navigator-mediaRenderer"><code>mediaRenderer</code></dfn> attribute must return the object 
+through which the mediaRenderer functionality can be accessed.
+</p>
+
+
+
+<h3 id="interface-mediarenderermanager"><span class="secno">1.2 </span>Interface <code title="">MediaRendererManager</code></h3>
+
+<pre class="idl">[NoInterfaceObject]
+interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
+    void <span title="MediaRendererManager-setRendererListener">setRendererListener</span>(
+        <a href="#mediarenderercallback">MediaRendererCallback</a> <var title="">rendererCallback</var>,
+        optional Function? <var title="">errorCallback</var>) ;
+    void <span title="MediaRendererManager-unsetRendererListener">unsetRendererListener</span>();
+};
+</pre>
+
+
+
+<h3 id="interface-mediarenderercallback"><span class="secno">1.3 </span>Interface <code title="">MediaRendererCallback</code></h3>
+
+<pre class="idl">[Callback, NoInterfaceObject] interface <dfn id="mediarenderercallback">MediaRendererCallback</dfn> {
+    void <span title="MediaRendererCallback-onrendererfound">onrendererfound</span>(<a href="#mediarenderer">MediaRenderer</a> <var title="">renderer</var>);
+    void <span title="MediaRendererCallback-onrendererlost">onrendererlost</span>(DOMString <var title="">rendererId</var>);
+};
+</pre>
+
+
+
+<h3 id="interface-mediarenderer"><span class="secno">1.4 </span>Interface <code title="">MediaRenderer</code></h3>
+
+<pre class="idl">[NoInterfaceObject] interface <dfn id="mediarenderer">MediaRenderer</dfn> {
+    readonly attribute DOMString <a href="#mediarenderer-id" title="MediaRenderer-id">id</a>;
+    readonly attribute DOMString? <a href="#mediarenderer-friendlyname" title="MediaRenderer-friendlyName">friendlyName</a>;
+    readonly attribute <span>MediaController</span> <a href="#mediarenderer-controller" title="MediaRenderer-controller">controller</a>;
+
+    void <span title="MediaRenderer-openURI">openURI</span>(
+        DOMString <var title="">mediaURI</var>,
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>
+        );
+};
+</pre>
+<p>The <dfn id="mediarenderer-id" title="MediaRenderer-id"><code>id</code></dfn> property is an opaque unique ID.
+</p>
+<p>The <dfn id="mediarenderer-friendlyname" title="MediaRenderer-friendlyName"><code>friendlyName</code></dfn> property is a user-friendly name for the device.
+</p>
+<p>The <dfn id="mediarenderer-controller" title="MediaRenderer-controller"><code>controller</code></dfn> implements 
+the HTML5 <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-controllers">MediaController</a> interface.
+</p>
+
+
+
+
+<h2 class="no-num" id="references">References</h2>
+<div id="anolis-references"><dl></dl></div>
+<ul>
+<li><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-controllers">html5 media controller interface</a>.
+<li><a href="http://specifications.freedesktop.org/mpris-spec/latest/">org.mpris.MediaPlayer2 APIs</a>.
+</ul>
