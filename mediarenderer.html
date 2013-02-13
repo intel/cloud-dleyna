@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Renderer API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-7-february-2013">Editor Draft &mdash; 7 February 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-13-february-2013">Editor Draft &mdash; 13 February 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -127,6 +127,7 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
 <pre class="idl">[NoInterfaceObject] interface <dfn id="mediarenderer">MediaRenderer</dfn> {
     readonly attribute DOMString <a href="#mediarenderer-id" title="MediaRenderer-id">id</a>;
     readonly attribute DOMString? <a href="#mediarenderer-friendlyname" title="MediaRenderer-friendlyName">friendlyName</a>;
+    readonly attribute DOMString? <a href="#mediarenderer-protocolinfo" title="MediaRenderer-protocolInfo">protocolInfo</a>;
     readonly attribute <span>MediaController</span> <a href="#mediarenderer-controller" title="MediaRenderer-controller">controller</a>;
 
     void <span title="MediaRenderer-openURI">openURI</span>(
@@ -139,6 +140,8 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
 <p>The <dfn id="mediarenderer-id" title="MediaRenderer-id"><code>id</code></dfn> property is an opaque unique ID.
 </p>
 <p>The <dfn id="mediarenderer-friendlyname" title="MediaRenderer-friendlyName"><code>friendlyName</code></dfn> property is a user-friendly name for the device.
+</p>
+<p>The <dfn id="mediarenderer-protocolinfo" title="MediaRenderer-protocolInfo"><code>protocolInfo</code></dfn> property defines supported network protocols and MIME types.
 </p>
 <p>The <dfn id="mediarenderer-controller" title="MediaRenderer-controller"><code>controller</code></dfn> implements 
 the HTML5 <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-controllers">MediaController</a> interface.

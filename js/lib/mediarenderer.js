@@ -113,6 +113,7 @@ mediarenderer.MediaRenderer = function(proxy) {
 	if (proxy) {
 		this.id = proxy.objectPath;
 		this.friendlyName = proxy.Identity;
+		this.protocolInfo = proxy.ProtocolInfo;
 	}
 	this.controller = new mediarenderer.MediaController(this);
 	return this;

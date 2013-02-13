@@ -48,6 +48,11 @@ mediaserver.init = function(uri, manifest, successCB, errorCB) {
 };
 
 
+mediaserver.setProtocolInfo = function(protocolInfo) {
+	mediaserver.manager.SetProtocolInfo(protocolInfo);
+}
+
+
 mediaserver.setServerListener = function(serverCallback, errorCallback) {
 	
 	var serverFoundCB = serverCallback.onserverfound;
@@ -66,7 +71,6 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 		for (var i=0; i<ids.length; i++)
 			onObjIdOk(ids[i]);
 	}
-	
 	mediaserver.manager.GetServers(onObjIdsOk, errorCallback);
 	mediaserver.manager.connectToSignal("com.intel.MediaServiceUPnP.Manager", "FoundServer",
 			onObjIdOk, errorCallback);
