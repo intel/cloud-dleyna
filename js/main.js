@@ -17,7 +17,73 @@
 	var sortMode;
 	// Selected item
 	var selectedItem;
+
+
+
+	//
+	// Browser-supported media types 
+	//
 	
+	var knownMediaTypes = {
+		audio: [	
+			"audio/ogg",
+			"audio/x-vorbis",
+			"audio/x-vorbis+ogg",
+			"audio/mpeg",
+			"audio/mp4",
+			"audio/l16",
+			"audio/x-ac3", 
+			"audio/x-wav",
+			"audio/x-ms-wma"
+		],
+		video: [
+			"video/ogg",
+			"video/x-oggm",
+			"video/x-dirac", 
+			"video/x-theora",
+			"video/x-theora+ogg",
+			"video/x-3ivx",
+			"video/mpeg",
+			"video/mp4",
+			"video/webm",
+			"video/avi",
+			"video/flv",
+			"video/x-ms-wmv",
+			"video/x-ms-asf",
+			"video/x-msvideo"
+	 ]
+	};
+
+
+	function getSupportedMediaTypes() {
+		var supported = [];
+		var media=["audio","video"];
+		for (var i=0; i<media.length; i++) {
+			var tag = document.createElement(media[i]);
+			for (var j=0; j<knownMediaTypes[media[i]].length; j++) {
+				if (tag.canPlayType(knownMediaTypes[media[i]][j])) // accept "probably", "maybe"
+					supported.push(knownMediaTypes[media[i]][j]);
+			}
+		}
+		return supported;
+	}
+	
+	
+	//
+	// Browser local implementation of MediaRenderer getProtocolInfo API
+	//
+	
+	function getProtocolInfo() {
+		var info = "http-get:*:image/jpeg:*,http-get:*:image/png:*,http-get:*:image/gif:*";
+		var mediaTypes = getSupportedMediaTypes();
+		for (var i=0; i<mediaTypes.length; i++) {
+			info += ",http-get:*:" + mediaTypes[i] + ":*";
+		}
+		return info;
+	}
+
+
+
 	//
 	// Initialization on HTML page load
 	//
@@ -49,9 +115,11 @@
 		setSortMode();
 		// init DLNA global objects
 		containerStack = [];
+		// in default DMP mode, only require browser-supported media types
+		mediaserver.setProtocolInfo(getProtocolInfo());
 		// find DMS on the local network
 		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById});
-		// find DMP on the local network
+		// find DMR on the local network
 		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById});
 	}
 
