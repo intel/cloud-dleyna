@@ -190,11 +190,13 @@
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
 			playButton.disabled = pauseButton.disabled = false;
+			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
 			playButton.disabled = pauseButton.disabled = true;
+			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
-		clearContentArea();
+		clearFolderInfo();
 	}
 	
 	function mediaRenderersListBoxChanged() {
