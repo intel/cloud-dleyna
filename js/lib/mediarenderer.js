@@ -108,8 +108,7 @@ mediarenderer.MediaController.prototype.pause = function() {
 
 mediarenderer.MediaController.prototype.setVolume = function(vol) {
 	var self = this;
-	var volNum = Number(vol);
-	volNum = Math.max(0,Math.min(0.99,volNum));
+	var volNum = Math.max(0,Math.min(0.99,Number(vol)));
 	
 	function onSetVolumeOk() {
 		self.volume = volNum;
