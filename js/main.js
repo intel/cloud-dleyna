@@ -6,7 +6,8 @@
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle,
-		playButton, pauseButton, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
+		playButton, pauseButton, volButton, volField,
+		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
 	// Remote renderer (null if rendering locally)
@@ -104,6 +105,8 @@
 		folderTitle = document.getElementById("folderTitle");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
+		volButton = document.getElementById("volButton");
+		volField = document.getElementById("volField");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -189,11 +192,12 @@
 	function setRemoteRenderer(renderer) {
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = false;
+			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = false;
+			volField.value = remoteRenderer.controller.volume;
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			playButton.disabled = pauseButton.disabled = true;
+			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();

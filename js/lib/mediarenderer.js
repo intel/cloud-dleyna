@@ -79,6 +79,7 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 mediarenderer.MediaController = function(renderer) {
 	this.renderer = renderer;
 	this.paused = true;
+	this.volume = renderer.proxy.Volume == undefined ? 1 : renderer.proxy.Volume;
 	return this;
 };
 
@@ -102,6 +103,19 @@ mediarenderer.MediaController.prototype.pause = function() {
 	}
 	
 	this.renderer.proxy.Pause(onPauseOk, cloudeebus.log);
+};
+
+
+mediarenderer.MediaController.prototype.setVolume = function(vol) {
+	var self = this;
+	var volNum = Number(vol);
+	volNum = Math.max(0,Math.min(0.99,volNum));
+	
+	function onSetVolumeOk() {
+		self.volume = volNum;
+	}
+	
+	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Volume", volNum, onSetVolumeOk, cloudeebus.log);
 };
 
 
