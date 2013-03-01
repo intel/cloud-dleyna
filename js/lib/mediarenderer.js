@@ -106,6 +106,17 @@ mediarenderer.MediaController.prototype.pause = function() {
 };
 
 
+mediarenderer.MediaController.prototype.stop = function() {
+	var self = this;
+
+	function onStopOk() {
+		self.paused = true;
+	}
+	
+	this.renderer.proxy.Stop(onStopOk, cloudeebus.log);
+};
+
+
 mediarenderer.MediaController.prototype.setVolume = function(vol) {
 	var self = this;
 	var volNum = Math.max(0,Math.min(0.99,Number(vol)));

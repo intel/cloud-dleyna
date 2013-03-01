@@ -190,6 +190,8 @@
 	}
 
 	function setRemoteRenderer(renderer) {
+		if (remoteRenderer)
+			remoteRenderer.controller.stop();
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
 			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = false;
