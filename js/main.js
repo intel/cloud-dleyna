@@ -173,6 +173,9 @@
     }
 
 	function addMediaRenderer(renderer) {
+		// Catch bogus media renderer / detected but introspection failed
+		if (renderer.friendlyName == undefined)
+			return;
 		// check if the media renderer is already known
 		if (getMediaRendererById(renderer.id))
 			return;
@@ -255,6 +258,9 @@
     }
 
 	function addMediaSource(source) {
+		// Catch bogus media source / detected but introspection failed
+		if (source.friendlyName == undefined)
+			return;
 		// check if the media source is already known
 		if (getMediaSourceById(source.id))
 			return;
