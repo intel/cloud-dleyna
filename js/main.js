@@ -10,6 +10,8 @@
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
+	// Current media source
+	var mediaSource;
 	// Remote renderer (null if rendering locally)
 	var remoteRenderer;
 	// Browsing path from current DMS root folder
@@ -304,6 +306,7 @@
 		clearFolderBrowsing();
 		if (source.root)
 			browseMediaSourceContainer(source, source.root);
+		mediaSource = source;
 	}
 
 	
@@ -440,6 +443,10 @@
 
 
 	function createFolder(title) {
+		if (document.getElementById("createUnderAny").checked) {
+			mediaSource.createFolder(title, createFolderOk, debugLog);
+			return;
+		}
 		if (containerStack.length == 0)
 			return;
 		var parent = containerStack[containerStack.length-1];
