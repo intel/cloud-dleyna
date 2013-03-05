@@ -117,6 +117,16 @@ mediarenderer.MediaController.prototype.stop = function() {
 };
 
 
+mediarenderer.MediaController.prototype.next = function() {
+	this.renderer.proxy.Next();
+};
+
+
+mediarenderer.MediaController.prototype.previous = function() {
+	this.renderer.proxy.Previous();
+};
+
+
 mediarenderer.MediaController.prototype.setVolume = function(vol) {
 	var self = this;
 	var volNum = Math.max(0,Math.min(0.99,Number(vol)));

@@ -6,7 +6,7 @@
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle,
-		playButton, pauseButton, volButton, volField,
+		playButton, pauseButton, volButton, volField, nextButton, previousButton,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -107,6 +107,8 @@
 		pauseButton = document.getElementById("pauseButton");
 		volButton = document.getElementById("volButton");
 		volField = document.getElementById("volField");
+		nextButton = document.getElementById("nextButton");
+		previousButton = document.getElementById("previousButton");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -194,12 +196,12 @@
 			remoteRenderer.controller.stop();
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = false;
+			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = false;
 			volField.value = remoteRenderer.controller.volume;
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = true;
+			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();

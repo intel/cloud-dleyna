@@ -71,6 +71,12 @@
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
 						<input id="volField" type="text" value="1" disabled="disabled"
 							style="width:20%"/>
+						<input id="nextButton" type="button" value="Next" disabled="disabled"
+							style="width:24%"
+							onclick="remoteRenderer.controller.next()"/>
+						<input id="previousButton" type="button" value="Previous" disabled="disabled"
+							style="width:24%"
+							onclick="remoteRenderer.controller.previous()"/>
 						<input id="localRenderingCheckBox" type="checkbox" checked="checked"
 							style="width:10%"
 							onchange="localRenderingCheckBoxChanged()"/>
