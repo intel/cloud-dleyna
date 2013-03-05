@@ -6,7 +6,7 @@
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle,
-		playButton, pauseButton, volButton, volField, nextButton, previousButton,
+		playButton, pauseButton, volButton, volField, nextButton, previousButton, trackButton, trackField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -109,6 +109,8 @@
 		volField = document.getElementById("volField");
 		nextButton = document.getElementById("nextButton");
 		previousButton = document.getElementById("previousButton");
+		trackButton = document.getElementById("trackButton");
+		trackField = document.getElementById("trackField");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -196,12 +198,13 @@
 			remoteRenderer.controller.stop();
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = false;
+			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = false;
 			volField.value = remoteRenderer.controller.volume;
+			trackField.value = remoteRenderer.controller.track;
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = true;
+			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();
@@ -227,6 +230,16 @@
 			mediaRenderersListBoxChanged();
 	}
 	
+	function nextTrack() {
+		remoteRenderer.controller.next();
+		trackField.value = remoteRenderer.controller.track;
+	}
+	
+	function previousTrack() {
+		remoteRenderer.controller.previous();
+		trackField.value = remoteRenderer.controller.track;
+	}
+
 	
 	//
 	// Media sources management
