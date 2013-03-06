@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle,
+		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle,
 		playButton, pauseButton, volButton, volField, nextButton, previousButton, trackButton, trackField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
@@ -105,6 +105,7 @@
 		uploadButton = document.getElementById("uploadButton");
 		uploadTo = document.getElementById("uploadTo");
 		folderTitle = document.getElementById("folderTitle");
+		itemTitle = document.getElementById("itemTitle");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
 		volButton = document.getElementById("volButton");
@@ -414,11 +415,6 @@
 	//
     
 	
-	function removedItemOk() {
-		alert("Removed item");
-	}
-
-
 	function removeCurrentContent() {
 		var msg, obj;
 		if (selectedItem) {
@@ -433,7 +429,27 @@
 			return;
 		if (!confirm(msg))
 			return;
-		obj.remove(removedItemOk, debugLog);
+		obj.remove(function() {
+				alert("Removed item");
+			}, 
+			debugLog);
+	}
+
+
+	
+	//
+	// Rename content
+	//
+    
+	
+	function renameItem(newTitle) {
+		if (selectedItem) {
+			obj = selectedItem.mediaItem;
+			obj.rename(newTitle, function() {
+					selectedItem.innerHTML = obj.title = obj.proxy.DisplayName = newTitle;
+				}, 
+				debugLog);
+		}
 	}
 
 
