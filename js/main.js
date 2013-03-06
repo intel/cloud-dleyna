@@ -485,12 +485,12 @@
 	//
 
     
-	function findInMediaSourceContainer(source, container, query) {
+	function findInMediaSourceContainer(source, container, nameQuery) {
 		var findCount = 10;
 		var findOffset = 0;
 		
 		function findErrorCB(str) {
-			alert("Error searching for " + query + " in " + container.title + " : " + str);
+			alert("Error searching for " + nameQuery + " in " + container.title + " : " + str);
 		}
 		
 	    function findContainerCB(mediaObjectArray) 
@@ -500,7 +500,7 @@
 				// or if we launched another search
 					|| container.id != searchButton.container.id
 					|| source.id != searchButton.source.id
-					|| query != searchField.value)
+					|| nameQuery != searchField.value)
 				return;
 			for (var i=0; i<mediaObjectArray.length; i++) {
 				var node = null;
@@ -519,7 +519,7 @@
 				source.find(container.id, 
 						findContainerCB, 
 						findErrorCB,  /* errorCallback */
-						query, /* search query */
+						"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
 						sortMode,  /* sortMode */
 						findCount, 
 						findOffset);
@@ -530,7 +530,7 @@
 		source.find(container.id, 
 				findContainerCB, 
 				findErrorCB, /* errorCallback */
-				query, /* search query */
+				"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
 				sortMode, /* sortMode */
 				findCount, 
 				findOffset);
