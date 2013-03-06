@@ -215,6 +215,8 @@
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();
+		if (containerStack.length > 0)
+			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id)
 	}
 	
 	function mediaRenderersListBoxChanged() {
