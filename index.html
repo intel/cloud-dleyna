@@ -61,13 +61,16 @@
 						</td>
 						<td>
 						<input id="playButton" type="button" value="Play" disabled="disabled"
-							style="width:24%"
+							style="width:18%"
 							onclick="remoteRenderer.controller.play()"/>
 						<input id="pauseButton" type="button" value="Pause" disabled="disabled"
-							style="width:24%"
+							style="width:18%"
 							onclick="remoteRenderer.controller.pause()"/>
+						<input id="stopButton" type="button" value="Stop" disabled="disabled"
+							style="width:18%"
+							onclick="remoteRenderer.controller.stop()"/>
 						<input id="volButton" type="button" value="Volume" disabled="disabled"
-							style="width:24%"
+							style="width:18%"
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
 						<input id="volField" type="text" value="1" disabled="disabled"
 							style="width:20%"/>

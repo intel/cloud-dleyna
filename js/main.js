@@ -6,7 +6,7 @@
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle,
-		playButton, pauseButton, volButton, volField, nextButton, previousButton, trackButton, trackField,
+		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -108,6 +108,7 @@
 		itemTitle = document.getElementById("itemTitle");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
+		stopButton = document.getElementById("stopButton");
 		volButton = document.getElementById("volButton");
 		volField = document.getElementById("volField");
 		nextButton = document.getElementById("nextButton");
@@ -204,13 +205,13 @@
 			remoteRenderer.controller.stop();
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = false;
+			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = false;
 			volField.value = remoteRenderer.controller.volume;
 			trackField.value = remoteRenderer.controller.track;
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			playButton.disabled = pauseButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = true;
+			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();
