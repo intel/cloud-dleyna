@@ -21,7 +21,7 @@
 var mediarenderer = window.mediarenderer = {};
 
 mediarenderer.reset = function() {
-	mediarenderer.busName = "com.intel.renderer-service-upnp";
+	mediarenderer.busName = "com.intel.dleyna-renderer";
 	mediarenderer.bus = null;
 	mediarenderer.uri = null;
 	mediarenderer.manager = null;
@@ -39,7 +39,7 @@ mediarenderer.init = function(uri, manifest, successCB, errorCB) {
 	function onConnectOk() {
 		mediarenderer.bus = cloudeebus.SessionBus();
 		mediarenderer.uri = uri;
-		mediarenderer.manager = mediarenderer.bus.getObject(mediarenderer.busName, "/com/intel/RendererServiceUPnP", onManagerOk);
+		mediarenderer.manager = mediarenderer.bus.getObject(mediarenderer.busName, "/com/intel/dLeynaRenderer", onManagerOk);
 	}
 	
 	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
@@ -66,9 +66,9 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	}
 	
 	mediarenderer.manager.GetServers(onObjIdsOk, errorCallback);
-	mediarenderer.manager.connectToSignal("com.intel.RendererServiceUPnP.Manager", "FoundServer",
+	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundServer",
 			onObjIdOk, errorCallback);
-	mediarenderer.manager.connectToSignal("com.intel.RendererServiceUPnP.Manager", "LostServer",
+	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostServer",
 			rendererLostCB, errorCallback);
 };
 

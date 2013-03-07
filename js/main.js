@@ -676,8 +676,8 @@
 			version: "development",
 			key: "dLeyna",
 			permissions: [
-				"com.intel.media-service-upnp",
-				"com.intel.renderer-service-upnp"
+				"com.intel.dleyna-server",
+				"com.intel.dleyna-renderer"
 			]
 	};
 	
@@ -691,7 +691,7 @@
 		mediarenderer.uri = mediaserver.uri;
 		mediarenderer.manager = mediarenderer.bus.getObject(
 				mediarenderer.busName, 
-				"/com/intel/RendererServiceUPnP", 
+				"/com/intel/dLeynaRenderer", 
 				initPage);
 	}
 	
