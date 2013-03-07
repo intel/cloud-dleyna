@@ -462,20 +462,21 @@
 	//
 
 	
-	function createFolderOk() {
-		alert("Folder created");
-	}
-
-
 	function createFolder(title) {
 		if (document.getElementById("createUnderAny").checked) {
-			mediaSource.createFolder(title, createFolderOk, debugLog);
+			mediaSource.createFolder(title, function() {
+				alert("Folder created by server");
+			},
+			debugLog);
 			return;
 		}
 		if (containerStack.length == 0)
 			return;
 		var parent = containerStack[containerStack.length-1];
-		parent.createFolder(title, createFolderOk, debugLog);
+		parent.createFolder(title, function() {
+			alert("Folder created under folder " + parent.title);
+		},
+		debugLog);
 	}
 
 
@@ -485,16 +486,17 @@
 	//
     
 	
-	function uploadedItemOk() {
-		alert("Uploaded item");
-	}
-
-
 	function uploadLocalContent() {
 		if (uploadTo.selectedIndex == 0)
-			uploadButton.source.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog);
+			uploadButton.source.upload(uploadTitle.value, uploadFile.value, function() {
+				alert("File uploaded on server");
+			},
+			debugLog);
 		else
-			uploadButton.container.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog);
+			uploadButton.container.upload(uploadTitle.value, uploadFile.value, function() {
+				alert("File uploaded under folder " + uploadButton.container.title);
+			},
+			debugLog);
 	}
 
 	
