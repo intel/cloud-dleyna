@@ -197,3 +197,9 @@ mediaserver.MediaServer.prototype.upload = function(title, path, successCallback
 	this.proxy.UploadToAnyContainer(title, path, successCallback, errorCallback);
 };
 
+
+mediaserver.MediaServer.prototype.createFolder = function(title, successCallback, errorCallback) {
+	this.proxy.CreateContainerInAnyContainer(title, "container", ["*"], successCallback, errorCallback);
+};
+
+

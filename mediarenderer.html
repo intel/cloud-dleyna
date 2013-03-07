@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Renderer API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-13-february-2013">Editor Draft &mdash; 13 February 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-7-march-2013">Editor Draft &mdash; 7 March 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -78,7 +78,8 @@ Media Renderer API to discover and manage media renderers on the local network.
    <li><a href="#interface-navigator"><span class="secno">1.1 </span>Interface <code title="">Navigator</code></a></li>
    <li><a href="#interface-mediarenderermanager"><span class="secno">1.2 </span>Interface <code title="">MediaRendererManager</code></a></li>
    <li><a href="#interface-mediarenderercallback"><span class="secno">1.3 </span>Interface <code title="">MediaRendererCallback</code></a></li>
-   <li><a href="#interface-mediarenderer"><span class="secno">1.4 </span>Interface <code title="">MediaRenderer</code></a></ol></li>
+   <li><a href="#interface-mediarenderer"><span class="secno">1.4 </span>Interface <code title="">MediaRenderer</code></a></li>
+   <li><a href="#interface-mediacontroller"><span class="secno">1.5 </span>Interface <code title="">MediaController</code></a></ol></li>
  <li><a class="no-num" href="#references">References</a></ol>
 <!--end-toc-->
 
@@ -128,7 +129,7 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
     readonly attribute DOMString <a href="#mediarenderer-id" title="MediaRenderer-id">id</a>;
     readonly attribute DOMString? <a href="#mediarenderer-friendlyname" title="MediaRenderer-friendlyName">friendlyName</a>;
     readonly attribute DOMString? <a href="#mediarenderer-protocolinfo" title="MediaRenderer-protocolInfo">protocolInfo</a>;
-    readonly attribute <span>MediaController</span> <a href="#mediarenderer-controller" title="MediaRenderer-controller">controller</a>;
+    readonly attribute <a href="#mediacontroller">MediaController</a> <span title="MediaRenderer-controller">controller</span>;
 
     void <span title="MediaRenderer-openURI">openURI</span>(
         DOMString <var title="">mediaURI</var>,
@@ -143,9 +144,25 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
 </p>
 <p>The <dfn id="mediarenderer-protocolinfo" title="MediaRenderer-protocolInfo"><code>protocolInfo</code></dfn> property defines supported network protocols and MIME types.
 </p>
-<p>The <dfn id="mediarenderer-controller" title="MediaRenderer-controller"><code>controller</code></dfn> implements 
-the HTML5 <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-controllers">MediaController</a> interface.
-</p>
+
+
+
+<h3 id="interface-mediacontroller"><span class="secno">1.5 </span>Interface <code title="">MediaController</code></h3>
+
+<pre class="idl">[NoInterfaceObject] interface <dfn id="mediacontroller">MediaController</dfn> {
+    readonly attribute boolean <span title="MediaController-paused">paused</span>;
+    readonly attribute float <span title="MediaController-volume">volume</span>;
+    readonly attribute integer <span title="MediaController-track">track</span>;
+
+    void <span title="MediaController-play">play</span>();
+    void <span title="MediaController-pause">pause</span>();
+    void <span title="MediaController-stop">stop</span>();
+    void <span title="MediaController-next">next</span>();
+    void <span title="MediaController-previous">previous</span>();
+    void <span title="MediaController-setVolume">setVolume</span>(float <var title="">volume</var>);
+    void <span title="MediaController-gotoTrack">gotoTrack</span>(integer <var title="">track</var>);
+};
+</pre>
 
 
 

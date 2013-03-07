@@ -5,10 +5,13 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle,
-		playButton, pauseButton, sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
+		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle,
+		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField,
+		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
+	// Current media source
+	var mediaSource;
 	// Remote renderer (null if rendering locally)
 	var remoteRenderer;
 	// Browsing path from current DMS root folder
@@ -102,8 +105,16 @@
 		uploadButton = document.getElementById("uploadButton");
 		uploadTo = document.getElementById("uploadTo");
 		folderTitle = document.getElementById("folderTitle");
+		itemTitle = document.getElementById("itemTitle");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
+		stopButton = document.getElementById("stopButton");
+		volButton = document.getElementById("volButton");
+		volField = document.getElementById("volField");
+		nextButton = document.getElementById("nextButton");
+		previousButton = document.getElementById("previousButton");
+		trackButton = document.getElementById("trackButton");
+		trackField = document.getElementById("trackField");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -164,6 +175,9 @@
     }
 
 	function addMediaRenderer(renderer) {
+		// Catch bogus media renderer / detected but introspection failed
+		if (renderer.friendlyName == undefined)
+			return;
 		// check if the media renderer is already known
 		if (getMediaRendererById(renderer.id))
 			return;
@@ -187,16 +201,22 @@
 	}
 
 	function setRemoteRenderer(renderer) {
+		if (remoteRenderer)
+			remoteRenderer.controller.stop();
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = false;
+			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = false;
+			volField.value = remoteRenderer.controller.volume;
+			trackField.value = remoteRenderer.controller.track;
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			playButton.disabled = pauseButton.disabled = true;
+			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();
+		if (containerStack.length > 0)
+			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id)
 	}
 	
 	function mediaRenderersListBoxChanged() {
@@ -219,6 +239,16 @@
 			mediaRenderersListBoxChanged();
 	}
 	
+	function nextTrack() {
+		remoteRenderer.controller.next();
+		trackField.value = remoteRenderer.controller.track;
+	}
+	
+	function previousTrack() {
+		remoteRenderer.controller.previous();
+		trackField.value = remoteRenderer.controller.track;
+	}
+
 	
 	//
 	// Media sources management
@@ -232,6 +262,9 @@
     }
 
 	function addMediaSource(source) {
+		// Catch bogus media source / detected but introspection failed
+		if (source.friendlyName == undefined)
+			return;
 		// check if the media source is already known
 		if (getMediaSourceById(source.id))
 			return;
@@ -283,6 +316,7 @@
 		clearFolderBrowsing();
 		if (source.root)
 			browseMediaSourceContainer(source, source.root);
+		mediaSource = source;
 	}
 
 	
@@ -384,11 +418,6 @@
 	//
     
 	
-	function removedItemOk() {
-		alert("Removed item");
-	}
-
-
 	function removeCurrentContent() {
 		var msg, obj;
 		if (selectedItem) {
@@ -403,7 +432,27 @@
 			return;
 		if (!confirm(msg))
 			return;
-		obj.remove(removedItemOk, debugLog);
+		obj.remove(function() {
+				alert("Removed item");
+			}, 
+			debugLog);
+	}
+
+
+	
+	//
+	// Rename content
+	//
+    
+	
+	function renameItem(newTitle) {
+		if (selectedItem) {
+			obj = selectedItem.mediaItem;
+			obj.rename(newTitle, function() {
+					selectedItem.innerHTML = obj.title = obj.proxy.DisplayName = newTitle;
+				}, 
+				debugLog);
+		}
 	}
 
 
@@ -413,16 +462,21 @@
 	//
 
 	
-	function createFolderOk() {
-		alert("Folder created");
-	}
-
-
 	function createFolder(title) {
+		if (document.getElementById("createUnderAny").checked) {
+			mediaSource.createFolder(title, function() {
+				alert("Folder created by server");
+			},
+			debugLog);
+			return;
+		}
 		if (containerStack.length == 0)
 			return;
 		var parent = containerStack[containerStack.length-1];
-		parent.createFolder(title, createFolderOk, debugLog);
+		parent.createFolder(title, function() {
+			alert("Folder created under folder " + parent.title);
+		},
+		debugLog);
 	}
 
 
@@ -432,16 +486,17 @@
 	//
     
 	
-	function uploadedItemOk() {
-		alert("Uploaded item");
-	}
-
-
 	function uploadLocalContent() {
 		if (uploadTo.selectedIndex == 0)
-			uploadButton.source.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog);
+			uploadButton.source.upload(uploadTitle.value, uploadFile.value, function() {
+				alert("File uploaded on server");
+			},
+			debugLog);
 		else
-			uploadButton.container.upload(uploadTitle.value, uploadFile.value, uploadedItemOk, debugLog);
+			uploadButton.container.upload(uploadTitle.value, uploadFile.value, function() {
+				alert("File uploaded under folder " + uploadButton.container.title);
+			},
+			debugLog);
 	}
 
 	
@@ -451,12 +506,12 @@
 	//
 
     
-	function findInMediaSourceContainer(source, container, query) {
+	function findInMediaSourceContainer(source, container, nameQuery) {
 		var findCount = 10;
 		var findOffset = 0;
 		
 		function findErrorCB(str) {
-			alert("Error searching for " + query + " in " + container.title + " : " + str);
+			alert("Error searching for " + nameQuery + " in " + container.title + " : " + str);
 		}
 		
 	    function findContainerCB(mediaObjectArray) 
@@ -466,7 +521,7 @@
 				// or if we launched another search
 					|| container.id != searchButton.container.id
 					|| source.id != searchButton.source.id
-					|| query != searchField.value)
+					|| nameQuery != searchField.value)
 				return;
 			for (var i=0; i<mediaObjectArray.length; i++) {
 				var node = null;
@@ -485,7 +540,7 @@
 				source.find(container.id, 
 						findContainerCB, 
 						findErrorCB,  /* errorCallback */
-						query, /* search query */
+						"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
 						sortMode,  /* sortMode */
 						findCount, 
 						findOffset);
@@ -496,7 +551,7 @@
 		source.find(container.id, 
 				findContainerCB, 
 				findErrorCB, /* errorCallback */
-				query, /* search query */
+				"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
 				sortMode, /* sortMode */
 				findCount, 
 				findOffset);

@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Server API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-13-february-2013">Editor Draft &mdash; 13 February 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-7-march-2013">Editor Draft &mdash; 7 March 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -193,6 +193,13 @@ interface <dfn id="mediaservermanager">MediaServerManager</dfn> {
 
     void <span title="MediaServer-upload">upload</span>(
         DOMString <var title="">path</var>,
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>
+        );
+
+
+    void <span title="MediaServer-createFolder">createFolder</span>(
+        DOMString <var title="">title</var>,
         optional Function? <var title="">successCallback</var>,
         optional Function? <var title="">errorCallback</var>
         );

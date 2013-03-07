@@ -79,6 +79,8 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 mediarenderer.MediaController = function(renderer) {
 	this.renderer = renderer;
 	this.paused = true;
+	this.volume = renderer.proxy.Volume == undefined ? 1 : Number(renderer.proxy.Volume);
+	this.track = renderer.proxy.CurrentTrack == undefined ? 1 : Number(renderer.proxy.CurrentTrack);
 	return this;
 };
 
@@ -102,6 +104,53 @@ mediarenderer.MediaController.prototype.pause = function() {
 	}
 	
 	this.renderer.proxy.Pause(onPauseOk, cloudeebus.log);
+};
+
+
+mediarenderer.MediaController.prototype.stop = function() {
+	var self = this;
+
+	function onStopOk() {
+		self.paused = true;
+	}
+	
+	this.renderer.proxy.Stop(onStopOk, cloudeebus.log);
+};
+
+
+mediarenderer.MediaController.prototype.next = function() {
+	this.renderer.proxy.Next();
+	this.track++;
+};
+
+
+mediarenderer.MediaController.prototype.previous = function() {
+	this.renderer.proxy.Previous();
+	this.track--;
+};
+
+
+mediarenderer.MediaController.prototype.setVolume = function(vol) {
+	var self = this;
+	var volNum = Math.max(0,Math.min(0.99,Number(vol)));
+	
+	function onSetVolumeOk() {
+		self.volume = volNum;
+	}
+	
+	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Volume", volNum, onSetVolumeOk, cloudeebus.log);
+};
+
+
+mediarenderer.MediaController.prototype.gotoTrack = function(track) {
+	var self = this;
+	var trackNum = Number(track);
+	
+	function onGotoTrackOk() {
+		self.track = trackNum;
+	}
+	
+	this.renderer.proxy.GotoTrack(trackNum, onGotoTrackOk, cloudeebus.log);
 };
 
 

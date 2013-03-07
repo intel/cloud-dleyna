@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Content API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-7-february-2013">Editor Draft &mdash; 7 February 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-7-march-2013">Editor Draft &mdash; 7 March 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -104,6 +104,10 @@ interface <dfn id="mediaobject">MediaObject</dfn> {
     void <a href="#mediaobject-remove" title="MediaObject-remove">remove</a>(
         optional Function? <var title="">successCallback</var>,
         optional Function? <var title="">errorCallback</var>);
+    void <a href="#mediaobject-rename" title="MediaObject-rename">rename</a>(
+        DOMString <var title="">newTitle</var>,
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>);
 };
 </pre>
 <p>The <dfn id="mediaobject-id" title="MediaObject-id"><code>id</code></dfn> property is an opaque media object ID.
@@ -115,6 +119,9 @@ by the <a href="https://live.gnome.org/Rygel/MediaServer2Spec/#org.gnome.MediaOb
 </p>
 <p>The <dfn id="mediaobject-remove" title="MediaObject-remove"><code>remove</code></dfn>
 method removes a <a href="#mediaobject">MediaObject</a> from the server.
+</p>
+<p>The <dfn id="mediaobject-rename" title="MediaObject-rename"><code>rename</code></dfn>
+method renames a <a href="#mediaobject">MediaObject</a> on the server.
 </p>
 
 

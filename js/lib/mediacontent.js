@@ -44,6 +44,17 @@ mediacontent.MediaObject.prototype.remove = function(successCallback, errorCallb
 };
 
 
+mediacontent.MediaObject.prototype.rename = function(newTitle, successCallback, errorCallback) {
+	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Update",
+		[
+		 {DisplayName:newTitle},
+		 []
+		],
+		successCallback,
+		errorCallback);
+};
+
+
 
 /*****************************************************************************/
 
