@@ -21,7 +21,7 @@
 var mediaserver = window.mediaserver = {};
 
 mediaserver.reset = function() {
-	mediaserver.busName = "com.intel.media-service-upnp";
+	mediaserver.busName = "com.intel.dleyna-server";
 	mediaserver.bus = null;
 	mediaserver.uri = null;
 	mediaserver.manager = null;
@@ -41,7 +41,7 @@ mediaserver.init = function(uri, manifest, successCB, errorCB) {
 	function onConnectOk() {
 		mediaserver.bus = cloudeebus.SessionBus();
 		mediaserver.uri = uri;
-		mediaserver.manager = mediaserver.bus.getObject(mediaserver.busName, "/com/intel/MediaServiceUPnP", onManagerOk);
+		mediaserver.manager = mediaserver.bus.getObject(mediaserver.busName, "/com/intel/dLeynaServer", onManagerOk);
 	}
 	
 	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
@@ -72,9 +72,9 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 			onObjIdOk(ids[i]);
 	}
 	mediaserver.manager.GetServers(onObjIdsOk, errorCallback);
-	mediaserver.manager.connectToSignal("com.intel.MediaServiceUPnP.Manager", "FoundServer",
+	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
 			onObjIdOk, errorCallback);
-	mediaserver.manager.connectToSignal("com.intel.MediaServiceUPnP.Manager", "LostServer",
+	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
 			serverLostCB, errorCallback);
 };
 
