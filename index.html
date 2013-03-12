@@ -60,54 +60,20 @@
 						<td id="mediaSourceInfo" class="content" style="width:50%">
 						</td>
 						<td>
-						<input id="playButton" type="button" value="Play" disabled="disabled"
+						<input id="playButton" type="button" value="Play"
 							style="width:18%"
 							onclick="remoteRenderer.controller.play()"/>
-						<input id="pauseButton" type="button" value="Pause" disabled="disabled"
+						<input id="pauseButton" type="button" value="Pause"
 							style="width:18%"
 							onclick="remoteRenderer.controller.pause()"/>
-						<input id="stopButton" type="button" value="Stop" disabled="disabled"
+						<input id="stopButton" type="button" value="Stop"
 							style="width:18%"
 							onclick="remoteRenderer.controller.stop()"/>
-						<input id="volButton" type="button" value="Volume" disabled="disabled"
+						<input id="volButton" type="button" value="Volume"
 							style="width:18%"
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
-						<input id="volField" type="text" value="1" disabled="disabled"
+						<input id="volField" type="text" value="1"
 							style="width:20%"/>
-						<input id="nextButton" type="button" value="Next" disabled="disabled"
-							style="width:24%"
-							onclick="nextTrack()"/>
-						<input id="previousButton" type="button" value="Previous" disabled="disabled"
-							style="width:24%"
-							onclick="previousTrack()"/>
-						<input id="trackButton" type="button" value="Track" disabled="disabled"
-							style="width:24%"
-							onclick="remoteRenderer.controller.gotoTrack(trackField.value)"/>
-						<input id="trackField" type="text" value="1" disabled="disabled"
-							style="width:20%"/>
-						<input id="localRenderingCheckBox" type="checkbox" checked="checked"
-							style="width:10%"
-							onchange="localRenderingCheckBoxChanged()"/>
-						Local rendering
-						<hr>
-						<input style="width:100%" type="button" value="Remove content" onclick="removeCurrentContent()">
-						<input style="width:30%" type="button" value="Create folder:" onclick="createFolder(folderTitle.value)">
-						<input style="width:30%" id="folderTitle" type="text">
-						<input style="width:10%" id="createUnderAny" type="checkbox"/>Anywhere
-						<input style="width:30%" type="button" value="Rename item" onclick="renameItem(itemTitle.value)">
-						<input style="width:60%" id="itemTitle" type="text">
-						</td>
-					</tr>
-					<tr class="singleRow">
-						<td id="uploadBox" style="width:100%" colspan=2>
-						<hr>
-						<input id="uploadFile" type="text">
-						<input id="uploadButton" type="button" value="Upload as:" onclick="uploadLocalContent()">
-						<input id="uploadTitle" type="text">
-						<select id="uploadTo">
-							<option value="Server" selected="selected">to server</option>
-							<option value="Folder">to folder</option>
-						</select>
 						</td>
 					</tr>
 					<tr class="singleRow">

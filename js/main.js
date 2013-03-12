@@ -4,9 +4,8 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle,
-		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField,
+	var mainView, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
+		playButton, pauseButton, stopButton, volButton, volField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -24,97 +23,22 @@
 
 
 	//
-	// Browser-supported media types 
-	//
-	
-	var knownMediaTypes = {
-		audio: [	
-			"audio/ogg",
-			"audio/x-vorbis",
-			"audio/x-vorbis+ogg",
-			"audio/mpeg",
-			"audio/mp4",
-			"audio/l16",
-			"audio/x-ac3", 
-			"audio/x-wav",
-			"audio/x-ms-wma"
-		],
-		video: [
-			"video/ogg",
-			"video/x-oggm",
-			"video/x-dirac", 
-			"video/x-theora",
-			"video/x-theora+ogg",
-			"video/x-3ivx",
-			"video/mpeg",
-			"video/mp4",
-			"video/webm",
-			"video/avi",
-			"video/flv",
-			"video/x-ms-wmv",
-			"video/x-ms-asf",
-			"video/x-msvideo"
-	 ]
-	};
-
-
-	function getSupportedMediaTypes() {
-		var supported = [];
-		var media=["audio","video"];
-		for (var i=0; i<media.length; i++) {
-			var tag = document.createElement(media[i]);
-			for (var j=0; j<knownMediaTypes[media[i]].length; j++) {
-				if (tag.canPlayType(knownMediaTypes[media[i]][j])) // accept "probably", "maybe"
-					supported.push(knownMediaTypes[media[i]][j]);
-			}
-		}
-		return supported;
-	}
-	
-	
-	//
-	// Browser local implementation of MediaRenderer getProtocolInfo API
-	//
-	
-	function getProtocolInfo() {
-		var info = "http-get:*:image/jpeg:*,http-get:*:image/png:*,http-get:*:image/gif:*";
-		var mediaTypes = getSupportedMediaTypes();
-		for (var i=0; i<mediaTypes.length; i++) {
-			info += ",http-get:*:" + mediaTypes[i] + ":*";
-		}
-		return info;
-	}
-
-
-
-	//
 	// Initialization on HTML page load
 	//
 	
 	function initPage() {
 		// init HTML DOM elements
 		mainView = document.getElementById("mainView");
-		localRenderingCheckBox = document.getElementById("localRenderingCheckBox");
 		mediaRenderersListBox = document.getElementById("mediaRenderersListBox");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
 		searchButton = document.getElementById("searchButton");
 		searchField = document.getElementById("searchField");
-		uploadFile = document.getElementById("uploadFile");
-		uploadTitle = document.getElementById("uploadTitle");
-		uploadButton = document.getElementById("uploadButton");
-		uploadTo = document.getElementById("uploadTo");
-		folderTitle = document.getElementById("folderTitle");
-		itemTitle = document.getElementById("itemTitle");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
 		stopButton = document.getElementById("stopButton");
 		volButton = document.getElementById("volButton");
 		volField = document.getElementById("volField");
-		nextButton = document.getElementById("nextButton");
-		previousButton = document.getElementById("previousButton");
-		trackButton = document.getElementById("trackButton");
-		trackField = document.getElementById("trackField");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -126,8 +50,6 @@
 		setSortMode();
 		// init DLNA global objects
 		containerStack = [];
-		// in default DMP mode, only require browser-supported media types
-		mediaserver.setProtocolInfo(getProtocolInfo());
 		// find DMS on the local network
 		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById});
 		// find DMR on the local network
@@ -205,14 +127,8 @@
 			remoteRenderer.controller.stop();
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = false;
 			volField.value = remoteRenderer.controller.volume;
-			trackField.value = remoteRenderer.controller.track;
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
-		}
-		else {
-			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = true;
-			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();
 		if (containerStack.length > 0)
@@ -220,35 +136,9 @@
 	}
 	
 	function mediaRenderersListBoxChanged() {
-		if (mediaRenderersListBox.selectedIndex==-1) {
-			localRenderingCheckBox.checked = "checked";
-			setRemoteRenderer(null);
-		}
-		else {
-			localRenderingCheckBox.checked = false;
+		if (mediaRenderersListBox.selectedIndex!=-1)
 			setRemoteRenderer(mediaRenderersListBox.options[mediaRenderersListBox.selectedIndex].mediaRenderer);
-		}
 	}
-	
-	function localRenderingCheckBoxChanged() {
-		if (localRenderingCheckBox.checked) {
-			mediaRenderersListBox.selectedIndex = -1;
-			setRemoteRenderer(null);
-		}
-		else
-			mediaRenderersListBoxChanged();
-	}
-	
-	function nextTrack() {
-		remoteRenderer.controller.next();
-		trackField.value = remoteRenderer.controller.track;
-	}
-	
-	function previousTrack() {
-		remoteRenderer.controller.previous();
-		trackField.value = remoteRenderer.controller.track;
-	}
-
 	
 	//
 	// Media sources management
@@ -479,26 +369,6 @@
 		debugLog);
 	}
 
-
-	
-	//
-	// Uploads to a DMS
-	//
-    
-	
-	function uploadLocalContent() {
-		if (uploadTo.selectedIndex == 0)
-			uploadButton.source.upload(uploadTitle.value, uploadFile.value, function() {
-				alert("File uploaded on server");
-			},
-			debugLog);
-		else
-			uploadButton.container.upload(uploadTitle.value, uploadFile.value, function() {
-				alert("File uploaded under folder " + uploadButton.container.title);
-			},
-			debugLog);
-	}
-
 	
 	
 	//
@@ -599,8 +469,8 @@
 			}
 	    }
 		
-		searchButton.source = uploadButton.source = source;
-		searchButton.container = uploadButton.container = container;
+		searchButton.source = source;
+		searchButton.container = container;
 		containerStack.push(container);
 		pushContainerToFolderPath(source, container);
 		clearFolderInfo();
