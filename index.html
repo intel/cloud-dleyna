@@ -52,23 +52,21 @@
 						</td>
 					</tr>
 					<tr class="listboxRow">
-						<td id="mediaSourceInfo" class="content" style="width:50%">
-						</td>
-						<td>
+						<td style="width:100%" colspan=2>
 						<input id="playButton" type="button" value="Play"
-							style="width:18%"
+							style="width:20%"
 							onclick="remoteRenderer.controller.play()"/>
 						<input id="pauseButton" type="button" value="Pause"
-							style="width:18%"
+							style="width:20%"
 							onclick="remoteRenderer.controller.pause()"/>
 						<input id="stopButton" type="button" value="Stop"
-							style="width:18%"
+							style="width:20%"
 							onclick="remoteRenderer.controller.stop()"/>
 						<input id="volButton" type="button" value="Volume"
-							style="width:18%"
+							style="width:20%"
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
 						<input id="volField" type="text" value="1"
-							style="width:20%"/>
+							style="width:15%"/>
 						</td>
 					</tr>
 					<tr class="singleRow">
@@ -80,7 +78,7 @@
 					<tr class="singleRow">
 						<td id="searchBox" style="width:50%">
 						<input id="searchButton" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
-						<input id="searchField" type="text" value="*">
+						<input id="searchField" type="text" value="">
 						</td>
 						<td style="width:50%">
 							Sort by:

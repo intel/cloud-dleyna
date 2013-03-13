@@ -4,7 +4,7 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
+	var mainView, mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
 		playButton, pauseButton, stopButton, volButton, volField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, outLog;
 	
@@ -31,7 +31,6 @@
 		mainView = document.getElementById("mainView");
 		mediaRenderersListBox = document.getElementById("mediaRenderersListBox");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
-		mediaSourceInfo = document.getElementById("mediaSourceInfo");
 		searchButton = document.getElementById("searchButton");
 		searchField = document.getElementById("searchField");
 		playButton = document.getElementById("playButton");
@@ -108,6 +107,10 @@
 		node.value = renderer.id;
 		node.mediaRenderer = renderer;
 		mediaRenderersListBox.add(node);
+		if (mediaRenderersListBox.options.length == 1) {
+			mediaRenderersListBox.selectedIndex = 0;
+			mediaRenderersListBoxChanged();
+		}
 	}
 	
 	function removeMediaRendererById(rendererId) {
@@ -163,6 +166,10 @@
 		node.value = source.id;
 		node.mediaSource = source;
 		mediaSourcesListBox.add(node);
+		if (mediaSourcesListBox.options.length == 1) {
+			mediaSourcesListBox.selectedIndex = 0;
+			logMediaSourceInfo(source);
+		}
 	}
 	
 	function removeMediaSourceById(sourceId) {
@@ -185,23 +192,6 @@
 	//
 
 	function logMediaSourceInfo(source) {
-		mediaSourceInfo.innerHTML = "";
-		if (source.iconURL)
-			mediaSourceInfo.innerHTML += "<img width=32 height=32 src='" + source.iconURL + "' alt='" + source.friendlyName + "'>";
-		mediaSourceInfo.innerHTML += "<b>" + source.friendlyName + "<b><br>";
-		mediaSourceInfo.innerHTML += source.UPC + "<br>";
-		if (source.serialNumber)
-			mediaSourceInfo.innerHTML += "s/n: " + source.serialNumber + "<br>";
-		if (source.manufacturerURL)
-			mediaSourceInfo.innerHTML += "Manufacturer: " + "<a href='" + source.manufacturerURL + "'>" + source.manufacturerURL + "</a><br>";
-		if (source.modelName)
-			mediaSourceInfo.innerHTML += "Model: " + source.modelName + " (" + source.modelNumber + ")<br>"; 
-		if (source.modelURL)
-			mediaSourceInfo.innerHTML += "<a href='" + source.modelURL + "'>" + source.modelURL + "</a><br>";
-		if (source.modelDescription)
-			mediaSourceInfo.innerHTML += "Description: " + source.modelDescription + "<br>";
-		if (source.presentationURL)
-			mediaSourceInfo.innerHTML += "<a href='" + source.presentationURL + "'>" + source.presentationURL + "</a><br>";
 		clearFolderBrowsing();
 		if (source.root)
 			browseMediaSourceContainer(source, source.root);
@@ -408,7 +398,6 @@
 	}
 	
 	function clearMediaSourceBrowsing() {
-		mediaSourceInfo.innerHTML="";
 		clearFolderBrowsing();
 	}
 	
