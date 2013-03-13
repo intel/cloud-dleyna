@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, target-densityDpi=device-dpi">
+    <meta name="description" content="dLeyna DLNA Player / Controller web application"/>
+
+    <title>Cloud dLeyna</title>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <script src="js/lib/autobahn.min.js"></script>
+    <script src="js/lib/cloudeebus.js"></script>
+    <script src="js/lib/mediacontent.js"></script>
+    <script src="js/lib/mediaserver.js"></script>
+    <script src="js/lib/mediarenderer.js"></script>
+    <script src="js/main.js"></script>
+</head>
+
+<body>
+
+	<header>
+	<h1>Local Network Media</h1>
+	</header>
+	<hr>
+	
+	<table id="mainView" style="width:100%;min-height:480px">
+		<tr style="height:10%">
+			<td style="width:50%">
+			<header>
+				<h2>Servers</h2><hr>
+			</header>
+			</td>
+			<td style="width:50%">
+			<header>
+				<h2>Renderers</h2><hr>
+			</header>
+			</td>
+		</tr>
+		<tr style="height:90%;min-height:440px">
+			<td style="width:100%" colspan=2>
+				<table style="width:100%;height:100%;min-height:400px">
+					<tr class="listboxRow">
+						<td style="width:50%">
+						<select id="mediaSourcesListBox" multiple="multiple" size=3 style="min-width:60px;width:100%"
+							onchange="logMediaSourceInfo(this.options[this.selectedIndex].mediaSource)" >
+						</select> 
+						</td>
+						<td style="width:50%">
+						<select id="mediaRenderersListBox" multiple="multiple" size=3 style="min-width:60px;width:100%"
+							onchange="mediaRenderersListBoxChanged()" >
+						</select> 
+						</td>
+					</tr>
+					<tr class="listboxRow">
+						<td id="mediaSourceInfo" class="content" style="width:50%">
+						</td>
+						<td>
+						<input id="playButton" type="button" value="Play"
+							style="width:18%"
+							onclick="remoteRenderer.controller.play()"/>
+						<input id="pauseButton" type="button" value="Pause"
+							style="width:18%"
+							onclick="remoteRenderer.controller.pause()"/>
+						<input id="stopButton" type="button" value="Stop"
+							style="width:18%"
+							onclick="remoteRenderer.controller.stop()"/>
+						<input id="volButton" type="button" value="Volume"
+							style="width:18%"
+							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
+						<input id="volField" type="text" value="1"
+							style="width:20%"/>
+						</td>
+					</tr>
+					<tr class="singleRow">
+						<td style="width:100%" colspan=2>
+						<div id="folderPath"></div>
+						<hr>
+						</td>
+					</tr>
+					<tr class="singleRow">
+						<td id="searchBox" style="width:50%">
+						<input id="searchButton" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
+						<input id="searchField" type="text" value="*">
+						</td>
+						<td style="width:50%">
+							Sort by:
+							<select id="sortByPopList" onchange="setSortMode()" >
+								<option value="DisplayName" selected="selected">Title</option>
+								<option value="Date">Date</option>
+								<option value="Size">Size</option>
+								<option value="Duration">Duration</option>
+								<option value="Album">Album</option>
+								<option value="Artist">Artist</option>
+								<option value="Genre">Genre</option>
+							</select>
+							<select id="sortDirectionPopList" onchange="setSortMode()" >
+								<option value="ASC" selected="selected">ascending</option>
+								<option value="DESC">descending</option>
+							</select>
+						</td>
+					</tr>
+					<tr class="contentRow">
+						<td id="folderInfo" style="height:100%;width:100%" colspan=2>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	
+</body>
+</html>
