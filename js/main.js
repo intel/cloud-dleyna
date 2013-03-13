@@ -6,7 +6,7 @@
 	// HTML DOM elements
 	var mainView, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		playButton, pauseButton, stopButton, volButton, volField,
-		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
+		sortByPopList, sortDirectionPopList, folderPath, folderInfo, outLog;
 	
 	// DLNA global objects
 	// Current media source
@@ -43,7 +43,6 @@
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
 		folderInfo = document.getElementById("folderInfo");
-		mediaContent = document.getElementById("mediaContent");
 		// prevent page scrolling
 		mainView.style.height = Math.floor(0.8 * window.innerHeight) + "px";
 		// init browsing context
@@ -210,61 +209,21 @@
 	}
 
 	
-	//
-	// Media content view
-	//
-
-	function fitItemNodeInClientView(item, node, view) {
-		// align largest item dimension on view, keep proportions 
-		var ratio,xratio,yratio;
-		xratio = view.clientWidth / item.resolution.width;
-		yratio = view.clientHeight / item.resolution.height;
-		ratio = xratio < yratio ? xratio : yratio;
-		node.width = item.resolution.width * ratio;
-		node.height = item.resolution.height * ratio;
-		return node;
-	}
-	
 	function containerContentsItemOnClick() {
-		clearContentArea();
 		if (this.mediaContainer) {
 			browseMediaSourceContainer(this.mediaSource, this.mediaContainer);
 			return;
 		}
 		this.className = "content selectedContent listContent";
+		if (selectedItem)
+			selectedItem.className = "content listContent";
 		selectedItem = this;
 		if (remoteRenderer) {
 			var renderer = remoteRenderer;
 			remoteRenderer.openURI(this.mediaItem.content.uri,
 					function(){renderer.controller.play();},
 					debugLog);
-			return;
 		}
-		var node = null;
-		if (this.mediaItem.type.indexOf("image") == 0) {
-			node = document.createElement("img");
-			node.src = this.mediaItem.content.uri;
-			fitItemNodeInClientView(this.mediaItem, node, mediaContent);
-		}
-		else {
-			if (this.mediaItem.type.indexOf("video") == 0) {
-				node = document.createElement("video");
-				fitItemNodeInClientView(this.mediaItem, node, mediaContent);
-			}
-			else if (this.mediaItem.type.indexOf("audio") == 0) {
-				node = document.createElement("audio");
-			}
-			else 
-				return;
-			var source = document.createElement("source");
-			source.src = this.mediaItem.content.uri;
-			source.type = this.mediaItem.type;
-			node.controls = true;
-			node.autoplay = true;
-			node.appendChild(source);
-		}
-		node.className = "content";
-		mediaContent.appendChild(node);
 	}
 	
 	
@@ -303,74 +262,6 @@
 
 
 
-	//
-	// Delete content
-	//
-    
-	
-	function removeCurrentContent() {
-		var msg, obj;
-		if (selectedItem) {
-			obj = selectedItem.mediaItem;
-			msg = "Remove " + obj.type + " item \"" + obj.title + "\" ?";
-		}
-		else if (containerStack.length) {
-			obj = containerStack[containerStack.length-1];
-			msg = "Remove folder \"" + obj.title + "\" and all it's content ?"; 
-		}
-		else
-			return;
-		if (!confirm(msg))
-			return;
-		obj.remove(function() {
-				alert("Removed item");
-			}, 
-			debugLog);
-	}
-
-
-	
-	//
-	// Rename content
-	//
-    
-	
-	function renameItem(newTitle) {
-		if (selectedItem) {
-			obj = selectedItem.mediaItem;
-			obj.rename(newTitle, function() {
-					selectedItem.innerHTML = obj.title = obj.proxy.DisplayName = newTitle;
-				}, 
-				debugLog);
-		}
-	}
-
-
-	
-	//
-	// Create folder
-	//
-
-	
-	function createFolder(title) {
-		if (document.getElementById("createUnderAny").checked) {
-			mediaSource.createFolder(title, function() {
-				alert("Folder created by server");
-			},
-			debugLog);
-			return;
-		}
-		if (containerStack.length == 0)
-			return;
-		var parent = containerStack[containerStack.length-1];
-		parent.createFolder(title, function() {
-			alert("Folder created under folder " + parent.title);
-		},
-		debugLog);
-	}
-
-	
-	
 	//
 	// Media source find under given container
 	//
@@ -499,13 +390,6 @@
 	// Clear content browsing areas
 	//
 
-	function clearContentArea() {
-		mediaContent.innerHTML="";
-		if (selectedItem)
-			selectedItem.className = "content listContent";
-		selectedItem=null;
-	}
-	    
 	function clearFolderInfo() {
 		outLog = document.createElement("div");
 		outLog.style.width = (folderInfo.clientWidth - 4) + "px";
@@ -514,7 +398,6 @@
 		outLog.style.overflow = "auto";
 		folderInfo.innerHTML="<hr>";
 		folderInfo.appendChild(outLog);
-		clearContentArea();
 	}
 
 	    
