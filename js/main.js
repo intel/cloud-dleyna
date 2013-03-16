@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
-		playButton, pauseButton, stopButton, volButton, volField,
+		playButton, pauseButton, stopButton, volButton, volField, seekButton, seekField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, outLog;
 	
 	// DLNA global objects
@@ -38,6 +38,8 @@
 		stopButton = document.getElementById("stopButton");
 		volButton = document.getElementById("volButton");
 		volField = document.getElementById("volField");
+		seekButton = document.getElementById("seekButton");
+		seekField = document.getElementById("seekField");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");

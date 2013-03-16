@@ -154,6 +154,11 @@ mediarenderer.MediaController.prototype.gotoTrack = function(track) {
 };
 
 
+mediarenderer.MediaController.prototype.seek = function(secOffset) {
+	this.renderer.proxy.Seek(Number(secOffset) * 1000000);
+};
+
+
 
 /*****************************************************************************/
 
