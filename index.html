@@ -85,6 +85,11 @@
 							onclick="remoteRenderer.controller.gotoTrack(trackField.value)"/>
 						<input id="trackField" type="text" value="1" disabled="disabled"
 							style="width:20%"/>
+						<input id="seekButton" type="button" value="seek" disabled="disabled"
+							style="width:20%"
+							onclick="remoteRenderer.controller.seek(seekField.value)"/>
+						<input id="seekField" type="text" value="0" disabled="disabled"
+							style="width:10%"/>
 						<input id="localRenderingCheckBox" type="checkbox" checked="checked"
 							style="width:10%"
 							onchange="localRenderingCheckBoxChanged()"/>
