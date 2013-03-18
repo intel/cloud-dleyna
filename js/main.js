@@ -511,6 +511,7 @@
 	function findInMediaSourceContainer(source, container, nameQuery) {
 		var findCount = 10;
 		var findOffset = 0;
+		var searchQuery = nameQuery ? ("DisplayName contains \"" + nameQuery + "\"") : "*";
 		
 		function findErrorCB(str) {
 			alert("Error searching for " + nameQuery + " in " + container.title + " : " + str);
@@ -542,7 +543,7 @@
 				source.find(container.id, 
 						findContainerCB, 
 						findErrorCB,  /* errorCallback */
-						"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
+						searchQuery, /* search query */
 						sortMode,  /* sortMode */
 						findCount, 
 						findOffset);
@@ -553,7 +554,7 @@
 		source.find(container.id, 
 				findContainerCB, 
 				findErrorCB, /* errorCallback */
-				"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
+				searchQuery, /* search query */
 				sortMode, /* sortMode */
 				findCount, 
 				findOffset);
