@@ -3,22 +3,22 @@ cloud-dLeyna
 ============
 
 cloud-dLeyna - dLeyna for the Cloud - is a Web Application that implements
-the DMP (Player) and the DMC (Controller) DLNA roles, on top of the dLeyna
-media-service-upnp and renderer-service-upnp DBus APIs.
+the DMP (Player) and the DMC (Controller) DLNA roles, on top of the 
+dleyna-server and dleyna-renderer DBus APIs.
 
 
 Requirements
 ------------
 
-  * [dLeyna media-service-upnp](https://github.com/01org/media-service-upnp)
-  * [dLeyna renderer-service-upnp](https://github.com/01org/renderer-service-upnp)
+  * [dleyna-server](https://github.com/01org/dleyna-server)
+  * [dleyna-renderer](https://github.com/01org/dleyna-renderer)
   * [Cloudeebus](https://github.com/01org/cloudeebus)
 
 
 Running the server
 ------------------
 
-The dLeyna components media-service-upnp and renderer-service-upnp, and the
+The dLeyna server and renderer components, as well as the
 Cloudeebus python server must be already installed. The dLeyna dbus services
 will be launched when called from the Cloudeebus python server.
 
