@@ -36,12 +36,12 @@
 				<table style="width:100%;height:100%;min-height:400px">
 					<tr class="listboxRow">
 						<td style="width:50%">
-						<select id="mediaSourcesListBox" multiple="multiple" size=3 style="min-width:60px;width:100%"
+						<select id="mediaSourcesListBox" size=3 style="min-width:60px;width:100%"
 							onchange="logMediaSourceInfo(this.options[this.selectedIndex].mediaSource)" >
 						</select> 
 						</td>
 						<td style="width:50%">
-						<select id="mediaRenderersListBox" multiple="multiple" size=3 style="min-width:60px;width:100%"
+						<select id="mediaRenderersListBox" size=3 style="min-width:60px;width:100%"
 							onchange="mediaRenderersListBoxChanged()" >
 						</select> 
 						</td>
@@ -49,18 +49,23 @@
 					<tr class="listboxRow">
 						<td style="width:100%" colspan=2>
 						<input id="playButton" type="button" value="Play"
-							style="width:20%"
+							style="width:30%"
 							onclick="remoteRenderer.controller.play()"/>
 						<input id="pauseButton" type="button" value="Pause"
-							style="width:20%"
+							style="width:30%"
 							onclick="remoteRenderer.controller.pause()"/>
 						<input id="stopButton" type="button" value="Stop"
-							style="width:20%"
+							style="width:30%"
 							onclick="remoteRenderer.controller.stop()"/>
 						<input id="volButton" type="button" value="Volume"
-							style="width:20%"
+							style="width:30%"
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
 						<input id="volField" type="text" value="1"
+							style="width:10%"/>
+						<input id="seekButton" type="button" value="seek"
+							style="width:30%"
+							onclick="remoteRenderer.controller.seek(seekField.value)"/>
+						<input id="seekField" type="text" value="0"
 							style="width:10%"/>
 						</td>
 					</tr>

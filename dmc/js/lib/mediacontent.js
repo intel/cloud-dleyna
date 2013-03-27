@@ -55,6 +55,15 @@ mediacontent.MediaObject.prototype.rename = function(newTitle, successCallback, 
 };
 
 
+mediacontent.MediaObject.prototype.getMetaData = function(successCallback, errorCallback) {
+	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "GetMetaData",
+		[
+		],
+		successCallback,
+		errorCallback);
+};
+
+
 
 /*****************************************************************************/
 

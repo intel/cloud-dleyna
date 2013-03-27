@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
-		playButton, pauseButton, stopButton, volButton, volField,
+		playButton, pauseButton, stopButton, volButton, volField, seekButton, seekField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, outLog;
 	
 	// DLNA global objects
@@ -38,6 +38,8 @@
 		stopButton = document.getElementById("stopButton");
 		volButton = document.getElementById("volButton");
 		volField = document.getElementById("volField");
+		seekButton = document.getElementById("seekButton");
+		seekField = document.getElementById("seekField");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -210,9 +212,21 @@
 		selectedItem = this;
 		if (remoteRenderer) {
 			var renderer = remoteRenderer;
-			remoteRenderer.openURI(this.mediaItem.content.uri,
-					function(){renderer.controller.play();},
-					debugLog);
+			var mediaItem = this.mediaItem;
+			var rendererPlay = function() {
+					renderer.controller.play();
+				};
+			mediaItem.getMetaData(
+				function(metaData) {
+					renderer.openURI(mediaItem.content.uri, metaData,
+							rendererPlay,
+							debugLog);
+				},
+				function() {
+					renderer.openURI(mediaItem.content.uri, null,
+							rendererPlay,
+							debugLog);
+				});
 		}
 	}
 	
@@ -260,6 +274,7 @@
 	function findInMediaSourceContainer(source, container, nameQuery) {
 		var findCount = 10;
 		var findOffset = 0;
+		var searchQuery = nameQuery ? ("DisplayName contains \"" + nameQuery + "\"") : "*";
 		
 		function findErrorCB(str) {
 			alert("Error searching for " + nameQuery + " in " + container.title + " : " + str);
@@ -291,7 +306,7 @@
 				source.find(container.id, 
 						findContainerCB, 
 						findErrorCB,  /* errorCallback */
-						"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
+						searchQuery, /* search query */
 						sortMode,  /* sortMode */
 						findCount, 
 						findOffset);
@@ -302,7 +317,7 @@
 		source.find(container.id, 
 				findContainerCB, 
 				findErrorCB, /* errorCallback */
-				"DisplayName contains \"" + (nameQuery ? nameQuery : "*") + "\"", /* search query */
+				searchQuery, /* search query */
 				sortMode, /* sortMode */
 				findCount, 
 				findOffset);

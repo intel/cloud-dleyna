@@ -154,6 +154,11 @@ mediarenderer.MediaController.prototype.gotoTrack = function(track) {
 };
 
 
+mediarenderer.MediaController.prototype.seek = function(secOffset) {
+	this.renderer.proxy.Seek(Number(secOffset) * 1000000);
+};
+
+
 
 /*****************************************************************************/
 
@@ -169,8 +174,10 @@ mediarenderer.MediaRenderer = function(proxy) {
 };
 
 
-mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, successCallback, errorCallback) {
-	this.proxy.OpenUri(mediaURI, successCallback, errorCallback);
+mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData, successCallback, errorCallback) {
+	if (metaData)
+		this.proxy.OpenUriEx(mediaURI, metaData, successCallback, errorCallback);
+	else
+		this.proxy.OpenUri(mediaURI, successCallback, errorCallback);
 };
-
 
