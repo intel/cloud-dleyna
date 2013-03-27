@@ -210,9 +210,21 @@
 		selectedItem = this;
 		if (remoteRenderer) {
 			var renderer = remoteRenderer;
-			remoteRenderer.openURI(this.mediaItem.content.uri,
-					function(){renderer.controller.play();},
-					debugLog);
+			var mediaItem = this.mediaItem;
+			var rendererPlay = function() {
+					renderer.controller.play();
+				};
+			mediaItem.getMetaData(
+				function(metaData) {
+					renderer.openURI(mediaItem.content.uri, metaData,
+							rendererPlay,
+							debugLog);
+				},
+				function() {
+					renderer.openURI(mediaItem.content.uri, null,
+							rendererPlay,
+							debugLog);
+				});
 		}
 	}
 	
