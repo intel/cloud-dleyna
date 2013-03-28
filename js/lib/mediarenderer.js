@@ -79,9 +79,21 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 mediarenderer.MediaController = function(renderer) {
 	this.renderer = renderer;
 	this.paused = true;
+	this.muted = renderer.proxy.Mute == undefined ? false : renderer.proxy.Mute;
 	this.volume = renderer.proxy.Volume == undefined ? 1 : Number(renderer.proxy.Volume);
 	this.track = renderer.proxy.CurrentTrack == undefined ? 1 : Number(renderer.proxy.CurrentTrack);
 	return this;
+};
+
+
+mediarenderer.MediaController.prototype.mute = function(mute) {
+	var self = this;
+	
+	function onMuteOk() {
+		self.muted = mute;
+	}
+	
+	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Mute", mute, onMuteOk, cloudeebus.log);
 };
 
 

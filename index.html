@@ -90,6 +90,11 @@
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
 						<input id="volField" type="text" value="1" disabled="disabled"
 							style="width:20%"/>
+						<input id="muteCheckBox" type="checkbox" disabled="disabled"
+							style="width:10%"
+							onchange="muteCheckBoxChanged()"/>
+						Mute
+						<hr>
 						<input id="localRenderingCheckBox" type="checkbox" checked="checked"
 							style="width:10%"
 							onchange="localRenderingCheckBoxChanged()"/>

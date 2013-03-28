@@ -4,7 +4,7 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, localRenderingCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
+	var mainView, localRenderingCheckBox, muteCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle,
 		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
@@ -95,6 +95,7 @@
 		// init HTML DOM elements
 		mainView = document.getElementById("mainView");
 		localRenderingCheckBox = document.getElementById("localRenderingCheckBox");
+		muteCheckBox = document.getElementById("muteCheckBox");
 		mediaRenderersListBox = document.getElementById("mediaRenderersListBox");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
@@ -207,13 +208,13 @@
 			remoteRenderer.controller.stop();
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = false;
+			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = false;
 			volField.value = remoteRenderer.controller.volume;
 			trackField.value = remoteRenderer.controller.track;
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = true;
+			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();
@@ -239,6 +240,10 @@
 		}
 		else
 			mediaRenderersListBoxChanged();
+	}
+	
+	function muteCheckBoxChanged() {
+		remoteRenderer.controller.mute(muteCheckBox.checked);
 	}
 	
 	function nextTrack() {
