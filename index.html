@@ -69,11 +69,11 @@
 						<input id="stopButton" type="button" value="Stop" disabled="disabled"
 							style="width:18%"
 							onclick="remoteRenderer.controller.stop()"/>
-						<input id="volButton" type="button" value="Volume" disabled="disabled"
-							style="width:18%"
-							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
-						<input id="volField" type="text" value="1" disabled="disabled"
-							style="width:20%"/>
+						<input id="seekButton" type="button" value="seek" disabled="disabled"
+							style="width:20%"
+							onclick="remoteRenderer.controller.seek(seekField.value)"/>
+						<input id="seekField" type="text" value="0" disabled="disabled"
+							style="width:10%"/>
 						<input id="nextButton" type="button" value="Next" disabled="disabled"
 							style="width:24%"
 							onclick="nextTrack()"/>
@@ -85,11 +85,11 @@
 							onclick="remoteRenderer.controller.gotoTrack(trackField.value)"/>
 						<input id="trackField" type="text" value="1" disabled="disabled"
 							style="width:20%"/>
-						<input id="seekButton" type="button" value="seek" disabled="disabled"
-							style="width:20%"
-							onclick="remoteRenderer.controller.seek(seekField.value)"/>
-						<input id="seekField" type="text" value="0" disabled="disabled"
-							style="width:10%"/>
+						<input id="volButton" type="button" value="Volume" disabled="disabled"
+							style="width:18%"
+							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
+						<input id="volField" type="text" value="1" disabled="disabled"
+							style="width:20%"/>
 						<input id="localRenderingCheckBox" type="checkbox" checked="checked"
 							style="width:10%"
 							onchange="localRenderingCheckBoxChanged()"/>
