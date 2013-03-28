@@ -87,82 +87,42 @@ mediarenderer.MediaController = function(renderer) {
 
 
 mediarenderer.MediaController.prototype.mute = function(mute) {
-	var self = this;
-	
-	function onMuteOk() {
-		self.muted = mute;
-	}
-	
-	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Mute", mute, onMuteOk, cloudeebus.log);
+	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Mute", mute);
 };
 
 
 mediarenderer.MediaController.prototype.play = function() {
-	var self = this;
-	
-	function onPlayOk() {
-		self.paused = false;
-	}
-	
-	this.renderer.proxy.Play(onPlayOk, cloudeebus.log);
+	this.renderer.proxy.Play();
 };
 
 
 mediarenderer.MediaController.prototype.pause = function() {
-	var self = this;
-	
-	function onPauseOk() {
-		self.paused = true;
-	}
-	
-	this.renderer.proxy.Pause(onPauseOk, cloudeebus.log);
+	this.renderer.proxy.Pause();
 };
 
 
 mediarenderer.MediaController.prototype.stop = function() {
-	var self = this;
-
-	function onStopOk() {
-		self.paused = true;
-	}
-	
-	this.renderer.proxy.Stop(onStopOk, cloudeebus.log);
+	this.renderer.proxy.Stop();
 };
 
 
 mediarenderer.MediaController.prototype.next = function() {
 	this.renderer.proxy.Next();
-	this.track++;
 };
 
 
 mediarenderer.MediaController.prototype.previous = function() {
 	this.renderer.proxy.Previous();
-	this.track--;
 };
 
 
 mediarenderer.MediaController.prototype.setVolume = function(vol) {
-	var self = this;
-	var volNum = Math.max(0,Math.min(0.99,Number(vol)));
-	
-	function onSetVolumeOk() {
-		self.volume = volNum;
-	}
-	
-	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Volume", volNum, onSetVolumeOk, cloudeebus.log);
+	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Volume", Math.max(0,Math.min(0.99,Number(vol))));
 };
 
 
 mediarenderer.MediaController.prototype.gotoTrack = function(track) {
-	var self = this;
-	var trackNum = Number(track);
-	
-	function onGotoTrackOk() {
-		self.track = trackNum;
-	}
-	
-	this.renderer.proxy.GotoTrack(trackNum, onGotoTrackOk, cloudeebus.log);
+	this.renderer.proxy.GotoTrack(Number(track));
 };
 
 
@@ -176,12 +136,26 @@ mediarenderer.MediaController.prototype.seek = function(secOffset) {
 
 mediarenderer.MediaRenderer = function(proxy) {
 	this.proxy = proxy;
+	this.controller = new mediarenderer.MediaController(this);
 	if (proxy) {
 		this.id = proxy.objectPath;
 		this.friendlyName = proxy.Identity;
 		this.protocolInfo = proxy.ProtocolInfo;
+		var controller = this.controller;
+		proxy.connectToSignal("org.freedesktop.DBus.Properties","PropertiesChanged", 
+			function(iface, changed, invalidated) {
+				if (changed.CurrentTrack != undefined)
+					controller.track = changed.CurrentTrack;
+				if (changed.Volume != undefined)
+					controller.volume = changed.Volume;
+				if (changed.Mute != undefined)
+					controller.muted = changed.Mute;
+				if (changed.PlaybackStatus != undefined) 
+					controller.paused = changed.PlaybackStatus != "Playing";
+				if (controller.onchange)
+					controller.onchange();
+			}, cloudeebus.log);
 	}
-	this.controller = new mediarenderer.MediaController(this);
 	return this;
 };
 
@@ -192,4 +166,3 @@ mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData, suc
 	else
 		this.proxy.OpenUri(mediaURI, successCallback, errorCallback);
 };
-

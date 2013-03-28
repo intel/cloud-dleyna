@@ -184,6 +184,12 @@
 		// check if the media renderer is already known
 		if (getMediaRendererById(renderer.id))
 			return;
+		// set the renderer's onchange mehod
+		renderer.controller.onchange = 	function() {
+			muteCheckBox.checked = renderer.controller.muted;
+			volField.value = renderer.controller.volume;
+			trackField.value = renderer.controller.track;
+		}
 		// add an option to the listbox
 		var node = document.createElement("option");
 		node.text = renderer.friendlyName;
