@@ -184,12 +184,6 @@
 		// check if the media renderer is already known
 		if (getMediaRendererById(renderer.id))
 			return;
-		// set the renderer's onchange mehod
-		renderer.controller.onchange = 	function() {
-			muteCheckBox.checked = renderer.controller.muted;
-			volField.value = renderer.controller.volume;
-			trackField.value = renderer.controller.track;
-		}
 		// add an option to the listbox
 		var node = document.createElement("option");
 		node.text = renderer.friendlyName;
@@ -210,13 +204,21 @@
 	}
 
 	function setRemoteRenderer(renderer) {
-		if (remoteRenderer)
+		if (remoteRenderer) {
+			remoteRenderer.controller.onchange = null;
 			remoteRenderer.controller.stop();
+		}
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
 			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = false;
-			volField.value = remoteRenderer.controller.volume;
-			trackField.value = remoteRenderer.controller.track;
+			// set the renderer's controller onchange method
+			remoteRenderer.controller.onchange = function() {
+				muteCheckBox.checked = this.muted;
+				volField.value = this.volume;
+				trackField.value = this.track;
+			}
+			// call it to initialize UI
+			remoteRenderer.controller.onchange.apply(remoteRenderer.controller);
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {

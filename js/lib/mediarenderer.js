@@ -141,19 +141,19 @@ mediarenderer.MediaRenderer = function(proxy) {
 		this.id = proxy.objectPath;
 		this.friendlyName = proxy.Identity;
 		this.protocolInfo = proxy.ProtocolInfo;
-		var controller = this.controller;
+		proxy.controller = this.controller;
 		proxy.connectToSignal("org.freedesktop.DBus.Properties","PropertiesChanged", 
 			function(iface, changed, invalidated) {
 				if (changed.CurrentTrack != undefined)
-					controller.track = changed.CurrentTrack;
+					this.controller.track = changed.CurrentTrack;
 				if (changed.Volume != undefined)
-					controller.volume = changed.Volume;
+					this.controller.volume = changed.Volume;
 				if (changed.Mute != undefined)
-					controller.muted = changed.Mute;
+					this.controller.muted = changed.Mute;
 				if (changed.PlaybackStatus != undefined) 
-					controller.paused = changed.PlaybackStatus != "Playing";
-				if (controller.onchange)
-					controller.onchange();
+					this.controller.paused = changed.PlaybackStatus != "Playing";
+				if (this.controller.onchange)
+					this.controller.onchange.apply(this.controller);
 			}, cloudeebus.log);
 	}
 	return this;
