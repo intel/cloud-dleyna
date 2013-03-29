@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Renderer API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-7-march-2013">Editor Draft &mdash; 7 March 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-29-march-2013">Editor Draft &mdash; 29 March 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -133,6 +133,7 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
 
     void <span title="MediaRenderer-openURI">openURI</span>(
         DOMString <var title="">mediaURI</var>,
+        optional DOMString? <var title="">metaData</var>,
         optional Function? <var title="">successCallback</var>,
         optional Function? <var title="">errorCallback</var>
         );
@@ -151,14 +152,17 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
 
 <pre class="idl">[NoInterfaceObject] interface <dfn id="mediacontroller">MediaController</dfn> {
     readonly attribute boolean <span title="MediaController-paused">paused</span>;
+    readonly attribute boolean <span title="MediaController-muted">muted</span>;
     readonly attribute float <span title="MediaController-volume">volume</span>;
     readonly attribute integer <span title="MediaController-track">track</span>;
+    optional attribute Function? <span title="MediaController-onchange">onchange</span>();
 
     void <span title="MediaController-play">play</span>();
     void <span title="MediaController-pause">pause</span>();
     void <span title="MediaController-stop">stop</span>();
     void <span title="MediaController-next">next</span>();
     void <span title="MediaController-previous">previous</span>();
+    void <span title="MediaController-previous">mute</span>(boolean <var title="">mute</var>));
     void <span title="MediaController-setVolume">setVolume</span>(float <var title="">volume</var>);
     void <span title="MediaController-gotoTrack">gotoTrack</span>(integer <var title="">track</var>);
 };

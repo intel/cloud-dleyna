@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Content API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-7-march-2013">Editor Draft &mdash; 7 March 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-29-march-2013">Editor Draft &mdash; 29 March 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -108,6 +108,9 @@ interface <dfn id="mediaobject">MediaObject</dfn> {
         DOMString <var title="">newTitle</var>,
         optional Function? <var title="">successCallback</var>,
         optional Function? <var title="">errorCallback</var>);
+    void <a href="#mediaobject-getmetadata" title="MediaObject-getMetaData">getMetaData</a>(
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>);
 };
 </pre>
 <p>The <dfn id="mediaobject-id" title="MediaObject-id"><code>id</code></dfn> property is an opaque media object ID.
@@ -122,6 +125,9 @@ method removes a <a href="#mediaobject">MediaObject</a> from the server.
 </p>
 <p>The <dfn id="mediaobject-rename" title="MediaObject-rename"><code>rename</code></dfn>
 method renames a <a href="#mediaobject">MediaObject</a> on the server.
+</p>
+<p>The <dfn id="mediaobject-getmetadata" title="MediaObject-getMetaData"><code>getMetaData</code></dfn>
+method returns the media object metadata info (raw DIDL-Lite XML).
 </p>
 
 

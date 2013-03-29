@@ -127,11 +127,18 @@
 	}
 
 	function setRemoteRenderer(renderer) {
-		if (remoteRenderer)
+		if (remoteRenderer) {
+			remoteRenderer.controller.onchange = null;
 			remoteRenderer.controller.stop();
+		}
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			volField.value = remoteRenderer.controller.volume;
+			// set the renderer's controller onchange method
+			remoteRenderer.controller.onchange = function() {
+				volField.value = this.volume;
+			}
+			// call it to initialize UI
+			remoteRenderer.controller.onchange.apply(remoteRenderer.controller);
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		clearFolderInfo();
