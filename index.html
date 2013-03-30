@@ -49,14 +49,17 @@
 					<tr class="listboxRow">
 						<td style="width:100%" colspan=2>
 						<input id="playButton" type="button" value="Play"
-							style="width:30%"
+							style="width:22%"
 							onclick="remoteRenderer.controller.play()"/>
 						<input id="pauseButton" type="button" value="Pause"
-							style="width:30%"
+							style="width:22%"
 							onclick="remoteRenderer.controller.pause()"/>
 						<input id="stopButton" type="button" value="Stop"
-							style="width:30%"
+							style="width:22%"
 							onclick="remoteRenderer.controller.stop()"/>
+						<input id="previewButton" type="button" value="Preview"
+							style="width:22%"
+							onclick="window.open(selectedItem.mediaItem.content.uri)"/>
 						<input id="volButton" type="button" value="Volume"
 							style="width:30%"
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
