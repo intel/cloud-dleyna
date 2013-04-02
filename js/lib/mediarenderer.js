@@ -53,11 +53,16 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	
 	function onRendererOk(proxy) {
 		if (rendererFoundCB)
-			rendererFoundCB(new mediarenderer.MediaRenderer(proxy));		
+			rendererFoundCB(new mediarenderer.MediaRenderer(proxy));
 	}
 	
 	function onObjIdOk(id) {
-		mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk);
+		var proxy = mediarenderer.bus.getObject(mediarenderer.busName, id);
+		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.mpris.MediaPlayer2", "Identity"],
+			function() {
+				mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk);
+			}
+		);
 	}
 	
 	function onObjIdsOk(ids) {
