@@ -220,6 +220,7 @@
 				muteCheckBox.checked = this.muted;
 				volField.value = this.volume;
 				trackField.value = this.track;
+				speedField.value = this.speed;
 				if (speedList.options.length != this.playSpeeds.length) {
 					speedList.options = [];
 					for (var i=0; i<this.playSpeeds.length; i++) {

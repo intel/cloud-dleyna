@@ -87,7 +87,7 @@ mediarenderer.MediaController = function(renderer) {
 	this.muted = renderer.proxy.Mute == undefined ? false : renderer.proxy.Mute;
 	this.volume = renderer.proxy.Volume == undefined ? 1 : Number(renderer.proxy.Volume);
 	this.track = renderer.proxy.CurrentTrack == undefined ? 1 : Number(renderer.proxy.CurrentTrack);
-	this.rate = renderer.proxy.Rate;
+	this.speed = renderer.proxy.Rate;
 	this.playSpeeds = renderer.proxy.TransportPlaySpeeds;
 	return this;
 };
@@ -189,7 +189,7 @@ mediarenderer.MediaRenderer = function(proxy) {
 				if (changed.PlaybackStatus != undefined) 
 					this.controller.paused = changed.PlaybackStatus != "Playing";
 				if (changed.Rate != undefined) 
-					this.controller.rate = changed.Rate;
+					this.controller.speed = changed.Rate;
 				if (changed.TransportPlaySpeeds != undefined) 
 					this.controller.playSpeeds = changed.TransportPlaySpeeds;
 				if (this.controller.onchange)
