@@ -140,6 +140,7 @@
 			// set the renderer's controller onchange method
 			remoteRenderer.controller.onchange = function() {
 				volField.value = this.volume;
+				speedField.value = this.speed;
 				if (speedList.options.length != this.playSpeeds.length) {
 					speedList.options = [];
 					for (var i=0; i<this.playSpeeds.length; i++) {
