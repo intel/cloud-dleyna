@@ -136,13 +136,15 @@
 		}
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			speedList.options = [];
+			while(speedList.options.length) 
+				speedList.options.remove(0);
 			// set the renderer's controller onchange method
 			remoteRenderer.controller.onchange = function() {
 				volField.value = this.volume;
 				speedField.value = this.speed;
 				if (speedList.options.length != this.playSpeeds.length) {
-					speedList.options = [];
+					while(speedList.options.length) 
+						speedList.options.remove(0);
 					for (var i=0; i<this.playSpeeds.length; i++) {
 						var node = document.createElement("option");
 						node.value = this.playSpeeds[i];
