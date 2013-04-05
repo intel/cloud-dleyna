@@ -82,6 +82,8 @@ mediarenderer.MediaController = function(renderer) {
 	this.muted = renderer.proxy.Mute == undefined ? false : renderer.proxy.Mute;
 	this.volume = renderer.proxy.Volume == undefined ? 1 : Number(renderer.proxy.Volume);
 	this.track = renderer.proxy.CurrentTrack == undefined ? 1 : Number(renderer.proxy.CurrentTrack);
+	this.rate = renderer.proxy.Rate;
+	this.playSpeeds = renderer.proxy.TransportPlaySpeeds;
 	return this;
 };
 
@@ -121,6 +123,11 @@ mediarenderer.MediaController.prototype.setVolume = function(vol) {
 };
 
 
+mediarenderer.MediaController.prototype.setSpeed = function(speed) {
+	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Rate", Number(speed));
+};
+
+
 mediarenderer.MediaController.prototype.gotoTrack = function(track) {
 	this.renderer.proxy.GotoTrack(Number(track));
 };
@@ -152,6 +159,10 @@ mediarenderer.MediaRenderer = function(proxy) {
 					this.controller.muted = changed.Mute;
 				if (changed.PlaybackStatus != undefined) 
 					this.controller.paused = changed.PlaybackStatus != "Playing";
+				if (changed.Rate != undefined) 
+					this.controller.rate = changed.Rate;
+				if (changed.TransportPlaySpeeds != undefined) 
+					this.controller.playSpeeds = changed.TransportPlaySpeeds;
 				if (this.controller.onchange)
 					this.controller.onchange.apply(this.controller);
 			}, cloudeebus.log);

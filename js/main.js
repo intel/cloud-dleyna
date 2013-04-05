@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
-		playButton, pauseButton, stopButton, volButton, volField, seekButton, seekField,
+		playButton, pauseButton, stopButton, volButton, volField, seekButton, seekField, speedButton, speedField, speedList,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, outLog;
 	
 	// DLNA global objects
@@ -33,6 +33,9 @@
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		searchButton = document.getElementById("searchButton");
 		searchField = document.getElementById("searchField");
+		speedButton = document.getElementById("speedButton");
+		speedField = document.getElementById("speedField");
+		speedList = document.getElementById("speedList");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
 		stopButton = document.getElementById("stopButton");
@@ -133,9 +136,19 @@
 		}
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
+			speedList.options = [];
 			// set the renderer's controller onchange method
 			remoteRenderer.controller.onchange = function() {
 				volField.value = this.volume;
+				if (speedList.options.length != this.playSpeeds.length) {
+					speedList.options = [];
+					for (var i=0; i<this.playSpeeds.length; i++) {
+						var node = document.createElement("option");
+						node.value = this.playSpeeds[i];
+						node.innerHTML = this.playSpeeds[i] + " X";
+						speedList.add(node);
+					}
+				}
 			}
 			// call it to initialize UI
 			remoteRenderer.controller.onchange.apply(remoteRenderer.controller);
