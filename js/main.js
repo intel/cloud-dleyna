@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, muteCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle,
+		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
 		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
@@ -107,6 +107,9 @@
 		uploadTo = document.getElementById("uploadTo");
 		folderTitle = document.getElementById("folderTitle");
 		itemTitle = document.getElementById("itemTitle");
+		speedButton = document.getElementById("speedButton");
+		speedField = document.getElementById("speedField");
+		speedList = document.getElementById("speedList");
 		playButton = document.getElementById("playButton");
 		pauseButton = document.getElementById("pauseButton");
 		stopButton = document.getElementById("stopButton");
@@ -210,19 +213,32 @@
 		}
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = false;
+			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = false;
+			while(speedList.options.length) 
+				speedList.options.remove(0);
 			// set the renderer's controller onchange method
 			remoteRenderer.controller.onchange = function() {
 				muteCheckBox.checked = this.muted;
 				volField.value = this.volume;
 				trackField.value = this.track;
+				speedField.value = this.speed;
+				if (speedList.options.length != this.playSpeeds.length) {
+					while(speedList.options.length) 
+						speedList.options.remove(0);
+					for (var i=0; i<this.playSpeeds.length; i++) {
+						var node = document.createElement("option");
+						node.value = this.playSpeeds[i];
+						node.innerHTML = this.playSpeeds[i] + " X";
+						speedList.add(node);
+					}
+				}
 			}
 			// call it to initialize UI
 			remoteRenderer.controller.onchange.apply(remoteRenderer.controller);
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = true;
+			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();

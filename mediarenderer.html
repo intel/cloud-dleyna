@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Renderer API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-29-march-2013">Editor Draft &mdash; 29 March 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-5-april-2013">Editor Draft &mdash; 5 April 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -155,6 +155,8 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
     readonly attribute boolean <span title="MediaController-muted">muted</span>;
     readonly attribute float <span title="MediaController-volume">volume</span>;
     readonly attribute integer <span title="MediaController-track">track</span>;
+    readonly attribute float <span title="MediaController-speed">speed</span>;
+    readonly attribute float[] <span title="MediaController-playSpeeds">playSpeeds</span>;
     optional attribute Function? <span title="MediaController-onchange">onchange</span>();
 
     void <span title="MediaController-play">play</span>();
@@ -164,6 +166,7 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
     void <span title="MediaController-previous">previous</span>();
     void <span title="MediaController-previous">mute</span>(boolean <var title="">mute</var>));
     void <span title="MediaController-setVolume">setVolume</span>(float <var title="">volume</var>);
+    void <span title="MediaController-setSpeed">setSpeed</span>(float <var title="">speed</var>);
     void <span title="MediaController-gotoTrack">gotoTrack</span>(integer <var title="">track</var>);
 };
 </pre>

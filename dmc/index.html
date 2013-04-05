@@ -70,6 +70,16 @@
 							onclick="remoteRenderer.controller.seek(seekField.value)"/>
 						<input id="seekField" type="text" value="0"
 							style="width:10%"/>
+						<input id="speedButton" type="button" value="speed X"
+							style="width:20%"
+							onclick="remoteRenderer.controller.setSpeed(speedField.value)"/>
+						<input id="speedField" type="text" value="1"
+							style="width:10%"/>
+						<select id="speedList"
+						  style="width:60%"
+						  onchange="speedField.value=this.options[this.selectedIndex].value">
+						  <option value="1" selected="selected">1 X</option>
+						</select>
 						</td>
 					</tr>
 					<tr class="singleRow">

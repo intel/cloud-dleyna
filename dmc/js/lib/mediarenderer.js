@@ -82,6 +82,8 @@ mediarenderer.MediaController = function(renderer) {
 	this.muted = renderer.proxy.Mute == undefined ? false : renderer.proxy.Mute;
 	this.volume = renderer.proxy.Volume == undefined ? 1 : Number(renderer.proxy.Volume);
 	this.track = renderer.proxy.CurrentTrack == undefined ? 1 : Number(renderer.proxy.CurrentTrack);
+	this.speed = renderer.proxy.Rate;
+	this.playSpeeds = renderer.proxy.TransportPlaySpeeds;
 	return this;
 };
 
@@ -117,7 +119,36 @@ mediarenderer.MediaController.prototype.previous = function() {
 
 
 mediarenderer.MediaController.prototype.setVolume = function(vol) {
-	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Volume", Math.max(0,Math.min(0.99,Number(vol))));
+	var argStr = String(vol);
+	if (argStr.indexOf(".") == -1)
+		argStr += ".0";
+	var proxy = this.renderer.proxy;
+	var arglist = [
+	       		proxy.busConnection.name,
+	       		proxy.busName,
+	       		proxy.objectPath,
+	       		"org.freedesktop.DBus.Properties",
+	       		"Set",
+	       		"[\"org.mpris.MediaPlayer2.Player\",\"Volume\"," + argStr + "]"
+	       	];
+	proxy.wampSession.call("dbusSend", arglist);
+};
+
+
+mediarenderer.MediaController.prototype.setSpeed = function(speed) {
+	var argStr = String(speed);
+	if (argStr.indexOf(".") == -1)
+		argStr += ".0";
+	var proxy = this.renderer.proxy;
+	var arglist = [
+	       		proxy.busConnection.name,
+	       		proxy.busName,
+	       		proxy.objectPath,
+	       		"org.freedesktop.DBus.Properties",
+	       		"Set",
+	       		"[\"org.mpris.MediaPlayer2.Player\",\"Rate\"," + argStr + "]"
+	       	];
+	proxy.wampSession.call("dbusSend", arglist);
 };
 
 
@@ -152,6 +183,10 @@ mediarenderer.MediaRenderer = function(proxy) {
 					this.controller.muted = changed.Mute;
 				if (changed.PlaybackStatus != undefined) 
 					this.controller.paused = changed.PlaybackStatus != "Playing";
+				if (changed.Rate != undefined) 
+					this.controller.speed = changed.Rate;
+				if (changed.TransportPlaySpeeds != undefined) 
+					this.controller.playSpeeds = changed.TransportPlaySpeeds;
 				if (this.controller.onchange)
 					this.controller.onchange.apply(this.controller);
 			}, cloudeebus.log);
