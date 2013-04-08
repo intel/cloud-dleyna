@@ -20,6 +20,8 @@
 	var sortMode;
 	// Selected item
 	var selectedItem;
+	// Current operation: browse / search + folder
+	var currentOp;
 
 
 
@@ -553,6 +555,7 @@
 		var findCount = 10;
 		var findOffset = 0;
 		var searchQuery = nameQuery ? ("DisplayName contains \"" + nameQuery + "\"") : "*";
+		var localOp = "Find_" + source.id + "_" + container.id + "_" + nameQuery;
 		
 		function findErrorCB(str) {
 			alert("Error searching for " + nameQuery + " in " + container.title + " : " + str);
@@ -561,11 +564,7 @@
 	    function findContainerCB(mediaObjectArray) 
 	    {
 			// exit if we started browsing another container
-			if (container.id != containerStack[containerStack.length-1].id
-				// or if we launched another search
-					|| container.id != searchButton.container.id
-					|| source.id != searchButton.source.id
-					|| nameQuery != searchField.value)
+			if (currentOp != localOp)
 				return;
 			for (var i=0; i<mediaObjectArray.length; i++) {
 				var node = null;
@@ -589,8 +588,14 @@
 						findCount, 
 						findOffset);
 			}
+			else // done
+				currentOp = "";
 	    }
 		
+		// exit if we are already doing the same thing
+		if (currentOp == localOp)
+			return;
+		currentOp = localOp;
 		clearFolderInfo();
 		source.find(container.id, 
 				findContainerCB, 
@@ -610,6 +615,7 @@
 	function browseMediaSourceContainer(source, container) {
 		var browseCount = 10;
 		var browseOffset = 0;
+		var localOp = "Browse_" + source.id + "_" + container.id;
 		
 		function browseErrorCB(str) {
 			alert("Error browsing " + container.title + " : " + str);
@@ -618,7 +624,7 @@
 	    function browseContainerCB(mediaObjectArray) 
 	    {
 			// exit if we are not browsing the current container
-			if (container.id != containerStack[containerStack.length-1].id)
+			if (currentOp != localOp)
 				return;
 			for (var i=0; i<mediaObjectArray.length; i++) {
 				var node = null;
@@ -641,12 +647,18 @@
 						browseCount, 
 						browseOffset);
 			}
+			else // done
+				currentOp = "";
 	    }
 		
 		searchButton.source = uploadButton.source = source;
 		searchButton.container = uploadButton.container = container;
 		containerStack.push(container);
 		pushContainerToFolderPath(source, container);
+		// exit if we are already doing the same thing
+		if (currentOp == localOp)
+			return;
+		currentOp = localOp;
 		clearFolderInfo();
 		source.browse(container.id, 
 				browseContainerCB, 
