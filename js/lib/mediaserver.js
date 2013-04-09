@@ -155,7 +155,8 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 	function onMediaObjectsOk(jsonArray) {
 		resultArray = resultArray.concat(jsonArray);
 		if (count) { // user wanted a partial result set, try to build it
-			if (resultArray.length >= count || jsonArray.length == 0)
+			if (resultArray.length >= count || jsonArray.length == 0 ||
+					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
 				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
 			else {
 				localOffset += jsonArray.length;
@@ -164,7 +165,8 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 			}
 		}
 		else { // user wanted everything, iterate until there's no result left
-			if (jsonArray.length == 0)
+			if (jsonArray.length == 0 ||
+					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
 				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
 			else {
 				localOffset += jsonArray.length;
@@ -189,7 +191,16 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 	var localCount = count ? count : 0;
 	var localOffset = offset ? offset : 0;
 	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
-	browseContainerProxy();
+	containerProxy.callMethod("org.freedesktop.DBus.Properties", "Get",
+		[
+			"org.gnome.UPnP.MediaContainer2", 
+			"ChildCount"
+		],
+		function (ChildCount) {
+			containerProxy.ChildCount = ChildCount;
+			browseContainerProxy();
+		},
+		errorCallback);		
 };
 
 
@@ -204,10 +215,11 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		sortStr += sortMode.attributeName;
 	}
 
-	function onMediaObjectsOk(jsonArray) {
+	function onMediaObjectsOk(jsonArray, total) {
 		resultArray = resultArray.concat(jsonArray);
 		if (count) { // user wanted a partial result set, try to build it
-			if (resultArray.length >= count || jsonArray.length == 0)
+			if (resultArray.length >= count || jsonArray.length == 0 ||
+					(total && offset + resultArray.length >= total))
 				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
 			else {
 				localOffset += jsonArray.length;
@@ -216,7 +228,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 			}
 		}
 		else { // user wanted everything, iterate until there's no result left
-			if (jsonArray.length == 0)
+			if (jsonArray.length == 0 || (total && offset + resultArray.length >= total))
 				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
 			else {
 				localOffset += jsonArray.length;
