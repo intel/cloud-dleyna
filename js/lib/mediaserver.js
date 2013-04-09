@@ -153,19 +153,43 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 	}
 
 	function onMediaObjectsOk(jsonArray) {
-		mediaserver.mediaObjectsOkCallback(jsonArray,successCallback);
+		resultArray = resultArray.concat(jsonArray);
+		if (count) { // user wanted a partial result set, try to build it
+			if (resultArray.length >= count || jsonArray.length == 0)
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				localCount -= jsonArray.length;
+				browseContainerProxy();
+			}
+		}
+		else { // user wanted everything, iterate until there's no result left
+			if (jsonArray.length == 0)
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				browseContainerProxy();
+			}
+		}
 	}
 
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
-	containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "ListChildrenEx", 
+	function browseContainerProxy() {
+		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "ListChildrenEx", 
 		[
-			offset ? offset : 0, 
-			count ? count : 0, 
+			localOffset, 
+			localCount, 
 			mediaserver.browseFilter, 
 			sortStr
 		],
 		onMediaObjectsOk,
 		errorCallback);
+	}
+
+	var resultArray = [];
+	var localCount = count ? count : 0;
+	var localOffset = offset ? offset : 0;
+	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	browseContainerProxy();
 };
 
 
@@ -181,20 +205,44 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 	}
 
 	function onMediaObjectsOk(jsonArray) {
-		mediaserver.mediaObjectsOkCallback(jsonArray,successCallback);
+		resultArray = resultArray.concat(jsonArray);
+		if (count) { // user wanted a partial result set, try to build it
+			if (resultArray.length >= count || jsonArray.length == 0)
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				localCount -= jsonArray.length;
+				searchContainerProxy();
+			}
+		}
+		else { // user wanted everything, iterate until there's no result left
+			if (jsonArray.length == 0)
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				searchContainerProxy();
+			}
+		}
 	}
 
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
-	containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "SearchObjectsEx", 
+	function searchContainerProxy() {
+		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "SearchObjectsEx", 
 		[
 			query ? query : "*",
-			offset ? offset : 0, 
-			count ? count : 0, 
+			localOffset, 
+			localCount, 
 			mediaserver.browseFilter, 
 			sortStr
 		],
 		onMediaObjectsOk,
 		errorCallback);
+	}
+
+	var resultArray = [];
+	var localCount = count ? count : 0;
+	var localOffset = offset ? offset : 0;
+	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	searchContainerProxy();
 };
 
 
