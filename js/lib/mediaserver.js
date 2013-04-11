@@ -65,7 +65,7 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 	
 	function onObjIdOk(id) {
 		var proxy = mediaserver.bus.getObject(mediaserver.busName, id);
-		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "DisplayName"],
+		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"],
 			function() {
 				mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
 			}
@@ -102,9 +102,11 @@ mediaserver.MediaServer = function(proxy) {
 		this.UPC = proxy.UDN;
 		this.presentationURL = proxy.PresentationURL;
 		this.iconURL = proxy.IconURL;
-		// proxy has a root folder if it implements MediaObject2
-		if (proxy.DisplayName) {
+		// proxy has a root folder if it implements MediaContainer2
+		if (proxy.ChildCount) {
 			this.root = new mediacontent.MediaContainer(proxy);
+			if (!this.root.title)
+			  this.root.title = this.friendlyName;
 		}
 	}
 	return this;
