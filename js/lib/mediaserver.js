@@ -130,12 +130,38 @@ mediaserver.browseFilter = [
 	"Genre"
 ];
 
+mediaserver.containerGetPropertiesDeferred = function(container) {
+	var obj = container;
+	obj.proxy.callMethod("org.freedesktop.DBus.Properties", "Get",
+		[
+			"org.gnome.UPnP.MediaContainer2", 
+			"ChildCount"
+		],
+		function (ChildCount) {
+			obj.childCount = ChildCount;
+		});
+	obj.proxy.callMethod("org.freedesktop.DBus.Properties", "Get",
+		[
+			"org.gnome.UPnP.MediaObject2", 
+			"DLNAManaged"
+		],
+		function (DLNAManaged) {
+			if (DLNAManaged.CreateContainer)
+				obj.canCreateContainer = true;
+			if (DLNAManaged.Delete)
+				obj.canDelete = true;
+			if (DLNAManaged.Upload)
+				obj.canUpload = true;
+		});
+}
 
 mediaserver.mediaObjectsOkCallback = function(jsonArray, successCallback) {
 	var objArray = [];
 	for (var i=0; i<jsonArray.length; i++) {
 		var obj = mediacontent.mediaObjectForProps(jsonArray[i]);
 		obj.proxy = mediaserver.bus.getObject(mediaserver.busName, obj.id);
+		if (obj.type == "container") 
+			mediaserver.containerGetPropertiesDeferred(obj);
 		objArray.push(obj);
 	}
 	if (successCallback)

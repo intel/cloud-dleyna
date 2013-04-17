@@ -74,17 +74,6 @@ mediacontent.MediaContainer = function(proxy) {
 	this.canCreateContainer = false;
 	this.canDelete = false;
 	this.canUpload = false;
-	if (proxy) {
-		this.childCount = proxy.ChildCount;
-		if (proxy.DLNAManaged) {
-			if (proxy.DLNAManaged.CreateContainer)
-				this.canCreateContainer = true;
-			if (proxy.DLNAManaged.Delete)
-				this.canDelete = true;
-			if (proxy.DLNAManaged.Upload)
-				this.canUpload = true;
-		}
-	}
 	return this;
 };
 
