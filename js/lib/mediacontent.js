@@ -70,6 +70,21 @@ mediacontent.MediaObject.prototype.getMetaData = function(successCallback, error
 mediacontent.MediaContainer = function(proxy) {
 	mediacontent.MediaObject.call(this,proxy);
 	this.type = "container";
+	this.childCount = 0;
+	this.canCreateContainer = false;
+	this.canDelete = false;
+	this.canUpload = false;
+	if (proxy) {
+		this.childCount = proxy.ChildCount;
+		if (proxy.DLNAManaged) {
+			if (proxy.DLNAManaged.CreateContainer)
+				this.canCreateContainer = true;
+			if (proxy.DLNAManaged.Delete)
+				this.canDelete = true;
+			if (proxy.DLNAManaged.Upload)
+				this.canUpload = true;
+		}
+	}
 	return this;
 };
 

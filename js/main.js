@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, muteCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
+		deleteButton, createFolderButton, createUnderAny, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
 		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
@@ -103,6 +103,9 @@
 		mediaSourceInfo = document.getElementById("mediaSourceInfo");
 		searchButton = document.getElementById("searchButton");
 		searchField = document.getElementById("searchField");
+		deleteButton = document.getElementById("deleteButton");
+		createFolderButton = document.getElementById("createFolderButton");
+		createUnderAny = document.getElementById("createUnderAny");
 		uploadFile = document.getElementById("uploadFile");
 		uploadTitle = document.getElementById("uploadTitle");
 		uploadButton = document.getElementById("uploadButton");
@@ -456,8 +459,21 @@
 		browseMediaSourceContainer(source, container);
 	}
 
-
-
+	
+	//
+	// Container UI capacities
+	//
+    	
+	function updateContainerCapacities() {
+		if (containerStack.length == 0)
+			return;
+		var container = containerStack[containerStack.length-1];
+		deleteButton.disabled = ! container.canDelete;
+		createFolderButton.disabled = ! (createUnderAny.checked || container.canCreateContainer);
+		uploadButton.disabled = ! (uploadTo.selectedIndex == 0 || container.canUpload);
+	}
+	
+	
 	//
 	// Delete content
 	//
@@ -508,7 +524,7 @@
 
 	
 	function createFolder(title) {
-		if (document.getElementById("createUnderAny").checked) {
+		if (createUnderAny.checked) {
 			mediaSource.createFolder(title, function() {
 				alert("Folder created by server");
 			},
@@ -655,6 +671,7 @@
 		searchButton.container = uploadButton.container = container;
 		containerStack.push(container);
 		pushContainerToFolderPath(source, container);
+		updateContainerCapacities();
 		// exit if we are already doing the same thing
 		if (currentOp == localOp)
 			return;

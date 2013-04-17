@@ -110,10 +110,10 @@
 							onchange="localRenderingCheckBoxChanged()"/>
 						Local rendering
 						<hr>
-						<input style="width:100%" type="button" value="Remove content" onclick="removeCurrentContent()">
-						<input style="width:30%" type="button" value="Create folder:" onclick="createFolder(folderTitle.value)">
+						<input style="width:100%" id="deleteButton" type="button" value="Remove content" onclick="removeCurrentContent()">
+						<input style="width:30%" id="createFolderButton" type="button" value="Create folder:" onclick="createFolder(folderTitle.value)">
 						<input style="width:30%" id="folderTitle" type="text">
-						<input style="width:10%" id="createUnderAny" type="checkbox"/>Anywhere
+						<input style="width:10%" id="createUnderAny" type="checkbox" onchange="updateContainerCapacities()"/>Anywhere
 						<input style="width:30%" type="button" value="Rename item" onclick="renameItem(itemTitle.value)">
 						<input style="width:60%" id="itemTitle" type="text">
 						</td>
@@ -124,7 +124,7 @@
 						<input id="uploadFile" type="text">
 						<input id="uploadButton" type="button" value="Upload as:" onclick="uploadLocalContent()">
 						<input id="uploadTitle" type="text">
-						<select id="uploadTo">
+						<select id="uploadTo" onchange="updateContainerCapacities()">
 							<option value="Server" selected="selected">to server</option>
 							<option value="Folder">to folder</option>
 						</select>
