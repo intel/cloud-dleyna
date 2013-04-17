@@ -74,6 +74,7 @@ mediacontent.MediaContainer = function(proxy) {
 	this.canCreateContainer = false;
 	this.canDelete = false;
 	this.canUpload = false;
+	this.canRename = false;
 	return this;
 };
 

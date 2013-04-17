@@ -152,6 +152,8 @@ mediaserver.containerGetPropertiesDeferred = function(container) {
 				obj.canDelete = true;
 			if (DLNAManaged.Upload)
 				obj.canUpload = true;
+			if (DLNAManaged.ChangeMeta)
+				obj.canRename = true;
 		});
 }
 

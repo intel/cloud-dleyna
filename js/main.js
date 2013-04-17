@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, muteCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		deleteButton, createFolderButton, createUnderAny, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
+		deleteButton, createFolderButton, createUnderAny, renameButton, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
 		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
@@ -106,6 +106,7 @@
 		deleteButton = document.getElementById("deleteButton");
 		createFolderButton = document.getElementById("createFolderButton");
 		createUnderAny = document.getElementById("createUnderAny");
+		renameButton = document.getElementById("renameButton");
 		uploadFile = document.getElementById("uploadFile");
 		uploadTitle = document.getElementById("uploadTitle");
 		uploadButton = document.getElementById("uploadButton");
@@ -469,6 +470,7 @@
 			return;
 		var container = containerStack[containerStack.length-1];
 		deleteButton.disabled = ! container.canDelete;
+		renameButton.disabled = ! container.canRename;
 		createFolderButton.disabled = ! (createUnderAny.checked || container.canCreateContainer);
 		uploadButton.disabled = ! (uploadTo.selectedIndex == 0 || container.canUpload);
 	}
