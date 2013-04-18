@@ -35,7 +35,7 @@
 <div class="head">
 	<h1>Media Renderer API Specification</h1>
 	
-	<h2 class="no-num no-toc" id="editor-draft-5-april-2013">Editor Draft &mdash; 5 April 2013</h2>
+	<h2 class="no-num no-toc" id="editor-draft-18-april-2013">Editor Draft &mdash; 18 April 2013</h2>
 	
 	<dl>
 		<dt>This version:
@@ -108,6 +108,7 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
         <a href="#mediarenderercallback">MediaRendererCallback</a> <var title="">rendererCallback</var>,
         optional Function? <var title="">errorCallback</var>) ;
     void <span title="MediaRendererManager-unsetRendererListener">unsetRendererListener</span>();
+    void <span title="MediaRendererManager-rescan">rescan</span>();
 };
 </pre>
 
@@ -132,6 +133,13 @@ interface <dfn id="mediarenderermanager">MediaRendererManager</dfn> {
     readonly attribute <a href="#mediacontroller">MediaController</a> <span title="MediaRenderer-controller">controller</span>;
 
     void <span title="MediaRenderer-openURI">openURI</span>(
+        DOMString <var title="">mediaURI</var>,
+        optional DOMString? <var title="">metaData</var>,
+        optional Function? <var title="">successCallback</var>,
+        optional Function? <var title="">errorCallback</var>
+        );
+
+    void <span title="MediaRenderer-prefetchURI">prefetchURI</span>(
         DOMString <var title="">mediaURI</var>,
         optional DOMString? <var title="">metaData</var>,
         optional Function? <var title="">successCallback</var>,

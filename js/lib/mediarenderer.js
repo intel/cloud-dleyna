@@ -46,6 +46,11 @@ mediarenderer.init = function(uri, manifest, successCB, errorCB) {
 };
 
 
+mediarenderer.rescan = function() {
+	mediarenderer.manager.Rescan();
+};
+
+
 mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	
 	var rendererFoundCB = rendererCallback.onrendererfound;
@@ -205,4 +210,8 @@ mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData, suc
 		this.proxy.OpenUriEx(mediaURI, metaData, successCallback, errorCallback);
 	else
 		this.proxy.OpenUri(mediaURI, successCallback, errorCallback);
+};
+
+mediarenderer.MediaRenderer.prototype.prefetchURI = function(mediaURI, metaData, successCallback, errorCallback) {
+	this.proxy.OpenNextUri(mediaURI, metaData, successCallback, errorCallback);
 };

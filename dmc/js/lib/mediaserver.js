@@ -48,6 +48,11 @@ mediaserver.init = function(uri, manifest, successCB, errorCB) {
 };
 
 
+mediaserver.rescan = function() {
+	mediaserver.manager.Rescan();
+};
+
+
 mediaserver.setProtocolInfo = function(protocolInfo) {
 	mediaserver.manager.SetProtocolInfo(protocolInfo);
 }
@@ -60,11 +65,16 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 	
 	function onServerOk(proxy) {
 		if (serverFoundCB)
-			serverFoundCB(new mediaserver.MediaServer(proxy));		
+			serverFoundCB(new mediaserver.MediaServer(proxy));
 	}
 	
 	function onObjIdOk(id) {
-		mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
+		var proxy = mediaserver.bus.getObject(mediaserver.busName, id);
+		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"],
+			function() {
+				mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
+			}
+		);
 	}
 	
 	function onObjIdsOk(ids) {
@@ -125,12 +135,40 @@ mediaserver.browseFilter = [
 	"Genre"
 ];
 
+mediaserver.containerGetPropertiesDeferred = function(container) {
+	var obj = container;
+	obj.proxy.callMethod("org.freedesktop.DBus.Properties", "Get",
+		[
+			"org.gnome.UPnP.MediaContainer2", 
+			"ChildCount"
+		],
+		function (ChildCount) {
+			obj.childCount = ChildCount;
+		});
+	obj.proxy.callMethod("org.freedesktop.DBus.Properties", "Get",
+		[
+			"org.gnome.UPnP.MediaObject2", 
+			"DLNAManaged"
+		],
+		function (DLNAManaged) {
+			if (DLNAManaged.CreateContainer)
+				obj.canCreateContainer = true;
+			if (DLNAManaged.Delete)
+				obj.canDelete = true;
+			if (DLNAManaged.Upload)
+				obj.canUpload = true;
+			if (DLNAManaged.ChangeMeta)
+				obj.canRename = true;
+		});
+}
 
 mediaserver.mediaObjectsOkCallback = function(jsonArray, successCallback) {
 	var objArray = [];
 	for (var i=0; i<jsonArray.length; i++) {
 		var obj = mediacontent.mediaObjectForProps(jsonArray[i]);
 		obj.proxy = mediaserver.bus.getObject(mediaserver.busName, obj.id);
+		if (obj.type == "container") 
+			mediaserver.containerGetPropertiesDeferred(obj);
 		objArray.push(obj);
 	}
 	if (successCallback)
@@ -150,19 +188,54 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 	}
 
 	function onMediaObjectsOk(jsonArray) {
-		mediaserver.mediaObjectsOkCallback(jsonArray,successCallback);
+		resultArray = resultArray.concat(jsonArray);
+		if (count) { // user wanted a partial result set, try to build it
+			if (resultArray.length >= count || jsonArray.length == 0 ||
+					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				localCount -= jsonArray.length;
+				browseContainerProxy();
+			}
+		}
+		else { // user wanted everything, iterate until there's no result left
+			if (jsonArray.length == 0 ||
+					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				browseContainerProxy();
+			}
+		}
 	}
 
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
-	containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "ListChildrenEx", 
+	function browseContainerProxy() {
+		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "ListChildrenEx", 
 		[
-			offset ? offset : 0, 
-			count ? count : 0, 
+			localOffset, 
+			localCount, 
 			mediaserver.browseFilter, 
 			sortStr
 		],
 		onMediaObjectsOk,
 		errorCallback);
+	}
+
+	var resultArray = [];
+	var localCount = count ? count : 0;
+	var localOffset = offset ? offset : 0;
+	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	containerProxy.callMethod("org.freedesktop.DBus.Properties", "Get",
+		[
+			"org.gnome.UPnP.MediaContainer2", 
+			"ChildCount"
+		],
+		function (ChildCount) {
+			containerProxy.ChildCount = ChildCount;
+			browseContainerProxy();
+		},
+		errorCallback);		
 };
 
 
@@ -177,21 +250,46 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		sortStr += sortMode.attributeName;
 	}
 
-	function onMediaObjectsOk(jsonArray) {
-		mediaserver.mediaObjectsOkCallback(jsonArray,successCallback);
+	function onMediaObjectsOk(jsonArray, total) {
+		resultArray = resultArray.concat(jsonArray);
+		if (count) { // user wanted a partial result set, try to build it
+			if (resultArray.length >= count || jsonArray.length == 0 ||
+					(total && offset + resultArray.length >= total))
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				localCount -= jsonArray.length;
+				searchContainerProxy();
+			}
+		}
+		else { // user wanted everything, iterate until there's no result left
+			if (jsonArray.length == 0 || (total && offset + resultArray.length >= total))
+				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+			else {
+				localOffset += jsonArray.length;
+				searchContainerProxy();
+			}
+		}
 	}
 
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
-	containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "SearchObjectsEx", 
+	function searchContainerProxy() {
+		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "SearchObjectsEx", 
 		[
 			query ? query : "*",
-			offset ? offset : 0, 
-			count ? count : 0, 
+			localOffset, 
+			localCount, 
 			mediaserver.browseFilter, 
 			sortStr
 		],
 		onMediaObjectsOk,
 		errorCallback);
+	}
+
+	var resultArray = [];
+	var localCount = count ? count : 0;
+	var localOffset = offset ? offset : 0;
+	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	searchContainerProxy();
 };
 
 

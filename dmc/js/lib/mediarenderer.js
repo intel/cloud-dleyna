@@ -46,6 +46,11 @@ mediarenderer.init = function(uri, manifest, successCB, errorCB) {
 };
 
 
+mediarenderer.rescan = function() {
+	mediarenderer.manager.Rescan();
+};
+
+
 mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	
 	var rendererFoundCB = rendererCallback.onrendererfound;
@@ -53,11 +58,16 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	
 	function onRendererOk(proxy) {
 		if (rendererFoundCB)
-			rendererFoundCB(new mediarenderer.MediaRenderer(proxy));		
+			rendererFoundCB(new mediarenderer.MediaRenderer(proxy));
 	}
 	
 	function onObjIdOk(id) {
-		mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk);
+		var proxy = mediarenderer.bus.getObject(mediarenderer.busName, id);
+		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.mpris.MediaPlayer2", "Identity"],
+			function() {
+				mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk);
+			}
+		);
 	}
 	
 	function onObjIdsOk(ids) {
@@ -200,4 +210,8 @@ mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData, suc
 		this.proxy.OpenUriEx(mediaURI, metaData, successCallback, errorCallback);
 	else
 		this.proxy.OpenUri(mediaURI, successCallback, errorCallback);
+};
+
+mediarenderer.MediaRenderer.prototype.prefetchURI = function(mediaURI, metaData, successCallback, errorCallback) {
+	this.proxy.OpenNextUri(mediaURI, metaData, successCallback, errorCallback);
 };
