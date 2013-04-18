@@ -211,3 +211,7 @@ mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData, suc
 	else
 		this.proxy.OpenUri(mediaURI, successCallback, errorCallback);
 };
+
+mediarenderer.MediaRenderer.prototype.prefetchURI = function(mediaURI, metaData, successCallback, errorCallback) {
+	this.proxy.OpenNextUri(mediaURI, metaData, successCallback, errorCallback);
+};

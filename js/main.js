@@ -6,7 +6,7 @@
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, muteCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
 		deleteButton, createFolderButton, createUnderAny, renameButton, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
-		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField,
+		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField, prefetchCheckBox,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
 	// DLNA global objects
@@ -127,6 +127,7 @@
 		trackField = document.getElementById("trackField");
 		seekButton = document.getElementById("seekButton");
 		seekField = document.getElementById("seekField");
+		prefetchCheckBox = document.getElementById("prefetchCheckBox");
 		sortByPopList = document.getElementById("sortByPopList");
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
@@ -219,7 +220,7 @@
 		}
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
-			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = false;
+			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = prefetchCheckBox.disabled = false;
 			while(speedList.options.length) 
 				speedList.options.remove(0);
 			// set the renderer's controller onchange method
@@ -244,7 +245,7 @@
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
-			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = true;
+			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = prefetchCheckBox.disabled = true;
 			mediaserver.setProtocolInfo(getProtocolInfo());
 		}
 		clearFolderInfo();
@@ -386,17 +387,20 @@
 			var rendererPlay = function() {
 					renderer.controller.play();
 				};
-			mediaItem.getMetaData(
-				function(metaData) {
+			var rendererOpen = function(metaData) {
+				if (prefetchCheckBox.checked) {
+					prefetchCheckBox.checked = false;
+					renderer.prefetchURI(mediaItem.content.uri, metaData,
+							null,
+							debugLog);
+				}
+				else {
 					renderer.openURI(mediaItem.content.uri, metaData,
 							rendererPlay,
 							debugLog);
-				},
-				function() {
-					renderer.openURI(mediaItem.content.uri, null,
-							rendererPlay,
-							debugLog);
-				});
+				}
+			};
+			mediaItem.getMetaData(rendererOpen,function(){rendererOpen(null);});
 			return;
 		}
 		var node = null;
