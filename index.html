@@ -74,6 +74,7 @@
 							onclick="remoteRenderer.controller.seek(seekField.value)"/>
 						<input id="seekField" type="text" value="0" disabled="disabled"
 							style="width:10%"/>
+						<hr>
 						<input id="speedButton" type="button" value="speed X" disabled="disabled"
 							style="width:20%"
 							onclick="remoteRenderer.controller.setSpeed(speedField.value)"/>
@@ -84,17 +85,22 @@
 						  onchange="speedField.value=this.options[this.selectedIndex].value">
 						  <option value="1" selected="selected">1 X</option>
 						</select>
+						<hr>
 						<input id="nextButton" type="button" value="Next" disabled="disabled"
-							style="width:24%"
+							style="width:18%"
 							onclick="nextTrack()"/>
 						<input id="previousButton" type="button" value="Previous" disabled="disabled"
-							style="width:24%"
+							style="width:18%"
 							onclick="previousTrack()"/>
 						<input id="trackButton" type="button" value="Track" disabled="disabled"
-							style="width:24%"
+							style="width:20%"
 							onclick="remoteRenderer.controller.gotoTrack(trackField.value)"/>
 						<input id="trackField" type="text" value="1" disabled="disabled"
-							style="width:20%"/>
+							style="width:10%"/>
+						<input id="nextURICheckBox" type="checkbox" disabled="disabled"
+							style="width:10%"/>
+						Next URI
+						<hr>
 						<input id="volButton" type="button" value="Volume" disabled="disabled"
 							style="width:18%"
 							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
