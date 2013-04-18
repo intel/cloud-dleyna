@@ -48,6 +48,11 @@ mediaserver.init = function(uri, manifest, successCB, errorCB) {
 };
 
 
+mediaserver.rescan = function() {
+	mediaserver.manager.Rescan();
+};
+
+
 mediaserver.setProtocolInfo = function(protocolInfo) {
 	mediaserver.manager.SetProtocolInfo(protocolInfo);
 }

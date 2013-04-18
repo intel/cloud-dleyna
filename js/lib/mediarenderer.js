@@ -46,6 +46,11 @@ mediarenderer.init = function(uri, manifest, successCB, errorCB) {
 };
 
 
+mediarenderer.rescan = function() {
+	mediarenderer.manager.Rescan();
+};
+
+
 mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	
 	var rendererFoundCB = rendererCallback.onrendererfound;
