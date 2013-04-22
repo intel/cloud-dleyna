@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, muteCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		deleteButton, createFolderButton, createUnderAny, renameButton, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
+		deleteButton, createFolderButton, createUnder, renameButton, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
 		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField, prefetchCheckBox,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
@@ -105,7 +105,7 @@
 		searchField = document.getElementById("searchField");
 		deleteButton = document.getElementById("deleteButton");
 		createFolderButton = document.getElementById("createFolderButton");
-		createUnderAny = document.getElementById("createUnderAny");
+		createUnder = document.getElementById("createUnder");
 		renameButton = document.getElementById("renameButton");
 		uploadFile = document.getElementById("uploadFile");
 		uploadTitle = document.getElementById("uploadTitle");
@@ -250,7 +250,7 @@
 		}
 		clearFolderInfo();
 		if (containerStack.length > 0)
-			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id)
+			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 	}
 	
 	function mediaRenderersListBoxChanged() {
@@ -475,7 +475,7 @@
 		var container = containerStack[containerStack.length-1];
 		deleteButton.disabled = ! container.canDelete;
 		renameButton.disabled = ! container.canRename;
-		createFolderButton.disabled = ! (createUnderAny.checked || container.canCreateContainer);
+		createFolderButton.disabled = ! (createUnder.selectedIndex == 0 || container.canCreateContainer);
 		uploadButton.disabled = ! (uploadTo.selectedIndex == 0 || container.canUpload);
 	}
 	
@@ -500,6 +500,9 @@
 		if (!confirm(msg))
 			return;
 		obj.remove(function() {
+				clearFolderInfo();
+				if (containerStack.length > 0)
+					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 				alert("Removed item");
 			}, 
 			debugLog);
@@ -530,7 +533,7 @@
 
 	
 	function createFolder(title) {
-		if (createUnderAny.checked) {
+		if (createUnder.selectedIndex == 0) {
 			mediaSource.createFolder(title, function() {
 				alert("Folder created by server");
 			},
@@ -541,6 +544,9 @@
 			return;
 		var parent = containerStack[containerStack.length-1];
 		parent.createFolder(title, function() {
+			clearFolderInfo();
+			if (containerStack.length > 0)
+				browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 			alert("Folder created under folder " + parent.title);
 		},
 		debugLog);
@@ -561,6 +567,9 @@
 			debugLog);
 		else
 			uploadButton.container.upload(uploadTitle.value, uploadFile.value, function() {
+				clearFolderInfo();
+				if (containerStack.length > 0)
+					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 				alert("File uploaded under folder " + uploadButton.container.title);
 			},
 			debugLog);

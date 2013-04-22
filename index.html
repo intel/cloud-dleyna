@@ -27,12 +27,12 @@
 		<tr style="height:10%">
 			<td style="width:20%">
 			<header>
-				<h2 onclick="mediaserver.rescan()">Servers</h2><hr>
+				<h2><input type="button" value="Servers" onclick="mediaserver.rescan()" style="min-width:50%"/></h2><hr>
 			</header>
 			</td>
 			<td style="width:30%">
 			<header>
-				<h2 onclick="mediarenderer.rescan()">Renderers</h2><hr>
+				<h2><input type="button" value="Renderers" onclick="mediarenderer.rescan()" style="min-width:50%"/></h2><hr>
 			</header>
 			</td>
 			<td style="width:50%">
@@ -119,7 +119,11 @@
 						<input style="width:100%" id="deleteButton" type="button" value="Remove content" onclick="removeCurrentContent()">
 						<input style="width:30%" id="createFolderButton" type="button" value="Create folder:" onclick="createFolder(folderTitle.value)">
 						<input style="width:30%" id="folderTitle" type="text">
-						<input style="width:10%" id="createUnderAny" type="checkbox" onchange="updateContainerCapacities()"/>Anywhere
+						<!-- input style="width:10%" id="createUnderAny" type="checkbox" onchange="updateContainerCapacities()"/>Anywhere -->
+						<select id="createUnder" onchange="updateContainerCapacities()">
+							<option value="Server" selected="selected">on server</option>
+							<option value="Folder">in folder</option>
+						</select>
 						<input style="width:30%" id="renameButton" type="button" value="Rename item" onclick="renameItem(itemTitle.value)">
 						<input style="width:60%" id="itemTitle" type="text">
 						</td>
