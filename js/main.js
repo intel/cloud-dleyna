@@ -5,7 +5,7 @@
 	
 	// HTML DOM elements
 	var mainView, localRenderingCheckBox, muteCheckBox, mediaRenderersListBox, mediaSourcesListBox, mediaSourceInfo, searchButton, searchField,
-		deleteButton, createFolderButton, createUnderAny, renameButton, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
+		deleteButton, createFolderButton, createUnder, renameButton, uploadFile, uploadTitle, uploadButton, uploadTo, folderTitle, itemTitle, speedButton, speedField, speedList,
 		playButton, pauseButton, stopButton, volButton, volField, nextButton, previousButton, trackButton, trackField, seekButton, seekField, prefetchCheckBox,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, mediaContent, outLog;
 	
@@ -105,7 +105,7 @@
 		searchField = document.getElementById("searchField");
 		deleteButton = document.getElementById("deleteButton");
 		createFolderButton = document.getElementById("createFolderButton");
-		createUnderAny = document.getElementById("createUnderAny");
+		createUnder = document.getElementById("createUnder");
 		renameButton = document.getElementById("renameButton");
 		uploadFile = document.getElementById("uploadFile");
 		uploadTitle = document.getElementById("uploadTitle");
@@ -475,7 +475,7 @@
 		var container = containerStack[containerStack.length-1];
 		deleteButton.disabled = ! container.canDelete;
 		renameButton.disabled = ! container.canRename;
-		createFolderButton.disabled = ! (createUnderAny.checked || container.canCreateContainer);
+		createFolderButton.disabled = ! (createUnder.selectedIndex == 0 || container.canCreateContainer);
 		uploadButton.disabled = ! (uploadTo.selectedIndex == 0 || container.canUpload);
 	}
 	
@@ -530,7 +530,7 @@
 
 	
 	function createFolder(title) {
-		if (createUnderAny.checked) {
+		if (createUnder.selectedIndex == 0) {
 			mediaSource.createFolder(title, function() {
 				alert("Folder created by server");
 			},
