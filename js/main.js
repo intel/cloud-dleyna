@@ -250,7 +250,7 @@
 		}
 		clearFolderInfo();
 		if (containerStack.length > 0)
-			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id)
+			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 	}
 	
 	function mediaRenderersListBoxChanged() {
@@ -500,6 +500,9 @@
 		if (!confirm(msg))
 			return;
 		obj.remove(function() {
+				clearFolderInfo();
+				if (containerStack.length > 0)
+					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 				alert("Removed item");
 			}, 
 			debugLog);
@@ -541,6 +544,9 @@
 			return;
 		var parent = containerStack[containerStack.length-1];
 		parent.createFolder(title, function() {
+			clearFolderInfo();
+			if (containerStack.length > 0)
+				browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 			alert("Folder created under folder " + parent.title);
 		},
 		debugLog);
@@ -561,6 +567,9 @@
 			debugLog);
 		else
 			uploadButton.container.upload(uploadTitle.value, uploadFile.value, function() {
+				clearFolderInfo();
+				if (containerStack.length > 0)
+					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 				alert("File uploaded under folder " + uploadButton.container.title);
 			},
 			debugLog);
