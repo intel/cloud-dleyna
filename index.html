@@ -83,19 +83,16 @@
 						</td>
 					</tr>
 					<tr class="singleRow">
-						<td style="width:100%" colspan=2>
+						<td class="content" style="width:100%" colspan=2>
 						<div id="folderPath"></div>
-						<hr>
 						</td>
 					</tr>
 					<tr class="singleRow">
-						<td id="searchBox" style="width:50%">
-						<input id="searchButton" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
-						<input id="searchField" type="text" value="">
-						</td>
-						<td style="width:50%">
+						<td style="width:100%" colspan=2>
+						<input id="searchButton" style="width:15%" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
+						<input id="searchField" style="width:25%" type="text" value="">
 							Sort by:
-							<select id="sortByPopList" onchange="setSortMode()" >
+							<select id="sortByPopList" style="width:20%" onchange="setSortMode()" >
 								<option value="DisplayName" selected="selected">Title</option>
 								<option value="Date">Date</option>
 								<option value="Size">Size</option>
@@ -104,7 +101,7 @@
 								<option value="Artist">Artist</option>
 								<option value="Genre">Genre</option>
 							</select>
-							<select id="sortDirectionPopList" onchange="setSortMode()" >
+							<select id="sortDirectionPopList" style="width:20%" onchange="setSortMode()" >
 								<option value="ASC" selected="selected">ascending</option>
 								<option value="DESC">descending</option>
 							</select>
