@@ -161,7 +161,7 @@
 		}
 		clearFolderInfo();
 		if (containerStack.length > 0)
-			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id)
+			browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
 	}
 	
 	function mediaRenderersListBoxChanged() {
@@ -282,7 +282,7 @@
 		}
 		if (!container)
 			return;
-		folderPath.innerHTML="<hr>";
+		folderPath.innerHTML="";
 		for (i=0; i<containerStack.length; i++) {
 			pushContainerToFolderPath(source, containerStack[i]);
 		}
@@ -441,7 +441,7 @@
 	    
 	function clearFolderBrowsing() {
 		containerStack = [];
-		folderPath.innerHTML="<hr>";
+		folderPath.innerHTML="";
 		clearFolderInfo();
 	}
 	

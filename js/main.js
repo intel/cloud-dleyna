@@ -457,7 +457,7 @@
 		}
 		if (!container)
 			return;
-		folderPath.innerHTML="<hr>";
+		folderPath.innerHTML="";
 		for (i=0; i<containerStack.length; i++) {
 			pushContainerToFolderPath(source, containerStack[i]);
 		}
@@ -738,7 +738,7 @@
 	    
 	function clearFolderBrowsing() {
 		containerStack = [];
-		folderPath.innerHTML="<hr>";
+		folderPath.innerHTML="";
 		clearFolderInfo();
 	}
 	
