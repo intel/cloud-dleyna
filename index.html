@@ -131,10 +131,10 @@
 					<tr class="singleRow">
 						<td id="uploadBox" style="width:100%" colspan=2>
 						<hr>
-						<input id="uploadFile" type="text">
-						<input id="uploadButton" type="button" value="Upload as:" onclick="uploadLocalContent()">
-						<input id="uploadTitle" type="text">
-						<select id="uploadTo" onchange="updateContainerCapacities()">
+						<input id="uploadFile" style="width:35%" type="text">
+						<input id="uploadButton" style="width:20%" type="button" value="Upload as:" onclick="uploadLocalContent()">
+						<input id="uploadTitle" style="width:20%" type="text">
+						<select id="uploadTo" style="width:20%" onchange="updateContainerCapacities()">
 							<option value="Server" selected="selected">to server</option>
 							<option value="Folder">to folder</option>
 						</select>
@@ -147,13 +147,11 @@
 						</td>
 					</tr>
 					<tr class="singleRow">
-						<td id="searchBox" style="width:40%">
-						<input id="searchButton" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
-						<input id="searchField" type="text" value="">
-						</td>
-						<td style="width:60%">
+						<td style="width:100%" colspan=2>
+						<input id="searchButton" style="width:15%" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
+						<input id="searchField" style="width:25%" type="text" value="">
 							Sort by:
-							<select id="sortByPopList" onchange="setSortMode()" >
+							<select id="sortByPopList" style="width:20%" onchange="setSortMode()" >
 								<option value="DisplayName" selected="selected">Title</option>
 								<option value="Date">Date</option>
 								<option value="Size">Size</option>
@@ -162,7 +160,7 @@
 								<option value="Artist">Artist</option>
 								<option value="Genre">Genre</option>
 							</select>
-							<select id="sortDirectionPopList" onchange="setSortMode()" >
+							<select id="sortDirectionPopList" style="width:20%" onchange="setSortMode()" >
 								<option value="ASC" selected="selected">ascending</option>
 								<option value="DESC">descending</option>
 							</select>
