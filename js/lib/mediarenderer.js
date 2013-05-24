@@ -75,10 +75,10 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 			onObjIdOk(ids[i]);
 	}
 	
-	mediarenderer.manager.GetServers(onObjIdsOk, errorCallback);
-	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundServer",
+	mediarenderer.manager.GetRenderers(onObjIdsOk, errorCallback);
+	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundRenderer",
 			onObjIdOk, errorCallback);
-	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostServer",
+	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostRenderer",
 			rendererLostCB, errorCallback);
 };
 
