@@ -63,7 +63,7 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	
 	function onObjIdOk(id) {
 		var proxy = mediarenderer.bus.getObject(mediarenderer.busName, id);
-		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.mpris.MediaPlayer2", "Identity"],
+		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.mpris.MediaPlayer2", "Identity"]).then(
 			function() {
 				mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk);
 			}
@@ -75,7 +75,7 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 			onObjIdOk(ids[i]);
 	}
 	
-	mediarenderer.manager.GetRenderers(onObjIdsOk, errorCallback);
+	mediarenderer.manager.GetRenderers().then(onObjIdsOk, errorCallback);
 	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundRenderer",
 			onObjIdOk, errorCallback);
 	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostRenderer",
@@ -207,11 +207,11 @@ mediarenderer.MediaRenderer = function(proxy) {
 
 mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData, successCallback, errorCallback) {
 	if (metaData)
-		this.proxy.OpenUriEx(mediaURI, metaData, successCallback, errorCallback);
+		this.proxy.OpenUriEx(mediaURI, metaData).then(successCallback, errorCallback);
 	else
-		this.proxy.OpenUri(mediaURI, successCallback, errorCallback);
+		this.proxy.OpenUri(mediaURI).then(successCallback, errorCallback);
 };
 
 mediarenderer.MediaRenderer.prototype.prefetchURI = function(mediaURI, metaData, successCallback, errorCallback) {
-	this.proxy.OpenNextUri(mediaURI, metaData, successCallback, errorCallback);
+	this.proxy.OpenNextUri(mediaURI, metaData).then(successCallback, errorCallback);
 };

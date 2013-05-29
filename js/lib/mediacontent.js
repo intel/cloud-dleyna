@@ -38,7 +38,7 @@ mediacontent.MediaObject = function(proxy) {
 mediacontent.MediaObject.prototype.remove = function(successCallback, errorCallback) {
 	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Delete",
 		[
-		],
+		]).then(
 		successCallback,
 		errorCallback);
 };
@@ -49,7 +49,7 @@ mediacontent.MediaObject.prototype.rename = function(newTitle, successCallback, 
 		[
 		 {DisplayName:newTitle},
 		 []
-		],
+		]).then(
 		successCallback,
 		errorCallback);
 };
@@ -58,7 +58,7 @@ mediacontent.MediaObject.prototype.rename = function(newTitle, successCallback, 
 mediacontent.MediaObject.prototype.getMetaData = function(successCallback, errorCallback) {
 	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "GetMetaData",
 		[
-		],
+		]).then(
 		successCallback,
 		errorCallback);
 };
@@ -87,7 +87,7 @@ mediacontent.MediaContainer.prototype.upload = function(title, path, successCall
 		[
 			title,
 			path
-		],
+		]).then(
 		successCallback,
 		errorCallback);
 };
@@ -99,7 +99,7 @@ mediacontent.MediaContainer.prototype.createFolder = function(title, successCall
 			title,
 			"container",
 			["*"],
-		],
+		]).then(
 		successCallback,
 		errorCallback);
 };
