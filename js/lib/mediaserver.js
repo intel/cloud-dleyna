@@ -70,11 +70,11 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 	
 	function onObjIdOk(id) {
 		var proxy = mediaserver.bus.getObject(mediaserver.busName, id);
-		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"],
-			function() {
+		var countCallDone = function() {
 				mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
-			}
-		);
+			};
+		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"],
+		  countCallDone, countCallDone);
 	}
 	
 	function onObjIdsOk(ids) {
