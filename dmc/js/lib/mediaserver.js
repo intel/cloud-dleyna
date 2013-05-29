@@ -70,7 +70,7 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 	
 	function onObjIdOk(id) {
 		var proxy = mediaserver.bus.getObject(mediaserver.busName, id);
-		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"],
+		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"]).then(
 			function() {
 				mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
 			}
@@ -81,7 +81,7 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 		for (var i=0; i<ids.length; i++)
 			onObjIdOk(ids[i]);
 	}
-	mediaserver.manager.GetServers(onObjIdsOk, errorCallback);
+	mediaserver.manager.GetServers().then(onObjIdsOk, errorCallback);
 	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
 			onObjIdOk, errorCallback);
 	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
@@ -141,7 +141,7 @@ mediaserver.containerGetPropertiesDeferred = function(container) {
 		[
 			"org.gnome.UPnP.MediaContainer2", 
 			"ChildCount"
-		],
+		]).then(
 		function (ChildCount) {
 			obj.childCount = ChildCount;
 		});
@@ -149,7 +149,7 @@ mediaserver.containerGetPropertiesDeferred = function(container) {
 		[
 			"org.gnome.UPnP.MediaObject2", 
 			"DLNAManaged"
-		],
+		]).then(
 		function (DLNAManaged) {
 			if (DLNAManaged.CreateContainer)
 				obj.canCreateContainer = true;
@@ -217,7 +217,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 			localCount, 
 			mediaserver.browseFilter, 
 			sortStr
-		],
+		]).then(
 		onMediaObjectsOk,
 		errorCallback);
 	}
@@ -230,7 +230,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 		[
 			"org.gnome.UPnP.MediaContainer2", 
 			"ChildCount"
-		],
+		]).then(
 		function (ChildCount) {
 			containerProxy.ChildCount = ChildCount;
 			browseContainerProxy();
@@ -280,7 +280,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 			localCount, 
 			mediaserver.browseFilter, 
 			sortStr
-		],
+		]).then(
 		onMediaObjectsOk,
 		errorCallback);
 	}
@@ -294,12 +294,12 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 
 
 mediaserver.MediaServer.prototype.upload = function(title, path, successCallback, errorCallback) {
-	this.proxy.UploadToAnyContainer(title, path, successCallback, errorCallback);
+	this.proxy.UploadToAnyContainer(title, path).then(successCallback, errorCallback);
 };
 
 
 mediaserver.MediaServer.prototype.createFolder = function(title, successCallback, errorCallback) {
-	this.proxy.CreateContainerInAnyContainer(title, "container", ["*"], successCallback, errorCallback);
+	this.proxy.CreateContainerInAnyContainer(title, "container", ["*"]).then(successCallback, errorCallback);
 };
 
 
