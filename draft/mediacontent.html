@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Media Content API Specification</title>
+  <meta charset="UTF-8">
+  <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
+          class='remove'></script>
+  <script class="remove">
+    var respecConfig = {
+          specStatus:           "unofficial",
+          shortName:            "dlna",
+          wg:            	"SSD-OTC.DLNA",
+          wgURI:		"https://github.com/01org/cloud-dleyna/wiki",
+          wgPublicList:		"none",
+          wgPatentURI:		"XXX",
+          edDraftURI:           "https://github.com/01org/cloud-dleyna/wiki",
+          editors: [
+            { name: "Luc Yriarte", company: "Intel",
+                    companyURL: "http://www.intel.com/" }
+          ]
+    };
+  </script>
+</head>
+
+<!-----------------------------------------------------------------------------
+Style guide to contributors:
+============================
+- this document uses ReSpec, see
+  http://dev.w3.org/2009/dap/ReSpec.js/documentation.html
+- use 80 characters wide lines, whenever possible (except long links)
+- keep sections 2 empty lines apart
+- put comments in front of sections, for better readability with syntax
+  coloring editors
+- use indentation with care: it may improve readability, but at the expense of
+  line lenght
+- when descriptions of attributes is short, use the <dd> elements even when
+  the text also contains conformance statements (e.g. MUST, SHOULD, MAY).
+  No use repeating the same information in a separate paragraph.
+------------------------------------------------------------------------------>
+
+<body>
+
+<!------------------------------ Abstract ------------------------------------>
+<section id="abstract">
+The Media Content API defines objects mapping the org.gnome.UPnP
+<a href="https://live.gnome.org/Rygel/MediaServer2Spec/#org.gnome.MediaObject2">MediaObject2</a> and
+<a href="https://live.gnome.org/Rygel/MediaServer2Spec/#org.gnome.MediaItem2">MediaItem2</a> interfaces
+on a subset of the <a href="http://www.w3.org/TR/gallery/#the-media-dictionary">W3C gallery draft Media Dictionary</a>
+</section>
+
+
+
+<!----------------------------- Terminology ---------------------------------->
+<section>
+  <h2>Terminology</h2>
+  <p>The <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#eventhandler"><code>
+  EventHandler</code></a></dfn> interface represents a callback used for event
+  handlers as defined in [[!HTML5]].</p>
+
+  <p>The concepts <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">
+       queue a task</a></dfn> and <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+  fire a simple event</a></dfn> are defined in [[!HTML5]].</p>
+
+  <p>The terms <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#event-handlers">
+  event handler</a></dfn>  and <dfn>
+<a href="http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+  event handler event types</a></dfn> are defined in [[!HTML5]].</p>
+  
+  <p>The <dfn><a href="http://dom.spec.whatwg.org/#event"><code>Event</code>
+  </a></dfn> interface and the <dfn>
+  <a href="http://dom.spec.whatwg.org/#promise"><code>Promise</code></a></dfn>
+  interface as well as the concept of a 
+  <a href="http://dom.spec.whatwg.org/#concept-resolver"><dfn>resolver</dfn>
+  </a>are defined in [[!DOM4]].</p>
+</section>
+
+
+
+<!------------------------ Interface MediaObject ----------------------------->
+<section>
+  <h2><a>MediaObject</a> Interface</h2>
+  <p>Generic media object.
+  </p>
+
+  <dl title="[NoInterfaceObject]
+             interface MediaObject"
+          class="idl">
+
+    <dt>readonly attribute DOMString id</dt>
+    <dd>An opaque media object ID.</dd>
+
+    <dt>readonly attribute DOMString type</dt>
+    <dd>The object type as defined by the
+<a href="https://live.gnome.org/Rygel/MediaServer2Spec/#org.gnome.MediaObject2">
+    org.gnome.UPnP.MediaObject2</a> interface.</dd>
+
+    <dt>readonly attribute DOMString title</dt>
+    <dd>User-friendly name.</dd>
+
+    <dt><a>Promise</a> remove()</dt>
+    <dd>Removes a <a>MediaObject</a> from the server. This method returns
+    a new <code>Promise</code> to notify the caller about the operation
+    success or failure.</dd>
+
+    <dt><a>Promise</a> rename(DOMString newTitle)</dt>
+    <dd>Renames a <a>MediaObject</a> on the server. This method returns
+    a new <code>Promise</code> to notify the caller about the operation
+    success or failure.</dd>
+
+    <dt><a>Promise</a> getMetaData()</dt>
+    <dd>Gets the <a>MediaObject</a> metadata info (raw DIDL-Lite XML). This
+    method returns a new <code>Promise</code> that will notify the caller with
+    the result of the operation, which is a <code>DOMString</code>.</dd>
+  </dl>
+
+</section> <!-- MediaObject -->
+
+
+
+<!------------------------ Interface MediaItem ------------------------------->
+<section>
+  <h2><a>MediaItem</a> Interface</h2>
+  <p>The media item interface provides access to properties of media items.
+  Implements parts of the 
+  <a href="http://www.w3.org/TR/gallery/#the-media-dictionary">
+  W3C gallery draft Media Dictionary</a>.
+  </p>
+
+  <dl title="[NoInterfaceObject]
+             interface MediaItem : MediaObject"
+          class="idl">
+
+    <dt>readonly attribute MediaContent content</dt>
+    <dd>A <a href="http://www.w3.org/TR/gallery/#idl-def-MediaContent">
+    MediaContent dictionary</a>. Can be a URI or a blob.</dd>
+
+    <dt>readonly attribute unsigned long? fileSize</dt>
+    <dd>The size of the media item, in bytes.</dd>
+
+    <dt>readonly attribute DOMString? collection</dt>
+    <dd>The collection name to which the media item belongs.</dd>
+
+    <dt>readonly attribute DOMString? category</dt>
+    <dd>The category that the media item belongs to.</dd>
+
+    <dt>readonly attribute DOMString? author</dt>
+    <dd>The author who created the media item.</dd>
+
+    <dt>readonly attribute Date? createdDate</dt>
+    <dd>The date when the media item was created.</dd>
+
+</section> <!-- MediaItem -->
+
+
+
+<!------------------------ Interface MediaVideo ------------------------------>
+<section>
+  <h2><a>MediaVideo</a> Interface</h2>
+  <p>The MediaVideo interface extends a basic media item object with 
+  video-specific attributes.</a>
+  </p>
+
+  <dl title="[NoInterfaceObject]
+             interface MediaVideo : MediaItem"
+          class="idl">
+
+    <dt>readonly attribute unsigned long duration</dt>
+    <dd>The video duration in seconds.</dd>
+
+    <dt>readonly attribute DOMString resolution</dt>
+    <dd>The video <a href="http://www.w3.org/TR/gallery/#widl-Media-resolution">
+    frame size</a> (e.g., width and height of 720 and 480 in px is represented
+    as 720*480+px).</dd>
+
+</section> <!-- MediaVideo -->
+
+
+
+<!------------------------ Interface MediaAudio ------------------------------>
+<section>
+  <h2><a>MediaAudio</a> Interface</h2>
+  <p>The MediaAudio interface extends a basic media item object with 
+  audio-specific attributes.</a>
+  </p>
+
+  <dl title="[NoInterfaceObject]
+             interface MediaAudio : MediaItem"
+          class="idl">
+
+    <dt>readonly attribute unsigned long? samplingRate</dt>
+    <dd>The audio samplingRate in samples per second.</dd>
+
+    <dt>readonly attribute unsigned long duration</dt>
+    <dd>The audio duration in seconds.</dd>
+
+</section> <!-- MediaAudio -->
+
+
+
+<!------------------------ Interface MediaImage ------------------------------>
+<section>
+  <h2><a>MediaImage</a> Interface</h2>
+  <p>The MediaImage interface extends a basic media item object with 
+  image-specific attributes.</a>
+  </p>
+
+  <dl title="[NoInterfaceObject]
+             interface MediaImage : MediaItem"
+          class="idl">
+
+    <dt>readonly attribute DOMString resolution</dt>
+    <dd>The image <a href="http://www.w3.org/TR/gallery/#widl-Media-resolution">
+    frame size</a> (e.g., width and height of 720 and 480 in px is represented
+    as 720*480+px).</dd>
+
+</section> <!-- MediaImage -->
+
+
+
+</body>
+</html>
+

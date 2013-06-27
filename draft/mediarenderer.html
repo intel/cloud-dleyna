@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Media Renderer API Specification</title>
+  <meta charset="UTF-8">
+  <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
+          class='remove'></script>
+  <script class="remove">
+    var respecConfig = {
+          specStatus:           "unofficial",
+          shortName:            "dlna",
+          wg:            	"SSD-OTC.DLNA",
+          wgURI:		"https://github.com/01org/cloud-dleyna/wiki",
+          wgPublicList:		"none",
+          wgPatentURI:		"XXX",
+          edDraftURI:           "https://github.com/01org/cloud-dleyna/wiki",
+          editors: [
+            { name: "Luc Yriarte", company: "Intel",
+                    companyURL: "http://www.intel.com/" }
+          ]
+    };
+  </script>
+</head>
+
+<!-----------------------------------------------------------------------------
+Style guide to contributors:
+============================
+- this document uses ReSpec, see
+  http://dev.w3.org/2009/dap/ReSpec.js/documentation.html
+- use 80 characters wide lines, whenever possible (except long links)
+- keep sections 2 empty lines apart
+- put comments in front of sections, for better readability with syntax
+  coloring editors
+- use indentation with care: it may improve readability, but at the expense of
+  line lenght
+- when descriptions of attributes is short, use the <dd> elements even when
+  the text also contains conformance statements (e.g. MUST, SHOULD, MAY).
+  No use repeating the same information in a separate paragraph.
+------------------------------------------------------------------------------>
+
+<body>
+
+<!------------------------------ Abstract ------------------------------------>
+<section id="abstract">
+<a href="http://specifications.freedesktop.org/mpris-spec/latest/">Media 
+Renderer</a> API to discover and manage media renderers on the local network.
+</section>
+
+
+
+<!----------------------------- Terminology ---------------------------------->
+<section>
+  <h2>Terminology</h2>
+  <p>The <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#eventhandler"><code>
+  EventHandler</code></a></dfn> interface represents a callback used for event
+  handlers as defined in [[!HTML5]].</p>
+
+  <p>The concepts <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">
+       queue a task</a></dfn> and <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+  fire a simple event</a></dfn> are defined in [[!HTML5]].</p>
+
+  <p>The terms <dfn>
+  <a href="http://dev.w3.org/html5/spec/webappapis.html#event-handlers">
+  event handler</a></dfn>  and <dfn>
+<a href="http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+  event handler event types</a></dfn> are defined in [[!HTML5]].</p>
+  
+  <p>The <dfn><a href="http://dom.spec.whatwg.org/#event"><code>Event</code>
+  </a></dfn> interface and the <dfn>
+  <a href="http://dom.spec.whatwg.org/#promise"><code>Promise</code></a></dfn>
+  interface as well as the concept of a 
+  <a href="http://dom.spec.whatwg.org/#concept-resolver"><dfn>resolver</dfn>
+  </a>are defined in [[!DOM4]].</p>
+</section>
+
+
+
+<!---------------------- Extended interface Navigator ------------------------>
+<section>
+  <h2>Extensions to <code>Navigator</code> object</h2>
+  <p>The <a>MediaRendererManager</a> interface is exposed on [[!HTML]]'s
+  <a href="http://www.whatwg.org/specs/web-apps/current-work/#dom-navigator">
+  <code>Navigator</code></a> object.
+  </p>
+  <dl title="partial interface Navigator" class="idl">
+    <dt>readonly attribute MediaRendererManager mediaRenderer</dt>
+    <dd>The object that exposes the default local network media renderers 
+      manager on the device.</dd>
+  </dl>
+</section>
+
+<!------------------------ Interface MediaRendererManager -------------------->
+<section>
+  <h2><a>MediaRendererManager</a> Interface</h2>
+  <p>The <a>MediaRendererManager</a> interface defines access to local network 
+    media renderers discovery functionality.
+  </p>
+  
+  <dl title="[NoInterfaceObject]
+             interface MediaRendererManager : EventTarget"
+          class="idl">
+
+    <dt>void scanNetwork()</dt>
+    <dd>Scans local network for <a>MediaRenderer</a>s.</dd>
+    
+    <dt class="no-docs"> attribute EventHandler onrendererfound</dt>
+    <dd>Event handler called when the <code><a>rendererfound</a></code>
+    event is dispatched.</dd>
+    
+    <dt class="no-docs"> attribute EventHandler onrendererlost</dt>
+    <dd>Event handler called when the <code><a>rendererlost</a></code>
+    event is dispatched.</dd>
+  </dl>
+
+  <section>
+  <h3>Event handlers</h3>
+  <p>The following are the <a>event handlers</a> (and their corresponding
+  <a>event handler types</a>) that MUST be supported as attributes by the
+  <a>MediaRendererManager</a> object.
+  <table class="simple">
+    <thead>
+      <tr>
+        <th>event handler</th>
+        <th>event name</th>
+        <th>event type</th>
+        <th>short description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong><code>onrendererfound</code></strong></td>
+        <td><code><dfn>rendererfound</dfn></code></td>
+        <td><a>MediaRendererEvent</a> with <code>renderer</code> property
+          set to the new <a>MediaRenderer</a> object.</td>
+        <td>Fired when a <a>MediaRenderer</a> appears on the 
+          local network.</td>
+      </tr>
+      <tr>
+        <td><strong><code>onrendererlost</code></strong></td>
+        <td><code><dfn>rendererlost</dfn></code></td>
+        <td><a>MediaRendererIdEvent</a> with <code>id</code> property
+          set to a DOMString with the id of the lost <a>MediaRenderer</a>.</td>
+        <td>Fired when a <a>MediaRenderer</a> disappears from the 
+          local network.</td>
+      </tr>
+    </tbody>
+  </table>
+  </section> <!-- Event handlers -->
+</section> <!-- MediaRendererManager -->      
+
+
+<!------------------------ Interface MediaRendererEvent ---------------------->
+<section>
+  <h2><a>MediaRendererEvent</a> Interface</h2>
+
+  <dl title="interface MediaRendererEvent : Event" class="idl">
+
+    <dt>readonly attribute MediaRenderer renderer</dt>
+    <dd>When getting, the user agent MUST return the <a>MediaRenderer</a>
+    that triggered the event.</dd>
+  </dl>
+
+</section><!-- MediaRendererEvent -->
+
+
+<!------------------------ Interface MediaRendererIdEvent -------------------->
+<section>
+  <h2><a>MediaRendererIdEvent</a> Interface</h2>
+
+  <dl title="interface MediaRendererIdEvent : Event" class="idl">
+
+    <dt>readonly attribute DOMString id</dt>
+    <dd>When getting, the user agent MUST return the id of the 
+    <a>MediaRenderer</a> that triggered the event.</dd>
+  </dl>
+
+</section><!-- MediaRendererIdEvent -->
+
+
+<!------------------------ Interface MediaRenderer --------------------------->
+<section>
+  <h2><a>MediaRenderer</a> Interface</h2>
+  <p>The media renderer interface.
+  </p>
+
+  <dl title="[NoInterfaceObject]
+             interface MediaRenderer"
+          class="idl">
+
+    <dt>readonly attribute DOMString id</dt>
+    <dd>An opaque unique ID.</dd>
+
+    <dt>readonly attribute DOMString? friendlyName</dt>
+    <dd>A user-friendly name for the device.</dd>
+
+    <dt>readonly attribute DOMString? manufacturer</dt>
+    <dd>A string identifying the manufacturer of the renderer.</dd>
+
+    <dt>readonly attribute DOMString? manufacturerURL</dt>
+    <dd>A URL pointing to the manufacturer's web site.</dd>
+
+    <dt>readonly attribute DOMString? modelDescription</dt>
+    <dd>A description of the renderer.</dd>
+
+    <dt>readonly attribute DOMString? modelName</dt>
+    <dd>The model name of the renderer.</dd>
+
+    <dt>readonly attribute DOMString? modelNumber</dt>
+    <dd>The renderer's version number.</dd>
+
+    <dt>readonly attribute DOMString? serialNumber</dt>
+    <dd>The renderer's serial number.</dd>
+
+    <dt>readonly attribute DOMString? UDN</dt>
+    <dd>The Unique Device Name of the renderer.</dd>
+
+    <dt>readonly attribute DOMString? presentationURL</dt>
+    <dd>The URL of the renderer's HTML management interface.</dd>
+
+    <dt>readonly attribute DOMString? iconURL</dt>
+    <dd>A URL pointing to an icon that graphically identifies the renderer</dd>
+
+    <dt>readonly attribute DOMString? deviceType</dt>
+    <dd>The UPnP type of the device.</dd>
+
+    <dt>readonly attribute DOMString? protocolInfo</dt>
+    <dd>Supported network protocols and MIME types.</dd>
+
+    <dt>readonly attribute <a>MediaController</a> controller</dt>
+    <dd>Controller associated to the current renderer.</dd>
+
+    <dt><a>Promise</a> openURI(DOMString mediaURI, DOMString? metaData)</dt>
+    <dd>Open a media item URI on the renderer.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+
+    <dt><a>Promise</a> prefetchURI(DOMString mediaURI, DOMString? metaData)</dt>
+    <dd>Pre-load a media item URI on the renderer.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+
+    <dt><a>Promise</a> cancel()</dt>
+    <dd>Cancels all requests a client has outstanding on that renderer.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+  </dl>
+
+</section> <!-- MediaRenderer -->
+
+
+<!------------------------ Interface MediaController ------------------------->
+<section>
+  <h2><a>MediaController</a> Interface</h2>
+  <p>The 
+<a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-controllers">
+    MediaController</a> interface provides APIs to control
+    a <a>MediaRenderer</a> and get notified about the renderer's status.
+  </p>
+  
+  <dl title="[NoInterfaceObject]
+             interface MediaController : EventTarget"
+          class="idl">
+
+    <dt>readonly attribute PlaybackStatus playbackStatus</dt>
+    <dd>Indicates if the renderer is currently stopped, paused or playing.</dd>
+
+    <dt>readonly attribute boolean muted</dt>
+    <dd>True if the renderer is muted.</dd>
+
+    <dt>readonly attribute float volume</dt>
+    <dd>Audio volume in the <code>[0..1]</code> range.</dd>
+
+    <dt>readonly attribute integer track</dt>
+    <dd>Current track number.</dd>
+
+    <dt>readonly attribute float speed</dt>
+    <dd>Current play speed.</dd>
+
+    <dt>readonly attribute float[] playSpeeds</dt>
+    <dd>Supported play speeds</dd>
+
+    <dt><a>Promise</a> play()</dt>
+    <dd>Plays the renderer's current media item.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> pause()</dt>
+    <dd>Pauses the media renderer.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> stop()</dt>
+    <dd>Stops the media renderer.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> next()</dt>
+    <dd>Plays the next track of the renderer's playlist.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> previous()</dt>
+    <dd>Plays the previous track of the renderer's playlist.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> mute(boolean mute)</dt>
+    <dd>Mutes the media renderer.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> setSpeed(float speed)</dt>
+    <dd>Sets the media renderer's play speed.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> setVolume(float volume)</dt>
+    <dd>Sets the media renderer audio volume.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt><a>Promise</a> gotoTrack(integer track)</dt>
+    <dd>Opens the specified track number of the renderer's playlist.
+    This method returns a new <code>Promise</code> to notify the caller 
+    about the operation success or failure.</dd>
+    
+    <dt class="no-docs"> attribute EventHandler onstatuschanged</dt>
+    <dd>Event handler called when the <code><a>statuschanged</a></code>
+    event is dispatched.</dd>
+  </dl>
+    
+  <section>
+  <h3>Event handlers</h3>
+  <p>The following are the <a>event handlers</a> (and their corresponding
+  <a>event handler types</a>) that MUST be supported as attributes by the
+  <a>mediaRenderer</a> object.
+  <table class="simple">
+    <thead>
+      <tr>
+        <th>event handler</th>
+        <th>event name</th>
+        <th>event type</th>
+        <th>short description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong><code>onstatuschanged</code></strong></td>
+        <td><code><dfn>statuschanged</dfn></code></td>
+        <td><a>MediaControllerStatusEvent</a> with the changed controller 
+          attributes and their corresponding new values.</td>
+        <td>Fired when a <code>MediaController</code> attribute value changes. 
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </section> <!-- Event handlers -->
+</section> <!-- MediaController -->      
+
+
+<!------------------------ Interface MediaControllerStatusEvent -------------->
+<section>
+  <h2><a>MediaControllerStatusEvent</a> Interface</h2>
+
+  <dl title="interface MediaControllerStatusEvent : Event" class="idl">
+
+    <dt>readonly attribute PlaybackStatus? playbackStatus</dt>
+    <dd>Indicates the playback status changed.</dd>
+
+    <dt>readonly attribute boolean? muted</dt>
+    <dd>Changes on mute / unmute.</dd>
+
+    <dt>readonly attribute float? volume</dt>
+    <dd>Audio volume changed.</dd>
+
+    <dt>readonly attribute integer? track</dt>
+    <dd>Track changed.</dd>
+
+    <dt>readonly attribute float? speed</dt>
+    <dd>Current play speed changed.</dd>
+
+  </dl>
+
+</section><!-- MediaControllerStatusEvent -->
+
+
+<!------------------------ Interface Enumerations ---------------------------->
+<section>
+  <h2>Enumerations</h2>
+  
+  <p>The attribute <code>playbackStatus</code> can have the following values:
+  <dl class="idl" title="enum PlaybackStatus">
+    <dt>playing</dt>
+    <dd>
+      A track is currently playing.
+    </dd>
+    <dt>paused</dt>
+    <dd>
+      A track is currently paused.
+    </dd>
+    <dt>stopped</dt>
+    <dd>
+      There is no track currently playing.
+    </dd>
+  </dl>
+</section> <!-- Enumerations -->
+
+
+</body>
+</html>
+
