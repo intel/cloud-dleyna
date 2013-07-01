@@ -400,7 +400,7 @@
 							debugLog);
 				}
 			};
-			mediaItem.getMetaData(rendererOpen,function(){rendererOpen(null);});
+			mediaItem.getMetaData().then(rendererOpen,function(){rendererOpen(null);});
 			return;
 		}
 		var node = null;
@@ -499,7 +499,7 @@
 			return;
 		if (!confirm(msg))
 			return;
-		obj.remove(function() {
+		obj.remove().then(function() {
 				clearFolderInfo();
 				if (containerStack.length > 0)
 					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
@@ -518,7 +518,7 @@
 	function renameItem(newTitle) {
 		if (selectedItem) {
 			obj = selectedItem.mediaItem;
-			obj.rename(newTitle, function() {
+			obj.rename(newTitle).then(function() {
 					selectedItem.innerHTML = obj.title = obj.proxy.DisplayName = newTitle;
 				}, 
 				debugLog);

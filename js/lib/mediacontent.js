@@ -35,32 +35,22 @@ mediacontent.MediaObject = function(proxy) {
 };
 
 
-mediacontent.MediaObject.prototype.remove = function(successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Delete",
-		[
-		]).then(
-		successCallback,
-		errorCallback);
+mediacontent.MediaObject.prototype.remove = function() {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Delete", []);
 };
 
 
-mediacontent.MediaObject.prototype.rename = function(newTitle, successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Update",
+mediacontent.MediaObject.prototype.rename = function(newTitle) {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Update",
 		[
 		 {DisplayName:newTitle},
 		 []
-		]).then(
-		successCallback,
-		errorCallback);
+		]);
 };
 
 
-mediacontent.MediaObject.prototype.getMetaData = function(successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "GetMetaData",
-		[
-		]).then(
-		successCallback,
-		errorCallback);
+mediacontent.MediaObject.prototype.getMetaData = function() {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "GetMetaData", []);
 };
 
 
