@@ -777,8 +777,8 @@
 
 	function initRenderers() {
 		mediarenderer.reset();
-		mediarenderer.bus = mediaserver.bus;
-		mediarenderer.uri = mediaserver.uri;
+		mediarenderer.bus = mediaserver._bus;
+		mediarenderer.uri = mediaserver._uri;
 		mediarenderer.manager = mediarenderer.bus.getObject(
 				mediarenderer.busName, 
 				"/com/intel/dLeynaRenderer", 
@@ -802,8 +802,8 @@
 			}
 		}
 		var cloudeebusURI = "ws://" + cloudeebusHost + ":" + cloudeebusPort;
-		mediaserver.init(cloudeebusURI, 
-				manifest,
+		mediaserver._init(cloudeebusURI, 
+				manifest).then(
 				initRenderers,
 				debugLog);
 	};

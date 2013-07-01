@@ -20,41 +20,49 @@
 
 var mediaserver = window.mediaserver = {};
 
-mediaserver.reset = function() {
-	mediaserver.busName = "com.intel.dleyna-server";
-	mediaserver.bus = null;
-	mediaserver.uri = null;
-	mediaserver.manager = null;
+mediaserver._reset = function() {
+	mediaserver._busName = "com.intel.dleyna-server";
+	mediaserver._bus = null;
+	mediaserver._uri = null;
+	mediaserver._manager = null;
 };
 
 
-mediaserver.init = function(uri, manifest, successCB, errorCB) {
-	mediaserver.reset();
+mediaserver._init = function(uri, manifest) {
+	mediaserver._reset();
+		
+	var promise = new cloudeebus.Promise(function (resolver) {
+		function onManagerOk(proxy) {
+			// Use LAN addresses in case there is a remote renderer
+			proxy.PreferLocalAddresses(false);
+			resolver.fulfill();
+		}
+		
+		function onConnectOk() {
+			mediaserver._bus = cloudeebus.SessionBus();
+			mediaserver._uri = uri;
+			mediaserver._manager = mediaserver._bus.getObject(mediaserver._busName, "/com/intel/dLeynaServer", onManagerOk, onerror);
+		}
+		
+		function onerror(error) {
+			cloudeebus.log("MediaServer init error: " + error);
+			resolver.reject(error, true);			
+		}
+		
+		cloudeebus.connect(uri, manifest, onConnectOk, onerror);
+	});
 	
-	function onManagerOk(proxy) {
-		// Use LAN addresses in case there is a remote renderer
-		proxy.PreferLocalAddresses(false);
-		if (successCB)
-			successCB();		
-	}
-	
-	function onConnectOk() {
-		mediaserver.bus = cloudeebus.SessionBus();
-		mediaserver.uri = uri;
-		mediaserver.manager = mediaserver.bus.getObject(mediaserver.busName, "/com/intel/dLeynaServer", onManagerOk);
-	}
-	
-	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
+	return promise;
 };
 
 
 mediaserver.rescan = function() {
-	mediaserver.manager.Rescan();
+	mediaserver._manager.Rescan();
 };
 
 
 mediaserver.setProtocolInfo = function(protocolInfo) {
-	mediaserver.manager.SetProtocolInfo(protocolInfo);
+	mediaserver._manager.SetProtocolInfo(protocolInfo);
 }
 
 
@@ -69,9 +77,9 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 	}
 	
 	function onObjIdOk(id) {
-		var proxy = mediaserver.bus.getObject(mediaserver.busName, id);
+		var proxy = mediaserver._bus.getObject(mediaserver._busName, id);
 		var countCallDone = function() {
-				mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
+				mediaserver._bus.getObject(mediaserver._busName, id, onServerOk);
 			};
 		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"]).then(
 		  countCallDone, countCallDone);
@@ -81,10 +89,10 @@ mediaserver.setServerListener = function(serverCallback, errorCallback) {
 		for (var i=0; i<ids.length; i++)
 			onObjIdOk(ids[i]);
 	}
-	mediaserver.manager.GetServers().then(onObjIdsOk, errorCallback);
-	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
+	mediaserver._manager.GetServers().then(onObjIdsOk, errorCallback);
+	mediaserver._manager.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
 			onObjIdOk, errorCallback);
-	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
+	mediaserver._manager.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
 			serverLostCB, errorCallback);
 };
 
@@ -166,7 +174,7 @@ mediaserver.mediaObjectsOkCallback = function(jsonArray, successCallback) {
 	var objArray = [];
 	for (var i=0; i<jsonArray.length; i++) {
 		var obj = mediacontent.mediaObjectForProps(jsonArray[i]);
-		obj.proxy = mediaserver.bus.getObject(mediaserver.busName, obj.id);
+		obj.proxy = mediaserver._bus.getObject(mediaserver._busName, obj.id);
 		if (obj.type == "container") 
 			mediaserver.containerGetPropertiesDeferred(obj);
 		objArray.push(obj);
@@ -225,7 +233,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 	var resultArray = [];
 	var localCount = count ? count : 0;
 	var localOffset = offset ? offset : 0;
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	var containerProxy = mediaserver._bus.getObject(mediaserver._busName, id);
 	containerProxy.callMethod("org.freedesktop.DBus.Properties", "Get",
 		[
 			"org.gnome.UPnP.MediaContainer2", 
@@ -288,7 +296,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 	var resultArray = [];
 	var localCount = count ? count : 0;
 	var localOffset = offset ? offset : 0;
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	var containerProxy = mediaserver._bus.getObject(mediaserver._busName, id);
 	searchContainerProxy();
 };
 
