@@ -124,10 +124,7 @@ mediacontent.MediaVideo = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
 	if (proxy) {
 		this.duration = proxy.Duration;
-		this.resolution = {
-			width: proxy.Width,
-			height: proxy.Height
-		};
+		this.resolution = proxy.Width + "*" + proxy.Height + "+px";
 	}
 	return this;
 };
@@ -158,10 +155,7 @@ mediacontent.MediaAudio.prototype.constructor = mediacontent.MediaAudio;
 mediacontent.MediaImage = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
 	if (proxy) {
-		this.resolution = {
-			width: proxy.Width,
-			height: proxy.Height
-		};
+		this.resolution = proxy.Width + "*" + proxy.Height + "+px";
 	}
 	return this;
 };
