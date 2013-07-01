@@ -72,26 +72,22 @@ mediacontent.MediaContainer.prototype = new mediacontent.MediaObject();
 mediacontent.MediaContainer.prototype.constructor = mediacontent.MediaContainer;
 
 
-mediacontent.MediaContainer.prototype.upload = function(title, path, successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "Upload",
+mediacontent.MediaContainer.prototype.upload = function(title, path) {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "Upload",
 		[
 			title,
 			path
-		]).then(
-		successCallback,
-		errorCallback);
+		]);
 };
 
 
-mediacontent.MediaContainer.prototype.createFolder = function(title, successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "CreateContainer",
+mediacontent.MediaContainer.prototype.createFolder = function(title) {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "CreateContainer",
 		[
 			title,
 			"container",
 			["*"],
-		]).then(
-		successCallback,
-		errorCallback);
+		]);
 };
 
 

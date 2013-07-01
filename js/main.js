@@ -545,7 +545,7 @@
 		if (containerStack.length == 0)
 			return;
 		var parent = containerStack[containerStack.length-1];
-		parent.createFolder(title, function() {
+		parent.createFolder(title).then(function() {
 			clearFolderInfo();
 			if (containerStack.length > 0)
 				browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
@@ -568,7 +568,7 @@
 			},
 			debugLog);
 		else
-			uploadButton.container.upload(uploadTitle.value, uploadFile.value, function() {
+			uploadButton.container.upload(uploadTitle.value, uploadFile.value).then(function() {
 				clearFolderInfo();
 				if (containerStack.length > 0)
 					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
