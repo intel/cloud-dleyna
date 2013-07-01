@@ -28,21 +28,29 @@ mediarenderer._reset = function() {
 };
 
 
-mediarenderer._init = function(uri, manifest, successCB, errorCB) {
+mediarenderer._init = function(uri, manifest) {
 	mediarenderer._reset();
 	
-	function onManagerOk() {
-		if (successCB)
-			successCB();		
-	}
+	var promise = new cloudeebus.Promise(function (resolver) {
+		function onManagerOk() {
+			resolver.fulfill();
+		}
+		
+		function onConnectOk() {
+			mediarenderer._bus = cloudeebus.SessionBus();
+			mediarenderer._uri = uri;
+			mediarenderer._manager = mediarenderer._bus.getObject(mediarenderer._busName, "/com/intel/dLeynaRenderer", onManagerOk, onerror);
+		}
+		
+		function onerror(error) {
+			cloudeebus.log("MediaRenderer init error: " + error);
+			resolver.reject(error, true);			
+		}
+		
+		cloudeebus.connect(uri, manifest, onConnectOk, onerror);
+	});
 	
-	function onConnectOk() {
-		mediarenderer._bus = cloudeebus.SessionBus();
-		mediarenderer._uri = uri;
-		mediarenderer._manager = mediarenderer._bus.getObject(mediarenderer._busName, "/com/intel/dLeynaRenderer", onManagerOk);
-	}
-	
-	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
+	return promise;
 };
 
 
