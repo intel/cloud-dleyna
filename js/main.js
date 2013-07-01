@@ -776,11 +776,11 @@
 	//
 
 	function initRenderers() {
-		mediarenderer.reset();
-		mediarenderer.bus = mediaserver._bus;
-		mediarenderer.uri = mediaserver._uri;
-		mediarenderer.manager = mediarenderer.bus.getObject(
-				mediarenderer.busName, 
+		mediarenderer._reset();
+		mediarenderer._bus = mediaserver._bus;
+		mediarenderer._uri = mediaserver._uri;
+		mediarenderer._manager = mediarenderer._bus.getObject(
+				mediarenderer._busName, 
 				"/com/intel/dLeynaRenderer", 
 				initPage);
 	}

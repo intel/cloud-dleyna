@@ -20,16 +20,16 @@
 
 var mediarenderer = window.mediarenderer = {};
 
-mediarenderer.reset = function() {
-	mediarenderer.busName = "com.intel.dleyna-renderer";
-	mediarenderer.bus = null;
-	mediarenderer.uri = null;
-	mediarenderer.manager = null;
+mediarenderer._reset = function() {
+	mediarenderer._busName = "com.intel.dleyna-renderer";
+	mediarenderer._bus = null;
+	mediarenderer._uri = null;
+	mediarenderer._manager = null;
 };
 
 
-mediarenderer.init = function(uri, manifest, successCB, errorCB) {
-	mediarenderer.reset();
+mediarenderer._init = function(uri, manifest, successCB, errorCB) {
+	mediarenderer._reset();
 	
 	function onManagerOk() {
 		if (successCB)
@@ -37,9 +37,9 @@ mediarenderer.init = function(uri, manifest, successCB, errorCB) {
 	}
 	
 	function onConnectOk() {
-		mediarenderer.bus = cloudeebus.SessionBus();
-		mediarenderer.uri = uri;
-		mediarenderer.manager = mediarenderer.bus.getObject(mediarenderer.busName, "/com/intel/dLeynaRenderer", onManagerOk);
+		mediarenderer._bus = cloudeebus.SessionBus();
+		mediarenderer._uri = uri;
+		mediarenderer._manager = mediarenderer._bus.getObject(mediarenderer._busName, "/com/intel/dLeynaRenderer", onManagerOk);
 	}
 	
 	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
@@ -47,7 +47,7 @@ mediarenderer.init = function(uri, manifest, successCB, errorCB) {
 
 
 mediarenderer.rescan = function() {
-	mediarenderer.manager.Rescan();
+	mediarenderer._manager.Rescan();
 };
 
 
@@ -62,10 +62,10 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 	}
 	
 	function onObjIdOk(id) {
-		var proxy = mediarenderer.bus.getObject(mediarenderer.busName, id);
+		var proxy = mediarenderer._bus.getObject(mediarenderer._busName, id);
 		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.mpris.MediaPlayer2", "Identity"]).then(
 			function() {
-				mediarenderer.bus.getObject(mediarenderer.busName, id, onRendererOk);
+				mediarenderer._bus.getObject(mediarenderer._busName, id, onRendererOk);
 			}
 		);
 	}
@@ -75,10 +75,10 @@ mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
 			onObjIdOk(ids[i]);
 	}
 	
-	mediarenderer.manager.GetRenderers().then(onObjIdsOk, errorCallback);
-	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundRenderer",
+	mediarenderer._manager.GetRenderers().then(onObjIdsOk, errorCallback);
+	mediarenderer._manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundRenderer",
 			onObjIdOk, errorCallback);
-	mediarenderer.manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostRenderer",
+	mediarenderer._manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostRenderer",
 			rendererLostCB, errorCallback);
 };
 
