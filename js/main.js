@@ -141,8 +141,6 @@
 		containerStack = [];
 		// in default DMP mode, only require browser-supported media types
 		mediaserver.setProtocolInfo(getProtocolInfo());
-		// find DMS on the local network
-		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById});
 		// find DMR on the local network
 		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById});
 	}
@@ -802,6 +800,12 @@
 			}
 		}
 		var cloudeebusURI = "ws://" + cloudeebusHost + ":" + cloudeebusPort;
+		mediaserver.onserverfound = function(e) {
+			addMediaSource(e.server);
+		};
+		mediaserver.onserverlost = function(e) {
+			removeMediaSourceById(e.id);
+		};
 		mediaserver._init(cloudeebusURI, 
 				manifest).then(
 				initRenderers,

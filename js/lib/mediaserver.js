@@ -32,9 +32,16 @@ mediaserver._init = function(uri, manifest) {
 	mediaserver._reset();
 		
 	var promise = new cloudeebus.Promise(function (resolver) {
+		
 		function onManagerOk(proxy) {
 			// Use LAN addresses in case there is a remote renderer
 			proxy.PreferLocalAddresses(false);
+			// Register mediaserver._manager proxy for found / lost servers
+			proxy.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
+					mediaserver._foundServerId, onerror);
+			proxy.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
+					mediaserver._lostServerId, onerror);
+			// promise fulfilled
 			resolver.fulfill();
 		}
 		
@@ -52,49 +59,59 @@ mediaserver._init = function(uri, manifest) {
 		cloudeebus.connect(uri, manifest, onConnectOk, onerror);
 	});
 	
-	return promise;
+	// First network scan for media servers once initialization done
+	return promise.then(mediaserver.scanNetwork, onerror);
 };
 
 
-mediaserver.rescan = function() {
+mediaserver._serverProxyIntrospected = function(proxy) {
+	if (mediaserver.onserverfound)
+		mediaserver.onserverfound.call(mediaserver, {
+				type: "serverfound",
+				server: new mediaserver.MediaServer(proxy)
+			});
+}
+
+
+mediaserver._foundServerId = function(id) {
+	var proxy = mediaserver._bus.getObject(mediaserver._busName, id);
+	// <appeasement - UPnP & DLNA certification tools>
+	var countCallDone = function() {
+			mediaserver._bus.getObject(mediaserver._busName, id, mediaserver._serverProxyIntrospected);
+		};
+	proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"]).then(
+	  countCallDone, countCallDone);
+	// </appeasement>
+}
+
+
+mediaserver._lostServerId = function(id) {
+	if (mediaserver.onserverlost)
+		mediaserver.onserverlost.call(mediaserver, {
+				type: "serverlost",
+				id: id
+			});
+}
+
+
+mediaserver.scanNetwork = function() {
+	function onObjIdsOk(ids) {
+		for (var i=0; i<ids.length; i++)
+			mediaserver._foundServerId(ids[i]);
+	}
+	
+	function onerror(error) {
+		cloudeebus.log("MediaServer scanNetwork error: " + error);
+	}
+	
+	mediaserver._manager.GetServers().then(onObjIdsOk, onerror);
 	mediaserver._manager.Rescan();
 };
 
 
 mediaserver.setProtocolInfo = function(protocolInfo) {
-	mediaserver._manager.SetProtocolInfo(protocolInfo);
+	return mediaserver._manager.SetProtocolInfo(protocolInfo);
 }
-
-
-mediaserver.setServerListener = function(serverCallback, errorCallback) {
-	
-	var serverFoundCB = serverCallback.onserverfound;
-	var serverLostCB = serverCallback.onserverlost;
-	
-	function onServerOk(proxy) {
-		if (serverFoundCB)
-			serverFoundCB(new mediaserver.MediaServer(proxy));
-	}
-	
-	function onObjIdOk(id) {
-		var proxy = mediaserver._bus.getObject(mediaserver._busName, id);
-		var countCallDone = function() {
-				mediaserver._bus.getObject(mediaserver._busName, id, onServerOk);
-			};
-		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"]).then(
-		  countCallDone, countCallDone);
-	}
-	
-	function onObjIdsOk(ids) {
-		for (var i=0; i<ids.length; i++)
-			onObjIdOk(ids[i]);
-	}
-	mediaserver._manager.GetServers().then(onObjIdsOk, errorCallback);
-	mediaserver._manager.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
-			onObjIdOk, errorCallback);
-	mediaserver._manager.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
-			serverLostCB, errorCallback);
-};
 
 
 
