@@ -160,7 +160,7 @@ mediaserver.browseFilter = [
 	"Genre"
 ];
 
-mediaserver.containerGetPropertiesDeferred = function(container) {
+mediaserver._containerGetPropertiesDeferred = function(container) {
 	var obj = container;
 	obj.proxy.callMethod("org.freedesktop.DBus.Properties", "Get",
 		[
@@ -187,22 +187,22 @@ mediaserver.containerGetPropertiesDeferred = function(container) {
 		});
 }
 
-mediaserver.mediaObjectsOkCallback = function(jsonArray, successCallback) {
+mediaserver._mediaObjectsOkCallback = function(jsonArray, resolver) {
 	var objArray = [];
 	for (var i=0; i<jsonArray.length; i++) {
 		var obj = mediacontent.mediaObjectForProps(jsonArray[i]);
 		obj.proxy = mediaserver._bus.getObject(mediaserver._busName, obj.id);
 		if (obj.type == "container") 
-			mediaserver.containerGetPropertiesDeferred(obj);
+			mediaserver._containerGetPropertiesDeferred(obj);
 		objArray.push(obj);
 	}
-	if (successCallback)
-		successCallback(objArray);
+	resolver.fulfill(objArray);
 };
 
 
-mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCallback, sortMode, count, offset) {
+mediaserver.MediaServer.prototype.browse = function(id, sortMode, count, offset) {
 
+  var promise = new cloudeebus.Promise(function (resolver) {
 	var sortStr = "";
 	if (sortMode) {
 		if (sortMode.order == "ASC")
@@ -217,7 +217,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 		if (count) { // user wanted a partial result set, try to build it
 			if (resultArray.length >= count || jsonArray.length == 0 ||
 					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				localCount -= jsonArray.length;
@@ -227,7 +227,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 		else { // user wanted everything, iterate until there's no result left
 			if (jsonArray.length == 0 ||
 					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				browseContainerProxy();
@@ -235,6 +235,11 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 		}
 	}
 
+	function onerror(error) {
+		cloudeebus.log("MediaServer browse error: " + error);
+		resolver.reject(error, true);			
+	}
+	
 	function browseContainerProxy() {
 		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "ListChildrenEx", 
 		[
@@ -244,7 +249,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 			sortStr
 		]).then(
 		onMediaObjectsOk,
-		errorCallback);
+		onerror);
 	}
 
 	var resultArray = [];
@@ -260,12 +265,16 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 			containerProxy.ChildCount = ChildCount;
 			browseContainerProxy();
 		},
-		errorCallback);		
+		onerror);		
+  });
+  
+  return promise;
 };
 
 
-mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCallback, query, sortMode, count, offset) {
+mediaserver.MediaServer.prototype.find = function(id, query, sortMode, count, offset) {
 
+  var promise = new cloudeebus.Promise(function (resolver) {
 	var sortStr = "";
 	if (sortMode) {
 		if (sortMode.order == "ASC")
@@ -280,7 +289,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		if (count) { // user wanted a partial result set, try to build it
 			if (resultArray.length >= count || jsonArray.length == 0 ||
 					(total && offset + resultArray.length >= total))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				localCount -= jsonArray.length;
@@ -289,7 +298,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		}
 		else { // user wanted everything, iterate until there's no result left
 			if (jsonArray.length == 0 || (total && offset + resultArray.length >= total))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				searchContainerProxy();
@@ -297,6 +306,11 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		}
 	}
 
+	function onerror(error) {
+		cloudeebus.log("MediaServer search error: " + error);
+		resolver.reject(error, true);			
+	}
+	
 	function searchContainerProxy() {
 		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "SearchObjectsEx", 
 		[
@@ -307,7 +321,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 			sortStr
 		]).then(
 		onMediaObjectsOk,
-		errorCallback);
+		onerror);
 	}
 
 	var resultArray = [];
@@ -315,6 +329,9 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 	var localOffset = offset ? offset : 0;
 	var containerProxy = mediaserver._bus.getObject(mediaserver._busName, id);
 	searchContainerProxy();
+  });
+  
+  return promise;
 };
 
 

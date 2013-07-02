@@ -612,12 +612,10 @@
 			if (mediaObjectArray.length == findCount) {
 				findOffset += findCount;
 				source.find(container.id, 
-						findContainerCB, 
-						findErrorCB,  /* errorCallback */
 						searchQuery, /* search query */
 						sortMode,  /* sortMode */
 						findCount, 
-						findOffset);
+						findOffset).then(findContainerCB, findErrorCB);
 			}
 			else // done
 				currentOp = "";
@@ -629,12 +627,10 @@
 		currentOp = localOp;
 		clearFolderInfo();
 		source.find(container.id, 
-				findContainerCB, 
-				findErrorCB, /* errorCallback */
 				searchQuery, /* search query */
 				sortMode, /* sortMode */
 				findCount, 
-				findOffset);
+				findOffset).then(findContainerCB, findErrorCB);
 	}
 
 
@@ -672,11 +668,9 @@
 			if (mediaObjectArray.length == browseCount) {
 				browseOffset += browseCount;
 				source.browse(container.id, 
-						browseContainerCB, 
-						browseErrorCB,  /* errorCallback */
 						sortMode,  /* sortMode */
 						browseCount, 
-						browseOffset);
+						browseOffset).then(browseContainerCB, browseErrorCB);
 			}
 			else // done
 				currentOp = "";
@@ -693,11 +687,9 @@
 		currentOp = localOp;
 		clearFolderInfo();
 		source.browse(container.id, 
-				browseContainerCB, 
-				browseErrorCB, /* errorCallback */
 				sortMode, /* sortMode */
 				browseCount, 
-				browseOffset);
+				browseOffset).then(browseContainerCB, browseErrorCB);
 	}
 
 
