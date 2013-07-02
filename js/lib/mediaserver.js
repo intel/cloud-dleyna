@@ -318,13 +318,13 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 };
 
 
-mediaserver.MediaServer.prototype.upload = function(title, path, successCallback, errorCallback) {
-	this.proxy.UploadToAnyContainer(title, path).then(successCallback, errorCallback);
+mediaserver.MediaServer.prototype.upload = function(title, path) {
+	return this.proxy.UploadToAnyContainer(title, path);
 };
 
 
-mediaserver.MediaServer.prototype.createFolder = function(title, successCallback, errorCallback) {
-	this.proxy.CreateContainerInAnyContainer(title, "container", ["*"]).then(successCallback, errorCallback);
+mediaserver.MediaServer.prototype.createFolder = function(title) {
+	return this.proxy.CreateContainerInAnyContainer(title, "container", ["*"]);
 };
 
 

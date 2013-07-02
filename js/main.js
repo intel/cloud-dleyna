@@ -534,7 +534,7 @@
 	
 	function createFolder(title) {
 		if (createUnder.selectedIndex == 0) {
-			mediaSource.createFolder(title, function() {
+			mediaSource.createFolder(title).then(function() {
 				alert("Folder created by server");
 			},
 			debugLog);
@@ -561,7 +561,7 @@
 	
 	function uploadLocalContent() {
 		if (uploadTo.selectedIndex == 0)
-			uploadButton.source.upload(uploadTitle.value, uploadFile.value, function() {
+			uploadButton.source.upload(uploadTitle.value, uploadFile.value).then(function() {
 				alert("File uploaded on server");
 			},
 			debugLog);
