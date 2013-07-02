@@ -227,20 +227,19 @@ mediarenderer.MediaRenderer = function(proxy) {
 		proxy.controller = this.controller;
 		proxy.connectToSignal("org.freedesktop.DBus.Properties","PropertiesChanged", 
 			function(iface, changed, invalidated) {
+				var e = {type: "statuschanged"};
 				if (changed.CurrentTrack != undefined)
-					this.controller.track = changed.CurrentTrack;
+					this.controller.track = e.track = changed.CurrentTrack;
 				if (changed.Volume != undefined)
-					this.controller.volume = changed.Volume;
+					this.controller.volume = e.volume = changed.Volume;
 				if (changed.Mute != undefined)
-					this.controller.muted = changed.Mute;
+					this.controller.muted = e.muted = changed.Mute;
 				if (changed.PlaybackStatus != undefined) 
-					this.controller.playbackStatus = changed.PlaybackStatus.toLowerCase();
+					this.controller.playbackStatus = e.playbackStatus = changed.PlaybackStatus.toLowerCase();
 				if (changed.Rate != undefined) 
-					this.controller.speed = changed.Rate;
-				if (changed.TransportPlaySpeeds != undefined) 
-					this.controller.playSpeeds = changed.TransportPlaySpeeds;
-				if (this.controller.onchange)
-					this.controller.onchange.apply(this.controller);
+					this.controller.speed = e.speed = changed.Rate;
+				if (this.controller.onstatuschanged)
+					this.controller.onstatuschanged.call(this.controller, e);
 			}, cloudeebus.log);
 	}
 	return this;

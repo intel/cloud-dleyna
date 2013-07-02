@@ -213,7 +213,7 @@
 
 	function setRemoteRenderer(renderer) {
 		if (remoteRenderer) {
-			remoteRenderer.controller.onchange = null;
+			remoteRenderer.controller.onstatuschanged = null;
 			remoteRenderer.controller.stop();
 		}
 		remoteRenderer = renderer;
@@ -221,8 +221,8 @@
 			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = prefetchCheckBox.disabled = false;
 			while(speedList.options.length) 
 				speedList.options.remove(0);
-			// set the renderer's controller onchange method
-			remoteRenderer.controller.onchange = function() {
+			// set the renderer's controller onstatuschanged method
+			remoteRenderer.controller.onstatuschanged = function() {
 				muteCheckBox.checked = this.muted;
 				volField.value = this.volume;
 				trackField.value = this.track;
@@ -239,7 +239,7 @@
 				}
 			}
 			// call it to initialize UI
-			remoteRenderer.controller.onchange.apply(remoteRenderer.controller);
+			remoteRenderer.controller.onstatuschanged.apply(remoteRenderer.controller);
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
