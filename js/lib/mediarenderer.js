@@ -121,40 +121,41 @@ mediarenderer.MediaController = function(renderer) {
 
 
 mediarenderer.MediaController.prototype.mute = function(mute) {
-	this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Mute", mute);
+	return this.renderer.proxy.Set("org.mpris.MediaPlayer2.Player", "Mute", mute);
 };
 
 
 mediarenderer.MediaController.prototype.play = function() {
-	this.renderer.proxy.Play();
+	return this.renderer.proxy.Play();
 };
 
 
 mediarenderer.MediaController.prototype.pause = function() {
-	this.renderer.proxy.Pause();
+	return this.renderer.proxy.Pause();
 };
 
 
 mediarenderer.MediaController.prototype.stop = function() {
-	this.renderer.proxy.Stop();
+	return this.renderer.proxy.Stop();
 };
 
 
 mediarenderer.MediaController.prototype.next = function() {
-	this.renderer.proxy.Next();
+	return this.renderer.proxy.Next();
 };
 
 
 mediarenderer.MediaController.prototype.previous = function() {
-	this.renderer.proxy.Previous();
+	return this.renderer.proxy.Previous();
 };
 
 
 mediarenderer.MediaController.prototype.setVolume = function(vol) {
+  var proxy = this.renderer.proxy;
+  var promise = new cloudeebus.Promise(function (resolver) {
 	var argStr = String(vol);
 	if (argStr.indexOf(".") == -1)
 		argStr += ".0";
-	var proxy = this.renderer.proxy;
 	var arglist = [
 	       		proxy.busConnection.name,
 	       		proxy.busName,
@@ -163,15 +164,25 @@ mediarenderer.MediaController.prototype.setVolume = function(vol) {
 	       		"Set",
 	       		"[\"org.mpris.MediaPlayer2.Player\",\"Volume\"," + argStr + "]"
 	       	];
-	proxy.wampSession.call("dbusSend", arglist);
+	proxy.wampSession.call("dbusSend", arglist).then(
+			function() {
+				resolver.fulfill();
+			},
+			function() {
+				resolver.reject();
+			});
+  });
+  
+  return promise;
 };
 
 
 mediarenderer.MediaController.prototype.setSpeed = function(speed) {
+  var proxy = this.renderer.proxy;
+  var promise = new cloudeebus.Promise(function (resolver) {
 	var argStr = String(speed);
 	if (argStr.indexOf(".") == -1)
 		argStr += ".0";
-	var proxy = this.renderer.proxy;
 	var arglist = [
 	       		proxy.busConnection.name,
 	       		proxy.busName,
@@ -180,17 +191,26 @@ mediarenderer.MediaController.prototype.setSpeed = function(speed) {
 	       		"Set",
 	       		"[\"org.mpris.MediaPlayer2.Player\",\"Rate\"," + argStr + "]"
 	       	];
-	proxy.wampSession.call("dbusSend", arglist);
+	proxy.wampSession.call("dbusSend", arglist).then(
+			function() {
+				resolver.fulfill();
+			},
+			function() {
+				resolver.reject();
+			});
+  });
+  
+  return promise;
 };
 
 
 mediarenderer.MediaController.prototype.gotoTrack = function(track) {
-	this.renderer.proxy.GotoTrack(Number(track));
+	return this.renderer.proxy.GotoTrack(Number(track));
 };
 
 
 mediarenderer.MediaController.prototype.seek = function(secOffset) {
-	this.renderer.proxy.Seek(Number(secOffset) * 1000000);
+	return this.renderer.proxy.Seek(Number(secOffset) * 1000000);
 };
 
 
