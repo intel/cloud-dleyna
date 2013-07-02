@@ -141,10 +141,8 @@
 		containerStack = [];
 		// in default DMP mode, only require browser-supported media types
 		mediaserver.setProtocolInfo(getProtocolInfo());
-		// find DMS on the local network
-		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById});
-		// find DMR on the local network
-		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById});
+		// Media Renderer manual init, scan network now
+		mediarenderer.scanNetwork();
 	}
 
 	
@@ -215,7 +213,7 @@
 
 	function setRemoteRenderer(renderer) {
 		if (remoteRenderer) {
-			remoteRenderer.controller.onchange = null;
+			remoteRenderer.controller.onstatuschanged = null;
 			remoteRenderer.controller.stop();
 		}
 		remoteRenderer = renderer;
@@ -223,8 +221,8 @@
 			speedButton.disabled = speedField.disabled = speedList.disabled = playButton.disabled = pauseButton.disabled = stopButton.disabled = volButton.disabled = volField.disabled = nextButton.disabled = previousButton.disabled = trackButton.disabled = trackField.disabled = seekButton.disabled = seekField.disabled = muteCheckBox.disabled = prefetchCheckBox.disabled = false;
 			while(speedList.options.length) 
 				speedList.options.remove(0);
-			// set the renderer's controller onchange method
-			remoteRenderer.controller.onchange = function() {
+			// set the renderer's controller onstatuschanged method
+			remoteRenderer.controller.onstatuschanged = function() {
 				muteCheckBox.checked = this.muted;
 				volField.value = this.volume;
 				trackField.value = this.track;
@@ -241,7 +239,7 @@
 				}
 			}
 			// call it to initialize UI
-			remoteRenderer.controller.onchange.apply(remoteRenderer.controller);
+			remoteRenderer.controller.onstatuschanged.apply(remoteRenderer.controller);
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		else {
@@ -364,12 +362,14 @@
 
 	function fitItemNodeInClientView(item, node, view) {
 		// align largest item dimension on view, keep proportions 
-		var ratio,xratio,yratio;
-		xratio = view.clientWidth / item.resolution.width;
-		yratio = view.clientHeight / item.resolution.height;
+		var ratio,xratio,yratio,width,height,match;
+		match = item.resolution.match(/[0-9]+/g);
+		width = match[0]; height = match[1];
+		xratio = view.clientWidth / width;
+		yratio = view.clientHeight / height;
 		ratio = xratio < yratio ? xratio : yratio;
-		node.width = item.resolution.width * ratio;
-		node.height = item.resolution.height * ratio;
+		node.width = width * ratio;
+		node.height = height * ratio;
 		return node;
 	}
 	
@@ -400,7 +400,7 @@
 							debugLog);
 				}
 			};
-			mediaItem.getMetaData(rendererOpen,function(){rendererOpen(null);});
+			mediaItem.getMetaData().then(rendererOpen,function(){rendererOpen(null);});
 			return;
 		}
 		var node = null;
@@ -499,7 +499,7 @@
 			return;
 		if (!confirm(msg))
 			return;
-		obj.remove(function() {
+		obj.remove().then(function() {
 				clearFolderInfo();
 				if (containerStack.length > 0)
 					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
@@ -518,7 +518,7 @@
 	function renameItem(newTitle) {
 		if (selectedItem) {
 			obj = selectedItem.mediaItem;
-			obj.rename(newTitle, function() {
+			obj.rename(newTitle).then(function() {
 					selectedItem.innerHTML = obj.title = obj.proxy.DisplayName = newTitle;
 				}, 
 				debugLog);
@@ -534,7 +534,7 @@
 	
 	function createFolder(title) {
 		if (createUnder.selectedIndex == 0) {
-			mediaSource.createFolder(title, function() {
+			mediaSource.createFolder(title).then(function() {
 				alert("Folder created by server");
 			},
 			debugLog);
@@ -543,7 +543,7 @@
 		if (containerStack.length == 0)
 			return;
 		var parent = containerStack[containerStack.length-1];
-		parent.createFolder(title, function() {
+		parent.createFolder(title).then(function() {
 			clearFolderInfo();
 			if (containerStack.length > 0)
 				browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
@@ -561,12 +561,12 @@
 	
 	function uploadLocalContent() {
 		if (uploadTo.selectedIndex == 0)
-			uploadButton.source.upload(uploadTitle.value, uploadFile.value, function() {
+			uploadButton.source.upload(uploadTitle.value, uploadFile.value).then(function() {
 				alert("File uploaded on server");
 			},
 			debugLog);
 		else
-			uploadButton.container.upload(uploadTitle.value, uploadFile.value, function() {
+			uploadButton.container.upload(uploadTitle.value, uploadFile.value).then(function() {
 				clearFolderInfo();
 				if (containerStack.length > 0)
 					browseContainerInStack(mediaSource, containerStack[containerStack.length-1].id);
@@ -612,12 +612,10 @@
 			if (mediaObjectArray.length == findCount) {
 				findOffset += findCount;
 				source.find(container.id, 
-						findContainerCB, 
-						findErrorCB,  /* errorCallback */
 						searchQuery, /* search query */
 						sortMode,  /* sortMode */
 						findCount, 
-						findOffset);
+						findOffset).then(findContainerCB, findErrorCB);
 			}
 			else // done
 				currentOp = "";
@@ -629,12 +627,10 @@
 		currentOp = localOp;
 		clearFolderInfo();
 		source.find(container.id, 
-				findContainerCB, 
-				findErrorCB, /* errorCallback */
 				searchQuery, /* search query */
 				sortMode, /* sortMode */
 				findCount, 
-				findOffset);
+				findOffset).then(findContainerCB, findErrorCB);
 	}
 
 
@@ -672,11 +668,9 @@
 			if (mediaObjectArray.length == browseCount) {
 				browseOffset += browseCount;
 				source.browse(container.id, 
-						browseContainerCB, 
-						browseErrorCB,  /* errorCallback */
 						sortMode,  /* sortMode */
 						browseCount, 
-						browseOffset);
+						browseOffset).then(browseContainerCB, browseErrorCB);
 			}
 			else // done
 				currentOp = "";
@@ -693,11 +687,9 @@
 		currentOp = localOp;
 		clearFolderInfo();
 		source.browse(container.id, 
-				browseContainerCB, 
-				browseErrorCB, /* errorCallback */
 				sortMode, /* sortMode */
 				browseCount, 
-				browseOffset);
+				browseOffset).then(browseContainerCB, browseErrorCB);
 	}
 
 
@@ -774,11 +766,17 @@
 	//
 
 	function initRenderers() {
-		mediarenderer.reset();
-		mediarenderer.bus = mediaserver.bus;
-		mediarenderer.uri = mediaserver.uri;
-		mediarenderer.manager = mediarenderer.bus.getObject(
-				mediarenderer.busName, 
+		mediarenderer._reset();
+		mediarenderer.onrendererfound = function(e) {
+			addMediaRenderer(e.renderer);
+		};
+		mediarenderer.onrendererlost = function(e) {
+			removeMediaRendererById(e.id);
+		};
+		mediarenderer._bus = mediaserver._bus;
+		mediarenderer._uri = mediaserver._uri;
+		mediarenderer._manager = mediarenderer._bus.getObject(
+				mediarenderer._busName, 
 				"/com/intel/dLeynaRenderer", 
 				initPage);
 	}
@@ -800,8 +798,14 @@
 			}
 		}
 		var cloudeebusURI = "ws://" + cloudeebusHost + ":" + cloudeebusPort;
-		mediaserver.init(cloudeebusURI, 
-				manifest,
+		mediaserver.onserverfound = function(e) {
+			addMediaSource(e.server);
+		};
+		mediaserver.onserverlost = function(e) {
+			removeMediaSourceById(e.id);
+		};
+		mediaserver._init(cloudeebusURI, 
+				manifest).then(
 				initRenderers,
 				debugLog);
 	};

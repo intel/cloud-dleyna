@@ -20,73 +20,98 @@
 
 var mediaserver = window.mediaserver = {};
 
-mediaserver.reset = function() {
-	mediaserver.busName = "com.intel.dleyna-server";
-	mediaserver.bus = null;
-	mediaserver.uri = null;
-	mediaserver.manager = null;
+mediaserver._reset = function() {
+	mediaserver._busName = "com.intel.dleyna-server";
+	mediaserver._bus = null;
+	mediaserver._uri = null;
+	mediaserver._manager = null;
 };
 
 
-mediaserver.init = function(uri, manifest, successCB, errorCB) {
-	mediaserver.reset();
+mediaserver._init = function(uri, manifest) {
+	mediaserver._reset();
+		
+	var promise = new cloudeebus.Promise(function (resolver) {
+		
+		function onManagerOk(proxy) {
+			// Use LAN addresses in case there is a remote renderer
+			proxy.PreferLocalAddresses(false);
+			// Register mediaserver._manager proxy for found / lost servers
+			proxy.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
+					mediaserver._foundServerId, onerror);
+			proxy.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
+					mediaserver._lostServerId, onerror);
+			// promise fulfilled
+			resolver.fulfill();
+		}
+		
+		function onConnectOk() {
+			mediaserver._bus = cloudeebus.SessionBus();
+			mediaserver._uri = uri;
+			mediaserver._manager = mediaserver._bus.getObject(mediaserver._busName, "/com/intel/dLeynaServer", onManagerOk, onerror);
+		}
+		
+		function onerror(error) {
+			cloudeebus.log("MediaServer init error: " + error);
+			resolver.reject(error, true);			
+		}
+		
+		cloudeebus.connect(uri, manifest, onConnectOk, onerror);
+	});
 	
-	function onManagerOk(proxy) {
-		// Use LAN addresses in case there is a remote renderer
-		proxy.PreferLocalAddresses(false);
-		if (successCB)
-			successCB();		
-	}
-	
-	function onConnectOk() {
-		mediaserver.bus = cloudeebus.SessionBus();
-		mediaserver.uri = uri;
-		mediaserver.manager = mediaserver.bus.getObject(mediaserver.busName, "/com/intel/dLeynaServer", onManagerOk);
-	}
-	
-	cloudeebus.connect(uri, manifest, onConnectOk, errorCB);
+	// First network scan for media servers once initialization done
+	return promise.then(mediaserver.scanNetwork, onerror);
 };
 
 
-mediaserver.rescan = function() {
-	mediaserver.manager.Rescan();
+mediaserver._serverProxyIntrospected = function(proxy) {
+	if (mediaserver.onserverfound)
+		mediaserver.onserverfound.call(mediaserver, {
+				type: "serverfound",
+				server: new mediaserver.MediaServer(proxy)
+			});
+}
+
+
+mediaserver._foundServerId = function(id) {
+	var proxy = mediaserver._bus.getObject(mediaserver._busName, id);
+	// <appeasement - UPnP & DLNA certification tools>
+	var countCallDone = function() {
+			mediaserver._bus.getObject(mediaserver._busName, id, mediaserver._serverProxyIntrospected);
+		};
+	proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"]).then(
+	  countCallDone, countCallDone);
+	// </appeasement>
+}
+
+
+mediaserver._lostServerId = function(id) {
+	if (mediaserver.onserverlost)
+		mediaserver.onserverlost.call(mediaserver, {
+				type: "serverlost",
+				id: id
+			});
+}
+
+
+mediaserver.scanNetwork = function() {
+	function onObjIdsOk(ids) {
+		for (var i=0; i<ids.length; i++)
+			mediaserver._foundServerId(ids[i]);
+	}
+	
+	function onerror(error) {
+		cloudeebus.log("MediaServer scanNetwork error: " + error);
+	}
+	
+	mediaserver._manager.GetServers().then(onObjIdsOk, onerror);
+	mediaserver._manager.Rescan();
 };
 
 
 mediaserver.setProtocolInfo = function(protocolInfo) {
-	mediaserver.manager.SetProtocolInfo(protocolInfo);
+	return mediaserver._manager.SetProtocolInfo(protocolInfo);
 }
-
-
-mediaserver.setServerListener = function(serverCallback, errorCallback) {
-	
-	var serverFoundCB = serverCallback.onserverfound;
-	var serverLostCB = serverCallback.onserverlost;
-	
-	function onServerOk(proxy) {
-		if (serverFoundCB)
-			serverFoundCB(new mediaserver.MediaServer(proxy));
-	}
-	
-	function onObjIdOk(id) {
-		var proxy = mediaserver.bus.getObject(mediaserver.busName, id);
-		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.gnome.UPnP.MediaObject2", "ChildCount"]).then(
-			function() {
-				mediaserver.bus.getObject(mediaserver.busName, id, onServerOk);
-			}
-		);
-	}
-	
-	function onObjIdsOk(ids) {
-		for (var i=0; i<ids.length; i++)
-			onObjIdOk(ids[i]);
-	}
-	mediaserver.manager.GetServers().then(onObjIdsOk, errorCallback);
-	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "FoundServer",
-			onObjIdOk, errorCallback);
-	mediaserver.manager.connectToSignal("com.intel.dLeynaServer.Manager", "LostServer",
-			serverLostCB, errorCallback);
-};
 
 
 
@@ -135,7 +160,7 @@ mediaserver.browseFilter = [
 	"Genre"
 ];
 
-mediaserver.containerGetPropertiesDeferred = function(container) {
+mediaserver._containerGetPropertiesDeferred = function(container) {
 	var obj = container;
 	obj.proxy.callMethod("org.freedesktop.DBus.Properties", "Get",
 		[
@@ -162,22 +187,22 @@ mediaserver.containerGetPropertiesDeferred = function(container) {
 		});
 }
 
-mediaserver.mediaObjectsOkCallback = function(jsonArray, successCallback) {
+mediaserver._mediaObjectsOkCallback = function(jsonArray, resolver) {
 	var objArray = [];
 	for (var i=0; i<jsonArray.length; i++) {
 		var obj = mediacontent.mediaObjectForProps(jsonArray[i]);
-		obj.proxy = mediaserver.bus.getObject(mediaserver.busName, obj.id);
+		obj.proxy = mediaserver._bus.getObject(mediaserver._busName, obj.id);
 		if (obj.type == "container") 
-			mediaserver.containerGetPropertiesDeferred(obj);
+			mediaserver._containerGetPropertiesDeferred(obj);
 		objArray.push(obj);
 	}
-	if (successCallback)
-		successCallback(objArray);
+	resolver.fulfill(objArray);
 };
 
 
-mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCallback, sortMode, count, offset) {
+mediaserver.MediaServer.prototype.browse = function(id, sortMode, count, offset) {
 
+  var promise = new cloudeebus.Promise(function (resolver) {
 	var sortStr = "";
 	if (sortMode) {
 		if (sortMode.order == "ASC")
@@ -192,7 +217,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 		if (count) { // user wanted a partial result set, try to build it
 			if (resultArray.length >= count || jsonArray.length == 0 ||
 					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				localCount -= jsonArray.length;
@@ -202,7 +227,7 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 		else { // user wanted everything, iterate until there's no result left
 			if (jsonArray.length == 0 ||
 					(containerProxy.ChildCount && offset + resultArray.length >= containerProxy.ChildCount))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				browseContainerProxy();
@@ -210,6 +235,11 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 		}
 	}
 
+	function onerror(error) {
+		cloudeebus.log("MediaServer browse error: " + error);
+		resolver.reject(error, true);			
+	}
+	
 	function browseContainerProxy() {
 		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "ListChildrenEx", 
 		[
@@ -219,13 +249,13 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 			sortStr
 		]).then(
 		onMediaObjectsOk,
-		errorCallback);
+		onerror);
 	}
 
 	var resultArray = [];
 	var localCount = count ? count : 0;
 	var localOffset = offset ? offset : 0;
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	var containerProxy = mediaserver._bus.getObject(mediaserver._busName, id);
 	containerProxy.callMethod("org.freedesktop.DBus.Properties", "Get",
 		[
 			"org.gnome.UPnP.MediaContainer2", 
@@ -235,12 +265,16 @@ mediaserver.MediaServer.prototype.browse = function(id, successCallback, errorCa
 			containerProxy.ChildCount = ChildCount;
 			browseContainerProxy();
 		},
-		errorCallback);		
+		onerror);		
+  });
+  
+  return promise;
 };
 
 
-mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCallback, query, sortMode, count, offset) {
+mediaserver.MediaServer.prototype.find = function(id, query, sortMode, count, offset) {
 
+  var promise = new cloudeebus.Promise(function (resolver) {
 	var sortStr = "";
 	if (sortMode) {
 		if (sortMode.order == "ASC")
@@ -255,7 +289,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		if (count) { // user wanted a partial result set, try to build it
 			if (resultArray.length >= count || jsonArray.length == 0 ||
 					(total && offset + resultArray.length >= total))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				localCount -= jsonArray.length;
@@ -264,7 +298,7 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		}
 		else { // user wanted everything, iterate until there's no result left
 			if (jsonArray.length == 0 || (total && offset + resultArray.length >= total))
-				mediaserver.mediaObjectsOkCallback(resultArray,successCallback);
+				mediaserver._mediaObjectsOkCallback(resultArray, resolver);
 			else {
 				localOffset += jsonArray.length;
 				searchContainerProxy();
@@ -272,6 +306,11 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 		}
 	}
 
+	function onerror(error) {
+		cloudeebus.log("MediaServer search error: " + error);
+		resolver.reject(error, true);			
+	}
+	
 	function searchContainerProxy() {
 		containerProxy.callMethod("org.gnome.UPnP.MediaContainer2", "SearchObjectsEx", 
 		[
@@ -282,24 +321,27 @@ mediaserver.MediaServer.prototype.find = function(id, successCallback, errorCall
 			sortStr
 		]).then(
 		onMediaObjectsOk,
-		errorCallback);
+		onerror);
 	}
 
 	var resultArray = [];
 	var localCount = count ? count : 0;
 	var localOffset = offset ? offset : 0;
-	var containerProxy = mediaserver.bus.getObject(mediaserver.busName, id);
+	var containerProxy = mediaserver._bus.getObject(mediaserver._busName, id);
 	searchContainerProxy();
+  });
+  
+  return promise;
 };
 
 
-mediaserver.MediaServer.prototype.upload = function(title, path, successCallback, errorCallback) {
-	this.proxy.UploadToAnyContainer(title, path).then(successCallback, errorCallback);
+mediaserver.MediaServer.prototype.upload = function(title, path) {
+	return this.proxy.UploadToAnyContainer(title, path);
 };
 
 
-mediaserver.MediaServer.prototype.createFolder = function(title, successCallback, errorCallback) {
-	this.proxy.CreateContainerInAnyContainer(title, "container", ["*"]).then(successCallback, errorCallback);
+mediaserver.MediaServer.prototype.createFolder = function(title) {
+	return this.proxy.CreateContainerInAnyContainer(title, "container", ["*"]);
 };
 
 
