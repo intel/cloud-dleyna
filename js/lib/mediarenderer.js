@@ -32,7 +32,13 @@ mediarenderer._init = function(uri, manifest) {
 	mediarenderer._reset();
 	
 	var promise = new cloudeebus.Promise(function (resolver) {
-		function onManagerOk() {
+		function onManagerOk(proxy) {
+			// Register mediarenderer._manager proxy for found / lost renderers
+			proxy.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundRenderer",
+					mediarenderer._foundRendererId, onerror);
+			proxy.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostRenderer",
+					mediarenderer._lostRendererId, onerror);
+			// promise fulfilled
 			resolver.fulfill();
 		}
 		
@@ -50,44 +56,52 @@ mediarenderer._init = function(uri, manifest) {
 		cloudeebus.connect(uri, manifest, onConnectOk, onerror);
 	});
 	
-	return promise;
+	// First network scan for media renderers once initialization done
+	return promise.then(mediarenderer.scanNetwork, onerror);
 };
 
 
-mediarenderer.rescan = function() {
-	mediarenderer._manager.Rescan();
-};
+mediarenderer._rendererProxyIntrospected = function(proxy) {
+	if (mediarenderer.onrendererfound)
+		mediarenderer.onrendererfound.call(mediarenderer, {
+				type: "rendererfound",
+				renderer: new mediarenderer.MediaRenderer(proxy)
+			});
+}
 
 
-mediarenderer.setRendererListener = function(rendererCallback, errorCallback) {
-	
-	var rendererFoundCB = rendererCallback.onrendererfound;
-	var rendererLostCB = rendererCallback.onrendererlost;
-	
-	function onRendererOk(proxy) {
-		if (rendererFoundCB)
-			rendererFoundCB(new mediarenderer.MediaRenderer(proxy));
-	}
-	
-	function onObjIdOk(id) {
-		var proxy = mediarenderer._bus.getObject(mediarenderer._busName, id);
-		proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.mpris.MediaPlayer2", "Identity"]).then(
+mediarenderer._foundRendererId = function(id) {
+	var proxy = mediarenderer._bus.getObject(mediarenderer._busName, id);
+	// <appeasement - UPnP & DLNA certification tools>
+	proxy.callMethod("org.freedesktop.DBus.Properties", "Get", ["org.mpris.MediaPlayer2", "Identity"]).then(
 			function() {
-				mediarenderer._bus.getObject(mediarenderer._busName, id, onRendererOk);
-			}
-		);
-	}
-	
+				mediarenderer._bus.getObject(mediarenderer._busName, id, mediarenderer._rendererProxyIntrospected);
+			});
+	// </appeasement>
+}
+
+
+mediarenderer._lostRendererId = function(id) {
+	if (mediarenderer.onrendererlost)
+		mediarenderer.onrendererlost.call(mediarenderer, {
+				type: "rendererlost",
+				id: id
+			});
+}
+
+
+mediarenderer.scanNetwork = function() {
 	function onObjIdsOk(ids) {
 		for (var i=0; i<ids.length; i++)
-			onObjIdOk(ids[i]);
+			mediarenderer._foundRendererId(ids[i]);
 	}
 	
-	mediarenderer._manager.GetRenderers().then(onObjIdsOk, errorCallback);
-	mediarenderer._manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "FoundRenderer",
-			onObjIdOk, errorCallback);
-	mediarenderer._manager.connectToSignal("com.intel.dLeynaRenderer.Manager", "LostRenderer",
-			rendererLostCB, errorCallback);
+	function onerror(error) {
+		cloudeebus.log("MediaRenderer scanNetwork error: " + error);
+	}
+	
+	mediarenderer._manager.GetRenderers().then(onObjIdsOk, onerror);
+	mediarenderer._manager.Rescan();
 };
 
 

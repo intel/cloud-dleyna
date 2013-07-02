@@ -141,8 +141,8 @@
 		containerStack = [];
 		// in default DMP mode, only require browser-supported media types
 		mediaserver.setProtocolInfo(getProtocolInfo());
-		// find DMR on the local network
-		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById});
+		// Media Renderer manual init, scan network now
+		mediarenderer.scanNetwork();
 	}
 
 	
@@ -775,6 +775,12 @@
 
 	function initRenderers() {
 		mediarenderer._reset();
+		mediarenderer.onrendererfound = function(e) {
+			addMediaRenderer(e.renderer);
+		};
+		mediarenderer.onrendererlost = function(e) {
+			removeMediaRendererById(e.id);
+		};
 		mediarenderer._bus = mediaserver._bus;
 		mediarenderer._uri = mediaserver._uri;
 		mediarenderer._manager = mediarenderer._bus.getObject(
