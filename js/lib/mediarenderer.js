@@ -110,7 +110,7 @@ mediarenderer.scanNetwork = function() {
 
 mediarenderer.MediaController = function(renderer) {
 	this.renderer = renderer;
-	this.paused = true;
+	this.playbackStatus = renderer.proxy.PlaybackStatus == undefined ? "stopped" : renderer.proxy.PlaybackStatus.toLowerCase();
 	this.muted = renderer.proxy.Mute == undefined ? false : renderer.proxy.Mute;
 	this.volume = renderer.proxy.Volume == undefined ? 1 : Number(renderer.proxy.Volume);
 	this.track = renderer.proxy.CurrentTrack == undefined ? 1 : Number(renderer.proxy.CurrentTrack);
@@ -234,7 +234,7 @@ mediarenderer.MediaRenderer = function(proxy) {
 				if (changed.Mute != undefined)
 					this.controller.muted = changed.Mute;
 				if (changed.PlaybackStatus != undefined) 
-					this.controller.paused = changed.PlaybackStatus != "Playing";
+					this.controller.playbackStatus = changed.PlaybackStatus.toLowerCase();
 				if (changed.Rate != undefined) 
 					this.controller.speed = changed.Rate;
 				if (changed.TransportPlaySpeeds != undefined) 
