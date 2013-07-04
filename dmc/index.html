@@ -18,16 +18,16 @@
 
 <body>
 
-	<table id="mainView" style="width:100%;height:95%;min-height:480px">
+	<table id="mainView" style="width:95%;margin-left:auto;margin-right:auto;height:95%;min-height:480px">
 		<tr style="height:10%">
 			<td style="width:50%">
 			<header>
-				<h2><input type="button" value="Servers" onclick="mediaserver.rescan()" style="min-width:50%"/></h2><hr>
+				<h2><input type="button" value="Servers" onclick="mediaserver.scanNetwork()" style="min-width:50%"/></h2><hr>
 			</header>
 			</td>
 			<td style="width:50%">
 			<header>
-				<h2><input type="button" value="Renderers" onclick="mediarenderer.rescan()" style="min-width:50%"/></h2><hr>
+				<h2><input type="button" value="Renderers" onclick="mediarenderer.scanNetwork()" style="min-width:50%"/></h2><hr>
 			</header>
 			</td>
 		</tr>

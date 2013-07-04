@@ -35,32 +35,22 @@ mediacontent.MediaObject = function(proxy) {
 };
 
 
-mediacontent.MediaObject.prototype.remove = function(successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Delete",
-		[
-		]).then(
-		successCallback,
-		errorCallback);
+mediacontent.MediaObject.prototype.remove = function() {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Delete", []);
 };
 
 
-mediacontent.MediaObject.prototype.rename = function(newTitle, successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Update",
+mediacontent.MediaObject.prototype.rename = function(newTitle) {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "Update",
 		[
 		 {DisplayName:newTitle},
 		 []
-		]).then(
-		successCallback,
-		errorCallback);
+		]);
 };
 
 
-mediacontent.MediaObject.prototype.getMetaData = function(successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "GetMetaData",
-		[
-		]).then(
-		successCallback,
-		errorCallback);
+mediacontent.MediaObject.prototype.getMetaData = function() {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaObject2", "GetMetaData", []);
 };
 
 
@@ -82,26 +72,22 @@ mediacontent.MediaContainer.prototype = new mediacontent.MediaObject();
 mediacontent.MediaContainer.prototype.constructor = mediacontent.MediaContainer;
 
 
-mediacontent.MediaContainer.prototype.upload = function(title, path, successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "Upload",
+mediacontent.MediaContainer.prototype.upload = function(title, path) {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "Upload",
 		[
 			title,
 			path
-		]).then(
-		successCallback,
-		errorCallback);
+		]);
 };
 
 
-mediacontent.MediaContainer.prototype.createFolder = function(title, successCallback, errorCallback) {
-	this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "CreateContainer",
+mediacontent.MediaContainer.prototype.createFolder = function(title) {
+	return this.proxy.callMethod("org.gnome.UPnP.MediaContainer2", "CreateContainer",
 		[
 			title,
 			"container",
 			["*"],
-		]).then(
-		successCallback,
-		errorCallback);
+		]);
 };
 
 
@@ -134,10 +120,7 @@ mediacontent.MediaVideo = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
 	if (proxy) {
 		this.duration = proxy.Duration;
-		this.resolution = {
-			width: proxy.Width,
-			height: proxy.Height
-		};
+		this.resolution = proxy.Width + "*" + proxy.Height + "+px";
 	}
 	return this;
 };
@@ -168,10 +151,7 @@ mediacontent.MediaAudio.prototype.constructor = mediacontent.MediaAudio;
 mediacontent.MediaImage = function(proxy) {
 	mediacontent.MediaItem.call(this,proxy);
 	if (proxy) {
-		this.resolution = {
-			width: proxy.Width,
-			height: proxy.Height
-		};
+		this.resolution = proxy.Width + "*" + proxy.Height + "+px";
 	}
 	return this;
 };
