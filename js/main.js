@@ -55,10 +55,8 @@
 		setSortMode();
 		// init DLNA global objects
 		containerStack = [];
-		// find DMS on the local network
-		mediaserver.setServerListener({onserverfound:addMediaSource, onserverlost:removeMediaSourceById});
-		// find DMR on the local network
-		mediarenderer.setRendererListener({onrendererfound:addMediaRenderer, onrendererlost:removeMediaRendererById});
+		// Media Renderer manual init, scan network now
+		mediarenderer.scanNetwork();
 	}
 
 	
@@ -133,15 +131,15 @@
 
 	function setRemoteRenderer(renderer) {
 		if (remoteRenderer) {
-			remoteRenderer.controller.onchange = null;
+			remoteRenderer.controller.onstatuschanged = null;
 			remoteRenderer.controller.stop();
 		}
 		remoteRenderer = renderer;
 		if (remoteRenderer) {
 			while(speedList.options.length) 
 				speedList.options.remove(0);
-			// set the renderer's controller onchange method
-			remoteRenderer.controller.onchange = function() {
+			// set the renderer's controller onstatuschanged method
+			remoteRenderer.controller.onstatuschanged = function() {
 				volField.value = this.volume;
 				speedField.value = this.speed;
 				if (speedList.options.length != this.playSpeeds.length) {
@@ -156,7 +154,7 @@
 				}
 			}
 			// call it to initialize UI
-			remoteRenderer.controller.onchange.apply(remoteRenderer.controller);
+			remoteRenderer.controller.onstatuschanged.apply(remoteRenderer.controller);
 			mediaserver.setProtocolInfo(remoteRenderer.protocolInfo);
 		}
 		clearFolderInfo();
@@ -241,7 +239,7 @@
 			var rendererPlay = function() {
 					renderer.controller.play();
 				};
-			mediaItem.getMetaData(
+			mediaItem.getMetaData().then(
 				function(metaData) {
 					renderer.openURI(mediaItem.content.uri, metaData,
 							rendererPlay,
@@ -326,12 +324,10 @@
 			if (mediaObjectArray.length == findCount) {
 				findOffset += findCount;
 				source.find(container.id, 
-						findContainerCB, 
-						findErrorCB,  /* errorCallback */
 						searchQuery, /* search query */
 						sortMode,  /* sortMode */
 						findCount, 
-						findOffset);
+						findOffset).then(findContainerCB, findErrorCB);
 			}
 			else // done
 				currentOp = "";
@@ -343,12 +339,10 @@
 		currentOp = localOp;
 		clearFolderInfo();
 		source.find(container.id, 
-				findContainerCB, 
-				findErrorCB, /* errorCallback */
 				searchQuery, /* search query */
 				sortMode, /* sortMode */
 				findCount, 
-				findOffset);
+				findOffset).then(findContainerCB, findErrorCB);
 	}
 
 
@@ -386,11 +380,9 @@
 			if (mediaObjectArray.length == browseCount) {
 				browseOffset += browseCount;
 				source.browse(container.id, 
-						browseContainerCB, 
-						browseErrorCB,  /* errorCallback */
 						sortMode,  /* sortMode */
 						browseCount, 
-						browseOffset);
+						browseOffset).then(browseContainerCB, browseErrorCB);
 			}
 			else // done
 				currentOp = "";
@@ -406,11 +398,9 @@
 		currentOp = localOp;
 		clearFolderInfo();
 		source.browse(container.id, 
-				browseContainerCB, 
-				browseErrorCB, /* errorCallback */
 				sortMode, /* sortMode */
 				browseCount, 
-				browseOffset);
+				browseOffset).then(browseContainerCB, browseErrorCB);
 	}
 
 
@@ -476,11 +466,17 @@
 	//
 
 	function initRenderers() {
-		mediarenderer.reset();
-		mediarenderer.bus = mediaserver.bus;
-		mediarenderer.uri = mediaserver.uri;
-		mediarenderer.manager = mediarenderer.bus.getObject(
-				mediarenderer.busName, 
+		mediarenderer._reset();
+		mediarenderer.onrendererfound = function(e) {
+			addMediaRenderer(e.renderer);
+		};
+		mediarenderer.onrendererlost = function(e) {
+			removeMediaRendererById(e.id);
+		};
+		mediarenderer._bus = mediaserver._bus;
+		mediarenderer._uri = mediaserver._uri;
+		mediarenderer._manager = mediarenderer._bus.getObject(
+				mediarenderer._busName, 
 				"/com/intel/dLeynaRenderer", 
 				initPage);
 	}
@@ -502,8 +498,14 @@
 			}
 		}
 		var cloudeebusURI = "ws://" + cloudeebusHost + ":" + cloudeebusPort;
-		mediaserver.init(cloudeebusURI, 
-				manifest,
+		mediaserver.onserverfound = function(e) {
+			addMediaSource(e.server);
+		};
+		mediaserver.onserverlost = function(e) {
+			removeMediaSourceById(e.id);
+		};
+		mediaserver._init(cloudeebusURI, 
+				manifest).then(
 				initRenderers,
 				debugLog);
 	};
