@@ -396,7 +396,7 @@
 				}
 				else {
 					renderer.openURI(mediaItem.content.uri, metaData,
-							rendererPlay,
+							null,
 							debugLog);
 				}
 			};
