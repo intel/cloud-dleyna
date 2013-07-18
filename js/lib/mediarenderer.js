@@ -246,13 +246,12 @@ mediarenderer.MediaRenderer = function(proxy) {
 };
 
 
-mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData, successCallback, errorCallback) {
+mediarenderer.MediaRenderer.prototype.openURI = function(mediaURI, metaData) {
 	if (metaData)
-		this.proxy.OpenUriEx(mediaURI, metaData).then(successCallback, errorCallback);
-	else
-		this.proxy.OpenUri(mediaURI).then(successCallback, errorCallback);
+		return this.proxy.OpenUriEx(mediaURI, metaData);
+	return this.proxy.OpenUri(mediaURI);
 };
 
-mediarenderer.MediaRenderer.prototype.prefetchURI = function(mediaURI, metaData, successCallback, errorCallback) {
-	this.proxy.OpenNextUri(mediaURI, metaData).then(successCallback, errorCallback);
+mediarenderer.MediaRenderer.prototype.prefetchURI = function(mediaURI, metaData) {
+	return this.proxy.OpenNextUri(mediaURI, metaData);
 };

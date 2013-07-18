@@ -384,20 +384,13 @@
 		if (remoteRenderer) {
 			var renderer = remoteRenderer;
 			var mediaItem = this.mediaItem;
-			var rendererPlay = function() {
-					renderer.controller.play();
-				};
 			var rendererOpen = function(metaData) {
 				if (prefetchCheckBox.checked) {
 					prefetchCheckBox.checked = false;
-					renderer.prefetchURI(mediaItem.content.uri, metaData,
-							null,
-							debugLog);
+					renderer.prefetchURI(mediaItem.content.uri, metaData).catch(debugLog);
 				}
 				else {
-					renderer.openURI(mediaItem.content.uri, metaData,
-							null,
-							debugLog);
+					renderer.openURI(mediaItem.content.uri, metaData).catch(debugLog);
 				}
 			};
 			mediaItem.getMetaData().then(rendererOpen,function(){rendererOpen(null);});
