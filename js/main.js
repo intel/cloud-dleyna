@@ -236,20 +236,11 @@
 		if (remoteRenderer) {
 			var renderer = remoteRenderer;
 			var mediaItem = this.mediaItem;
-			var rendererPlay = function() {
-					renderer.controller.play();
-				};
-			mediaItem.getMetaData().then(
-				function(metaData) {
-					renderer.openURI(mediaItem.content.uri, metaData,
-							rendererPlay,
-							debugLog);
-				},
-				function() {
-					renderer.openURI(mediaItem.content.uri, null,
-							rendererPlay,
-							debugLog);
-				});
+			var rendererOpen = function(metaData) {
+				renderer.openURI(mediaItem.content.uri, metaData).catch(debugLog);
+			};
+			mediaItem.getMetaData().then(rendererOpen,rendererOpen);
+			return;
 		}
 	}
 	
