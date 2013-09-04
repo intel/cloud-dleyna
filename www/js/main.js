@@ -75,7 +75,7 @@
 	
 	function containerBrowsingListItem(source, container) {
 		var node = containerBrowsingElement(source, container);
-		node.className="listContent";
+		node.className="button listContent";
 		return node;
 	}
 
@@ -255,6 +255,7 @@
 	
 	function pushContainerToFolderPath(source, container) {
 		var node = containerBrowsingElement(source, container);
+		node.className="stackButton";
 		node.onclick = folderPathButtonOnClick;
 		folderPath.appendChild(node);		
 	}
