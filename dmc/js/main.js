@@ -4,7 +4,7 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
+	var mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
 		playButton, pauseButton, stopButton, volButton, volField, seekButton, seekField, speedButton, speedField, speedList,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, outLog;
 	
@@ -30,7 +30,6 @@
 	
 	function initPage() {
 		// init HTML DOM elements
-		mainView = document.getElementById("mainView");
 		mediaRenderersListBox = document.getElementById("mediaRenderersListBox");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		searchButton = document.getElementById("searchButton");
@@ -49,8 +48,6 @@
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
 		folderInfo = document.getElementById("folderInfo");
-		// prevent page scrolling
-		mainView.style.height = Math.floor(0.8 * window.innerHeight) + "px";
 		// init browsing context
 		setSortMode();
 		// init DLNA global objects
@@ -75,7 +72,7 @@
 	
 	function containerBrowsingListItem(source, container) {
 		var node = containerBrowsingElement(source, container);
-		node.className="listContent";
+		node.className="button listContent";
 		return node;
 	}
 
@@ -92,6 +89,12 @@
 	// Media renderers management
 	//
 
+	function resetMediaRenderers() {
+		mediaRenderersListBox.selectedIndex = -1;
+		mediaRenderersListBoxChanged()
+		mediarenderer.scanNetwork();		
+	}
+	
     function getMediaRendererById(id) {
 		for (var i=0; i<mediaRenderersListBox.options.length; i++) {
 			if (mediaRenderersListBox.options[i].value == id)
@@ -112,10 +115,6 @@
 		node.value = renderer.id;
 		node.mediaRenderer = renderer;
 		mediaRenderersListBox.add(node);
-		if (mediaRenderersListBox.options.length == 1) {
-			mediaRenderersListBox.selectedIndex = 0;
-			mediaRenderersListBoxChanged();
-		}
 	}
 	
 	function removeMediaRendererById(rendererId) {
@@ -163,7 +162,9 @@
 	}
 	
 	function mediaRenderersListBoxChanged() {
-		if (mediaRenderersListBox.selectedIndex!=-1)
+		if (mediaRenderersListBox.selectedIndex==-1)
+			setRemoteRenderer(null);
+		else
 			setRemoteRenderer(mediaRenderersListBox.options[mediaRenderersListBox.selectedIndex].mediaRenderer);
 	}
 	
@@ -171,6 +172,13 @@
 	// Media sources management
 	//
 
+	function resetMediaSources() {
+		mediaSourcesListBox.selectedIndex = -1;
+		mediaSource = null;
+		clearFolderBrowsing();
+		mediaserver.scanNetwork();		
+	}
+	
     function getMediaSourceById(id) {
 		for (var i=0; i<mediaSourcesListBox.options.length; i++) {
 			if (mediaSourcesListBox.options[i].value == id)
@@ -236,20 +244,11 @@
 		if (remoteRenderer) {
 			var renderer = remoteRenderer;
 			var mediaItem = this.mediaItem;
-			var rendererPlay = function() {
-					renderer.controller.play();
-				};
-			mediaItem.getMetaData().then(
-				function(metaData) {
-					renderer.openURI(mediaItem.content.uri, metaData,
-							rendererPlay,
-							debugLog);
-				},
-				function() {
-					renderer.openURI(mediaItem.content.uri, null,
-							rendererPlay,
-							debugLog);
-				});
+			var rendererOpen = function(metaData) {
+				renderer.openURI(mediaItem.content.uri, metaData).catch(debugLog);
+			};
+			mediaItem.getMetaData().then(rendererOpen,rendererOpen);
+			return;
 		}
 	}
 	
@@ -264,6 +263,7 @@
 	
 	function pushContainerToFolderPath(source, container) {
 		var node = containerBrowsingElement(source, container);
+		node.className="stackButton";
 		node.onclick = folderPathButtonOnClick;
 		folderPath.appendChild(node);		
 	}

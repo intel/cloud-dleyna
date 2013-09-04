@@ -18,103 +18,124 @@
 
 <body>
 
-	<table id="mainView" style="width:95%;margin-left:auto;margin-right:auto;height:95%;min-height:480px">
-		<tr style="height:10%">
+	<table style="width:95%;margin-left:auto;margin-right:auto">
+		<tr class="listboxRow">
 			<td style="width:50%">
-			<header>
-				<h2><input type="button" value="Servers" onclick="mediaserver.scanNetwork()" style="min-width:50%"/></h2><hr>
-			</header>
+			  <input type="button" class="button gridCell" value="Servers" onclick="resetMediaSources()"/>
 			</td>
 			<td style="width:50%">
-			<header>
-				<h2><input type="button" value="Renderers" onclick="mediarenderer.scanNetwork()" style="min-width:50%"/></h2><hr>
-			</header>
+				<input type="button" class="button gridCell" value="Renderers" onclick="resetMediaRenderers()"/>
 			</td>
 		</tr>
-		<tr style="height:90%;min-height:440px">
-			<td style="width:100%" colspan=2>
-				<table style="width:100%;height:100%;min-height:400px">
-					<tr class="listboxRow">
-						<td style="width:50%">
-						<select id="mediaSourcesListBox" size=3 style="min-width:60px;width:100%"
-							onchange="logMediaSourceInfo(this.options[this.selectedIndex].mediaSource)" >
-						</select> 
-						</td>
-						<td style="width:50%">
-						<select id="mediaRenderersListBox" size=3 style="min-width:60px;width:100%"
-							onchange="mediaRenderersListBoxChanged()" >
-						</select> 
-						</td>
-					</tr>
-					<tr class="listboxRow">
-						<td style="width:100%" colspan=2>
-						<input id="playButton" type="button" value="Play"
-							style="width:22%"
-							onclick="remoteRenderer.controller.play()"/>
-						<input id="pauseButton" type="button" value="Pause"
-							style="width:22%"
-							onclick="remoteRenderer.controller.pause()"/>
-						<input id="stopButton" type="button" value="Stop"
-							style="width:22%"
-							onclick="remoteRenderer.controller.stop()"/>
-						<input id="previewButton" type="button" value="Preview"
-							style="width:22%"
-							onclick="window.open(selectedItem.mediaItem.content.uri)"/>
-						<input id="volButton" type="button" value="Volume"
-							style="width:30%"
-							onclick="remoteRenderer.controller.setVolume(volField.value)"/>
-						<input id="volField" type="text" value="1"
-							style="width:10%"/>
-						<input id="seekButton" type="button" value="Seek"
-							style="width:30%"
-							onclick="remoteRenderer.controller.seek(seekField.value)"/>
-						<input id="seekField" type="text" value="0"
-							style="width:10%"/>
-						<input id="speedButton" type="button" value="speed X"
-							style="width:20%"
-							onclick="remoteRenderer.controller.setSpeed(speedField.value)"/>
-						<input id="speedField" type="text" value="1"
-							style="width:10%"/>
-						<select id="speedList"
-						  style="width:60%"
-						  onchange="speedField.value=this.options[this.selectedIndex].value">
-						  <option value="1" selected="selected">1 X</option>
-						</select>
-						</td>
-					</tr>
-					<tr class="singleRow">
-						<td class="content" style="width:100%" colspan=2>
-						<div id="folderPath"></div>
-						</td>
-					</tr>
-					<tr class="singleRow">
-						<td style="width:100%" colspan=2>
-						<input id="searchButton" style="width:15%" type="button" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
-						<input id="searchField" style="width:25%" type="text" value="">
-							Sort by:
-							<select id="sortByPopList" style="width:20%" onchange="setSortMode()" >
-								<option value="DisplayName" selected="selected">Title</option>
-								<option value="Date">Date</option>
-								<option value="Size">Size</option>
-								<option value="Duration">Duration</option>
-								<option value="Album">Album</option>
-								<option value="Artist">Artist</option>
-								<option value="Genre">Genre</option>
-							</select>
-							<select id="sortDirectionPopList" style="width:20%" onchange="setSortMode()" >
-								<option value="ASC" selected="selected">ascending</option>
-								<option value="DESC">descending</option>
-							</select>
-						</td>
-					</tr>
-					<tr class="contentRow">
-						<td id="folderInfo" style="height:100%;width:100%" colspan=2>
-						</td>
-					</tr>
-				</table>
+		<tr class="listboxRow">
+			<td style="width:50%">
+				<select class="button gridCell" id="mediaSourcesListBox" style="min-width:60px;width:100%"
+						onchange="logMediaSourceInfo(this.options[this.selectedIndex].mediaSource)" >
+				</select> 
+			</td>
+			<td style="width:50%">
+				<select class="button gridCell" id="mediaRenderersListBox" style="min-width:60px;width:100%"
+						onchange="mediaRenderersListBoxChanged()" >
+				</select> 
 			</td>
 		</tr>
-	</table>
+		</table>
+		
+		<hr>
+		
+		<table style="width:95%;margin-left:auto;margin-right:auto">
+			<tr class="listboxRow">
+				<td style="width:25%">
+					<input id="playButton" type="button" class="button gridCell" value="Play"
+						onclick="remoteRenderer.controller.play()"/>
+				</td>
+				<td style="width:25%">
+					<input id="pauseButton" type="button" class="button gridCell" value="Pause"
+						onclick="remoteRenderer.controller.pause()"/>
+				</td>
+				<td style="width:25%">
+					<input id="stopButton" type="button" class="button gridCell" value="Stop"
+						onclick="remoteRenderer.controller.stop()"/>
+				</td>
+				<td style="width:25%">
+					<input id="previewButton" type="button" class="button gridCell" value="Preview"
+						onclick="window.open(selectedItem.mediaItem.content.uri)"/>
+				</td>
+			</tr>
+			<tr class="listboxRow">
+				<td style="width:25%">
+					<input id="volButton" type="button" class="button gridCell" value="Volume"
+						onclick="remoteRenderer.controller.setVolume(volField.value)"/>
+				</td>
+				<td style="width:25%">
+					<input id="volField" type="text" class="textField gridCell" value="1"/>
+				</td>
+				<td style="width:25%">
+					<input id="seekButton" type="button" class="button gridCell" value="Seek"
+						onclick="remoteRenderer.controller.seek(seekField.value)"/>
+				</td>
+				<td style="width:25%">
+					<input id="seekField" type="text" class="textField gridCell" value="0"/>
+				</td>
+			</tr>
+			<tr class="listboxRow">
+				<td style="width:25%">
+					<input id="speedButton" type="button" class="button gridCell" value="speed X"
+						onclick="remoteRenderer.controller.setSpeed(speedField.value)"/>
+				</td>
+				<td style="width:25%">
+					<input id="speedField" type="text" class="textField gridCell" value="1"/>
+				</td>
+				<td style="width:50%" colspan=2>
+					<select class="button gridCell" id="speedList"
+					  onchange="speedField.value=this.options[this.selectedIndex].value">
+					  <option value="1" selected="selected">1 X</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		
+		<hr>
+		
+		<table style="width:95%;margin-left:auto;margin-right:auto">
+			<tr class="singleRow">
+				<td class="content" style="width:100%" colspan=5>
+					<div id="folderPath"></div>
+				</td>
+			</tr>
+			<tr class="singleRow">
+				<td style="width:20%">
+					<input id="searchButton" type="button" class="button gridCell" value="Search" onclick="findInMediaSourceContainer(this.source, this.container, searchField.value)">
+				</td>
+				<td style="width:20%">
+					<input id="searchField" type="text" class="textField gridCell" value="">
+				</td>
+				<td style="width:20%">
+					<div class="textField gridCell">Sort by:</div>
+				</td>
+				<td style="width:20%">
+					<select class="button gridCell" id="sortByPopList" onchange="setSortMode()" >
+						<option value="DisplayName" selected="selected">Title</option>
+						<option value="Date">Date</option>
+						<option value="Size">Size</option>
+						<option value="Duration">Duration</option>
+						<option value="Album">Album</option>
+						<option value="Artist">Artist</option>
+						<option value="Genre">Genre</option>
+					</select>
+				</td>
+				<td style="width:20%">
+					<select class="button gridCell" id="sortDirectionPopList" onchange="setSortMode()" >
+						<option value="ASC" selected="selected">ascending</option>
+						<option value="DESC">descending</option>
+					</select>
+				</td>
+			</tr>
+			<tr class="contentRow">
+				<td id="folderInfo" style="height:100%;width:100%;margin-left:auto;margin-right:auto" colspan=5>
+				</td>
+			</tr>
+		</table>
 	
 </body>
 </html>
