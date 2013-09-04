@@ -109,10 +109,6 @@
 		node.value = renderer.id;
 		node.mediaRenderer = renderer;
 		mediaRenderersListBox.add(node);
-		if (mediaRenderersListBox.options.length == 1) {
-			mediaRenderersListBox.selectedIndex = 0;
-			mediaRenderersListBoxChanged();
-		}
 	}
 	
 	function removeMediaRendererById(rendererId) {
@@ -160,7 +156,9 @@
 	}
 	
 	function mediaRenderersListBoxChanged() {
-		if (mediaRenderersListBox.selectedIndex!=-1)
+		if (mediaRenderersListBox.selectedIndex==-1)
+			setRemoteRenderer(null);
+		else
 			setRemoteRenderer(mediaRenderersListBox.options[mediaRenderersListBox.selectedIndex].mediaRenderer);
 	}
 	
