@@ -178,6 +178,12 @@
 	// Media renderers management
 	//
 
+	function resetMediaRenderers() {
+		mediaRenderersListBox.selectedIndex = -1;
+		mediaRenderersListBoxChanged()
+		mediarenderer.scanNetwork();		
+	}
+	
     function getMediaRendererById(id) {
 		for (var i=0; i<mediaRenderersListBox.options.length; i++) {
 			if (mediaRenderersListBox.options[i].value == id)
@@ -290,6 +296,13 @@
 	// Media sources management
 	//
 
+	function resetMediaSources() {
+		mediaSourcesListBox.selectedIndex = -1;
+		mediaSource = null;
+		clearFolderBrowsing();
+		mediaserver.scanNetwork();		
+	}
+	
     function getMediaSourceById(id) {
 		for (var i=0; i<mediaSourcesListBox.options.length; i++) {
 			if (mediaSourcesListBox.options[i].value == id)
