@@ -58,11 +58,12 @@ h2 {
 }
 
 .content {
-	background-color:#F7E9E9;
-	font-size:3em;
-	padding:2px 5px;
-	border-style:solid;
-	border-width:1px
+    background-color:#F7E9E9;
+    font-size:3em;
+    margin:0px 5px;
+    padding:2px 5px;
+    border-style:solid;
+    border-width:1px
 }
 
 .selectedContent {
@@ -72,21 +73,21 @@ h2 {
 }
 
 .listContent {
-	margin: 2px;
-	width:99%
+    margin: 2px;
+    width:99%
 }
 
 .singleRow {
-	height:5%;
-	min-height:20px
+    height:5%;
+    min-height:20px
 }
 
 .listboxRow {
-	height:10%;
-	min-height:60px
+    height:10%;
+    min-height:60px
 }
 
 .contentRow {
-	height:50%;
-	min-height:160px
+    height:50%;
+    min-height:160px
 }

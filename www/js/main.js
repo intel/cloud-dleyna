@@ -4,7 +4,7 @@
 	//
 	
 	// HTML DOM elements
-	var mainView, mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
+	var mediaRenderersListBox, mediaSourcesListBox, searchButton, searchField,
 		playButton, pauseButton, stopButton, volButton, volField, seekButton, seekField, speedButton, speedField, speedList,
 		sortByPopList, sortDirectionPopList, folderPath, folderInfo, outLog;
 	
@@ -30,7 +30,6 @@
 	
 	function initPage() {
 		// init HTML DOM elements
-		mainView = document.getElementById("mainView");
 		mediaRenderersListBox = document.getElementById("mediaRenderersListBox");
 		mediaSourcesListBox = document.getElementById("mediaSourcesListBox");
 		searchButton = document.getElementById("searchButton");
@@ -49,8 +48,6 @@
 		sortDirectionPopList = document.getElementById("sortDirectionPopList");
 		folderPath = document.getElementById("folderPath");
 		folderInfo = document.getElementById("folderInfo");
-		// prevent page scrolling
-		mainView.style.height = Math.floor(0.8 * window.innerHeight) + "px";
 		// init browsing context
 		setSortMode();
 		// init DLNA global objects
