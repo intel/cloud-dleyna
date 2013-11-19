@@ -482,7 +482,7 @@
 	}
 	
 	var init = function () {
-		var cloudeebusHost = "localhost";
+		var cloudeebusHost = window.location.host;
 		var cloudeebusPort = "9000";
 		var queryString = window.location.toString().split("\?")[1];
 		if (queryString) {
